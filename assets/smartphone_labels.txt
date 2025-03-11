@@ -1,0 +1,9 @@
+Front Camera
+Speaker
+Vibrator Motor
+battery
+cable
+camera
+other-parts
+phone
+screw
