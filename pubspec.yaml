@@ -26,3 +26,5 @@ flutter:
 
   assets:
     - assets/smartphone_model.tflite
+    - assets/model1.tflite
+    - assets/smartphone_labels.txt
