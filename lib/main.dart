@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'select_ewaste.dart';
 import 'chatbot_screen.dart';
+import 'part_detection.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Check if the app is opened for the first time
+  final prefs = await SharedPreferences.getInstance();
+  final bool isFirstOpen = prefs.getBool('isFirstOpen') ?? true; // Default to true if null
+
+  runApp(MyApp(isFirstOpen: isFirstOpen));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isFirstOpen;
+
+  const MyApp({super.key, required this.isFirstOpen});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +29,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         scaffoldBackgroundColor: const Color(0xFF1E1E1E),
       ),
-      home: const HomeScreen(),
+      home: isFirstOpen ? const HomeScreen() : const SelectEwaste(),
     );
   }
 }
@@ -109,8 +119,13 @@ class HomeScreen extends StatelessWidget {
                       _buildButton(
                         context: context,
                         text: 'Get Started',
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          // Mark the app as no longer being opened for the first time
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setBool('isFirstOpen', false);
+
+                          // Navigate to SelectEwaste screen
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const SelectEwaste(),
@@ -120,7 +135,6 @@ class HomeScreen extends StatelessWidget {
                       ),
 
                       SizedBox(height: screenHeight * 0.015),
-                      
                     ],
                   ),
                 ),

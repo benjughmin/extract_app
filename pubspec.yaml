@@ -41,6 +41,7 @@ dependencies:
   image_field: ^0.0.10
   google_fonts: ^6.2.1
   camera: 0.11.1
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:
