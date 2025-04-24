@@ -41,16 +41,25 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Map<String, List<String>> _detectedPartsPerImage = {};
   Map<int, String> _processedImagePathsMap = {}; 
   List<List<int>> _uploadBatches = []; // Track images uploaded in batches
+  Map<String, dynamic> _laptopInstructions = {};
+  List<String> _currentOptions = [];
+  String _currentStep = 'start';
 
   @override
   void initState() {
     super.initState();
+    _loadKnowledgeBase();
+    _loadLaptopInstructions();
     
-    // Set initial category
     _selectedCategory = widget.initialCategory;
     
-    // Add welcome message
-    _addBotMessage("Hello! I'm your e-waste assistant. I can help you identify and extract valuable parts from your ${widget.initialCategory}.");
+    // Add welcome message and start laptop instructions if category is Laptop
+    if (_selectedCategory == 'Laptop') {
+      _addBotMessage("Hello! I'm your e-waste assistant. I can help you identify and extract valuable parts from your Laptop.");
+      _startLaptopInstructions();
+    } else {
+      _addBotMessage("Hello! I'm your e-waste assistant. I can help you identify and extract valuable parts from your ${widget.initialCategory}.");
+    }
     
     // If we have an initial image, process it
     if (widget.initialImagePath != null) {
@@ -100,8 +109,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         _addBotMessage("I couldn't detect any components in your image. Try a clearer image or different angle.");
       }
     }
-    
-    _loadKnowledgeBase();
   }
   void _navigateImages(int currentIndex, int direction) {
     if (_imagePaths.isEmpty) return;
@@ -232,7 +239,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         centerTitle: true,
                         title: Text(
                           message.isResult ? 'Detection Results' : 'Image ${currentIdx + 1}',
-                          style: GoogleFonts.roboto(
+                          style: GoogleFonts.montserrat(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -346,7 +353,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                       child: Center(
                                         child: Text(
                                           'Image ${currentBatch.indexOf(currentIdx) + 1} of ${currentBatch.length}',
-                                          style: GoogleFonts.roboto(
+                                          style: GoogleFonts.montserrat(
                                             color: Colors.white70,
                                             fontSize: 14,
                                           ),
@@ -362,7 +369,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                         Text(
                                           'Detected Components',
                                           textAlign: TextAlign.center,
-                                          style: GoogleFonts.roboto(
+                                          style: GoogleFonts.montserrat(
                                             color: Colors.white,
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -379,7 +386,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                                 const SizedBox(width: 8),
                                                 Text(
                                                   part,
-                                                  style: GoogleFonts.roboto(
+                                                  style: GoogleFonts.montserrat(
                                                     color: Colors.white,
                                                     fontSize: 16,
                                                   ),
@@ -392,7 +399,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                             padding: const EdgeInsets.only(top: 8.0),
                                             child: Text(
                                               'No components detected in this image.',
-                                              style: GoogleFonts.roboto(
+                                              style: GoogleFonts.montserrat(
                                                 color: Colors.white70,
                                                 fontSize: 14,
                                                 fontStyle: FontStyle.italic,
@@ -425,7 +432,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                             children: [
                                               Text(
                                                 componentName,
-                                                style: GoogleFonts.roboto(
+                                                style: GoogleFonts.montserrat(
                                                   color: Colors.white,
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,
@@ -456,7 +463,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                               const SizedBox(height: 16),
                                               Text(
                                                 'No component images available',
-                                                style: GoogleFonts.roboto(
+                                                style: GoogleFonts.montserrat(
                                                   color: Colors.white70,
                                                   fontSize: 16,
                                                 ),
@@ -488,7 +495,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                             alignment: Alignment.center,
                             child: Text(
                               'Close',
-                              style: GoogleFonts.roboto(
+                              style: GoogleFonts.montserrat(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -519,6 +526,28 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     }
   }
 
+  Future<void> _loadLaptopInstructions() async {
+    try {
+      final String jsonString = await rootBundle.loadString('assets/laptop_instructions.json');
+      setState(() {
+        _laptopInstructions = json.decode(jsonString);
+        // Initialize with start options from the nodes array
+        var startNode = (_laptopInstructions['nodes'] as List<dynamic>)
+            .firstWhere((node) => node['id'] == 'start', 
+                      orElse: () => null);
+        
+        if (startNode != null && startNode['options'] != null) {
+          _currentOptions = startNode['options']
+              .map<String>((option) => option['label'] as String)
+              .toList();
+        }
+      });
+      print("Laptop instructions loaded successfully: ${_laptopInstructions.toString().substring(0, 100)}..."); // Debug print
+    } catch (e) {
+      print("Error loading laptop instructions: $e");
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -534,14 +563,19 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ));
     });
     
-    // Scroll to bottom after message is added
+    if (!_scrollController.hasClients) return;
+    
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        try {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        } catch (e) {
+          print('Error scrolling after adding message: $e');
+        }
       }
     });
   }
@@ -734,6 +768,9 @@ Future<void> _getImage(ImageSource source) async {
           if (detectedParts.isNotEmpty) {
             _addBotMessage("I've analyzed image ${i + 1} of ${selectedImages.length}! Detected parts: ${detectedParts.join(', ')}");
             
+            // Start the part-by-part instructions
+            _handleDetectedPartsInstructions(detectedParts);
+            
             // NEW - Add a message with the cropped component images
             if (croppedImages.isNotEmpty) {
               _addComponentImagesMessage(croppedImages);
@@ -774,13 +811,19 @@ Future<void> _getImage(ImageSource source) async {
 }
 
 void _scrollToBottom() {
+  if (!_scrollController.hasClients) return;
+  
   Future.delayed(const Duration(milliseconds: 100), () {
     if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      try {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      } catch (e) {
+        print('Error scrolling to bottom: $e');
+      }
     }
   });
 }
@@ -798,102 +841,278 @@ void _addComponentImagesMessage(Map<String, String> componentImages) {
   _scrollToBottom();
 }
 
+void _startLaptopInstructions() {
+  if (_laptopInstructions.isEmpty) {
+    _addBotMessage("Sorry, I couldn't load the laptop instructions. Please try again later.");
+    return;
+  }
+
+  // Find the start node
+  var startNode = (_laptopInstructions['nodes'] as List<dynamic>)
+      .firstWhere((node) => node['id'] == 'start', 
+                  orElse: () => null);
+
+  if (startNode == null) {
+    _addBotMessage("Error loading instructions. Please try again.");
+    return;
+  }
+
+  setState(() {
+    _currentStep = 'start';
+    // Extract options from the node
+    _currentOptions = startNode['options']
+        .map<String>((option) => option['label'] as String)
+        .toList();
+    
+    // Add initial message
+    _addBotMessage(startNode['text'] ?? 
+      "Welcome! Let's help you disassemble your laptop. What would you like to do?");
+  });
+}
+
+void _handleInstructionChoice(String choice) {
+  _addUserMessage(choice);
+
+  if (choice == 'Start Over') {
+    _startLaptopInstructions();
+    return;
+  }
+
+  if (choice == 'Continue to next part' || choice == 'Skip this part') {
+    // Safely parse the current step index
+    if (_currentStep.startsWith('part_')) {
+      int currentIndex = int.parse(_currentStep.split('_')[1]);
+      _showNextPartInstructions(_detectedParts, currentIndex + 1);
+    } else {
+      // If `_currentStep` is not in the expected format, reset to the first part
+      _showNextPartInstructions(_detectedParts, 0);
+    }
+    return;
+  }
+
+  // Handle other options (e.g., disposal instructions)
+  if (_laptopInstructions.isEmpty) return;
+
+  // Find current node
+  var currentNode = (_laptopInstructions['nodes'] as List<dynamic>)
+      .firstWhere((node) => node['id'] == _currentStep, orElse: () => null);
+
+  if (currentNode == null) return;
+
+  // Find the selected option and get the next node id
+  String? nextNodeId;
+  for (var option in currentNode['options']) {
+    if (option['label'] == choice) {
+      nextNodeId = option['next'];
+      break;
+    }
+  }
+
+  if (nextNodeId == null) return;
+
+  // Find the next node
+  var nextNode = (_laptopInstructions['nodes'] as List<dynamic>)
+      .firstWhere((node) => node['id'] == nextNodeId, orElse: () => null);
+
+  if (nextNode == null) return;
+
+  setState(() {
+    _currentStep = nextNodeId!;
+
+    // Handle different node types
+    if (nextNode.containsKey('steps')) {
+      var steps = nextNode['steps'] as List<dynamic>;
+      String message = "Here are the steps:\n\n";
+      for (var step in steps) {
+        message += "${step['order']}. ${step['action']}\n";
+      }
+      _addBotMessage(message);
+      _currentOptions = ['Continue to next part'];
+    } else if (nextNode.containsKey('instructions')) {
+      var instructions = nextNode['instructions'] as List<dynamic>;
+      String message = "Instructions:\n\n";
+      for (var instruction in instructions) {
+        message += "• ${instruction['step']}\n";
+      }
+      _addBotMessage(message);
+      _currentOptions = ['Continue to next part'];
+    } else if (nextNode.containsKey('text')) {
+      _addBotMessage(nextNode['text']);
+      if (nextNode.containsKey('options')) {
+        _currentOptions = nextNode['options']
+            .map<String>((option) => option['label'] as String)
+            .toList();
+      } else {
+        _currentOptions = ['Continue to next part'];
+      }
+    }
+  });
+}
+
+void _handleDetectedPartsInstructions(List<String> detectedParts, {String? relatedPart}) {
+  // If a related part exists, handle it first
+  if (relatedPart != null) {
+    _addBotMessage("Let's start with the part related to the issue you selected: $relatedPart.");
+    _showNextPartInstructions([relatedPart], 0, isRelatedPart: true);
+  } else {
+    // If no related part, proceed with all detected parts
+    _addBotMessage("I'll guide you through extracting each detected part safely.");
+    _showNextPartInstructions(detectedParts, 0);
+  }
+}
+
+void _showNextPartInstructions(List<String> parts, int index, {bool isRelatedPart = false}) {
+  if (index >= parts.length) {
+    if (isRelatedPart) {
+      // After the related part, proceed with the remaining parts
+      _addBotMessage("Now let's move on to the other detected parts.");
+      _showNextPartInstructions(_detectedParts, 0);
+    } else {
+      // If all parts are done, end the flow
+      _addBotMessage("That's all the parts! Would you like to start over or try something else?");
+      _currentOptions = ['Start Over', 'Change device type'];
+    }
+    return;
+  }
+
+  String part = parts[index].toLowerCase();
+  String nodeId = _getInstructionNodeId(part);
+
+  // Find the node for this part
+  var node = (_laptopInstructions['nodes'] as List<dynamic>)
+      .firstWhere((node) => node['id'] == nodeId, orElse: () => null);
+
+  if (node != null) {
+    _addBotMessage("Let's extract the ${parts[index]}:");
+
+    // Show instructions or options based on node type
+    if (node.containsKey('steps')) {
+      String steps = node['steps']
+          .map((step) => "${step['order']}. ${step['action']}")
+          .join('\n');
+      _addBotMessage(steps);
+
+      // Add continue button
+      _currentOptions = ['Continue to next part'];
+      _currentStep = 'part_${index}'; // Properly set the current step
+    } else if (node.containsKey('options')) {
+      _currentOptions = node['options']
+          .map<String>((option) => option['label'] as String)
+          .toList();
+      _currentStep = nodeId;
+    }
+  } else {
+    // Skip unknown parts
+    _showNextPartInstructions(parts, index + 1, isRelatedPart: isRelatedPart);
+  }
+}
+
+String _getInstructionNodeId(String part) {
+  switch (part) {
+    case 'battery':
+      return 'battery_type';
+    case 'fan':
+      return 'extract_fan';
+    case 'ram':
+      return 'ram_issue';
+    case 'hard drive':
+    case 'hdd':
+      return 'hdd_flow';
+    case 'ssd':
+      return 'sata_flow';
+    case 'wifi card':
+    case 'wireless':
+      return 'extract_wifi';
+    default:
+      return '';
+  }
+}
+
+void _handleCauseSelection(String cause) {
+  _addUserMessage(cause);
+
+  // Map cause to related part
+  String? relatedPart;
+  switch (cause) {
+    case "Laptop is not powering on":
+      relatedPart = "battery";
+      break;
+    case "Overheating":
+      relatedPart = "fan";
+      break;
+    case "Storage issue / Drive failure":
+      relatedPart = "hard drive";
+      break;
+    case "Memory issue / RAM failure":
+      relatedPart = "ram";
+      break;
+    case "Other / Wi-Fi & misc.":
+      relatedPart = "wifi card";
+      break;
+  }
+
+  // Start instructions with the related part
+  _handleDetectedPartsInstructions(_detectedParts, relatedPart: relatedPart);
+}
+
   @override
   Widget build(BuildContext context) {
     return Base(
       title: 'e-Waste Assistant',
       child: Scaffold(
         backgroundColor: const Color(0xFF1E1E1E),
-        body: Column(
-          children: [
-            // Chat messages
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(16),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  return _buildChatMessage(_messages[index]);
-                },
-              ),
-            ),
-              
-            // Part options for smartphone
-            if (_showPartOptions && _selectedCategory == 'Smartphone')
-              Container(
-                height: 55,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: _detectedParts.map((part) => 
-                    _buildPartButton(part)
-                  ).toList(),
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Chat messages list
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _messages.length,
+                  itemBuilder: (context, index) {
+                    return _buildChatMessage(_messages[index]);
+                  },
                 ),
               ),
-            
-            // Predefined response buttons and actions container
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                  )
-                ],
-              ),
-              child: Column(
-                children: [
-                  // Action buttons row
-                  Row(
-                    children: [
-                      // Camera button
-                      _buildIconButton(Icons.camera_alt, () => _getImage(ImageSource.camera)),
-                      const SizedBox(width: 8),
-                      
-                      // Upload button
-                      _buildIconButton(Icons.photo_library, () => _getImage(ImageSource.gallery)),
-                      
-                      const Spacer(),
-                      
-                      // Change device type button
-                      _buildTextIconButton("Change device", Icons.refresh, () => 
-                        _handlePredefinedResponse("Change device type")
-                      ),
-                    ],
-                  ),
-                  
-                  // Only show these options after an image is uploaded
-                  if (_imageUploaded) ...[
-                    const SizedBox(height: 12),
-                    
-                    // Predefined responses grid
-                    !_showPartOptions ? Row(
-                      children: [
-                        Expanded(
-                          child: _buildResponseButton("What parts can I extract?", 
-                            onTap: () => _handlePredefinedResponse("What parts can I extract?")),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _buildResponseButton("How much are the parts worth?", 
-                            onTap: () => _handlePredefinedResponse("How much are the parts worth?")),
-                        ),
-                      ],
-                    ) : const SizedBox.shrink(),
-                    
-                    !_showPartOptions ? const SizedBox(height: 8) : const SizedBox.shrink(),
-                    
-                    !_showPartOptions ? _buildResponseButton("How do I recycle this device?", 
-                      onTap: () => _handlePredefinedResponse("How do I recycle this device?")
-                    ) : const SizedBox.shrink(),
+
+              // Instruction buttons (if any)
+              if (_currentOptions.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  color: const Color(0xFF2A2A2A),
+                  child: _buildInstructionButtons(),
+                ),
+
+              // Action buttons
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2A2A2A),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                    )
                   ],
-                ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildIconButton(Icons.camera_alt, () => _getImage(ImageSource.camera)),
+                    _buildIconButton(Icons.photo_library, () => _getImage(ImageSource.gallery)),
+                    if (_imageUploaded)
+                      _buildIconButton(Icons.restart_alt, () {
+                        setState(() {
+                          _imageUploaded = false;
+                          _detectedParts.clear();
+                        });
+                      }),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -962,7 +1181,7 @@ Widget _buildChatMessage(ChatMessage message) {
                 if (message.text.isNotEmpty)
                   SelectableText(
                     message.text,
-                    style: GoogleFonts.roboto(
+                    style: GoogleFonts.montserrat(
                       color: Colors.white,
                       fontSize: 16,
                     ),
@@ -1016,7 +1235,7 @@ Widget _buildChatMessage(ChatMessage message) {
                         message.isResult 
                             ? 'Analysis results' 
                             : 'Image ${message.imageIndex != null ? (message.imageIndex! + 1) : ""}',
-                        style: GoogleFonts.roboto(
+                        style: GoogleFonts.montserrat(
                           color: Colors.white70,
                           fontSize: 12,
                         ),
@@ -1135,7 +1354,7 @@ Widget _buildChatMessage(ChatMessage message) {
                   const SizedBox(height: 12),
                   Text(
                     'Detected Components:',
-                    style: GoogleFonts.roboto(
+                    style: GoogleFonts.montserrat(
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -1168,7 +1387,7 @@ Widget _buildChatMessage(ChatMessage message) {
                               const SizedBox(height: 4),
                               Text(
                                 componentName,
-                                style: GoogleFonts.roboto(
+                                style: GoogleFonts.montserrat(
                                   color: Colors.white,
                                   fontSize: 12,
                                 ),
@@ -1244,7 +1463,7 @@ Widget _buildChatMessage(ChatMessage message) {
             const SizedBox(width: 4),
             Text(
               text,
-              style: GoogleFonts.roboto(
+              style: GoogleFonts.montserrat(
                 color: Colors.white,
                 fontSize: 14,
               ),
@@ -1278,7 +1497,7 @@ Widget _buildChatMessage(ChatMessage message) {
         ),
         child: Text(
           text,
-          style: GoogleFonts.roboto(
+          style: GoogleFonts.montserrat(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.bold,
@@ -1317,7 +1536,7 @@ Widget _buildChatMessage(ChatMessage message) {
             const SizedBox(height: 4),
             Text(
               category.split(' ')[0],
-              style: GoogleFonts.roboto(
+              style: GoogleFonts.montserrat(
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -1349,11 +1568,49 @@ Widget _buildChatMessage(ChatMessage message) {
         ),
         child: Text(
           partName,
-          style: GoogleFonts.roboto(
+          style: GoogleFonts.montserrat(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInstructionButtons() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: _currentOptions.map((option) {
+          bool isStartOver = option == 'Start Over';
+          
+          return ElevatedButton(
+            onPressed: () {
+              if (isStartOver) {
+                _startLaptopInstructions();
+              } else {
+                _handleInstructionChoice(option);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isStartOver ? Colors.blue : const Color(0xFF34A853),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            child: Text(
+              option,
+              style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

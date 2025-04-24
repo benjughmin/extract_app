@@ -76,8 +76,9 @@ flutter:
     - assets/models/computer/labels.txt
     - assets/models/smartphone/best_phone_float16.tflite
     - assets/models/smartphone/labels.txt
-    - assets/models/telecom/best_router_float16.tflite
+    - assets/models/telecom/best_router-1_float16.tflite
     - assets/models/telecom/labels.txt
+    - assets/laptop_instructions.json
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

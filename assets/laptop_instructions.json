@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "text": "What is the cause of disposal?",
+      "options": [
+        { "label": "Laptop is not powering on", "next": "battery_issue" },
+        { "label": "Overheating",               "next": "fan_issue" },
+        { "label": "Storage issue / Drive failure", "next": "storage_issue" },
+        { "label": "Memory issue / RAM failure",    "next": "ram_issue" },
+        { "label": "Other / Wi-Fi & misc.",          "next": "other_issue" }
+      ]
+    },
+    {
+      "id": "battery_issue",
+      "text": "This may be caused by an issue with the battery. Would you still like to extract this part?",
+      "options": [
+        { "label": "Yes", "next": "battery_type" },
+        { "label": "No",  "next": "dispose_battery" }
+      ]
+    },
+    {
+      "id": "battery_type",
+      "text": "What type of battery does this laptop have?",
+      "options": [
+        { "label": "Screw-mounted (internal)", "next": "extract_battery_screwed" },
+        { "label": "Tool-less removable (clip latch)", "next": "extract_battery_easy" },
+        { "label": "Other / Uncertain",         "next": "extract_battery_generic" }
+      ]
+    },
+    {
+      "id": "extract_battery_screwed",
+      "steps": [
+        { "order": 1, "action": "Flip the laptop over and remove all screws on the bottom cover." },
+        { "order": 2, "action": "Pry up and remove the bottom panel." },
+        { "order": 3, "action": "Locate the battery and remove the screws securing it." },
+        { "order": 4, "action": "Carefully unplug the battery cable from the motherboard." },
+        { "order": 5, "action": "Lift the battery straight out of its bay." }
+      ]
+    },
+    {
+      "id": "extract_battery_easy",
+      "steps": [
+        { "order": 1, "action": "Slide the latch(es) on the bottom of the laptop to the unlocked position." },
+        { "order": 2, "action": "Grip the exposed battery edge and pull it out of its compartment." }
+      ]
+    },
+    {
+      "id": "extract_battery_generic",
+      "text": "If the battery type is different (e.g., proprietary pack), consult the device’s service manual or look for visible release mechanisms before attempting removal."
+    },
+    {
+      "id": "dispose_battery",
+      "instructions": [
+        { "step": "Tape battery terminals or place each battery in a separate plastic bag." },
+        { "step": "Bring to a designated hazardous-waste or electronics recycling drop-off." },
+        { "step": "⚠️ WARNING: Never dispose of lithium-ion batteries in regular trash bins!" }
+      ]
+    },
+    {
+      "id": "fan_issue",
+      "text": "Overheating may be caused by a cooling/fan issue. Would you still like to extract the fan assembly?",
+      "options": [
+        { "label": "Yes", "next": "extract_fan" },
+        { "label": "No",  "next": "dispose_fan" }
+      ]
+    },
+    {
+      "id": "extract_fan",
+      "steps": [
+        { "order": 1, "action": "Remove base screws and pry off the bottom cover." },
+        { "order": 2, "action": "Unscrew the fan/heat-sink mounting screws." },
+        { "order": 3, "action": "Unplug the fan’s power cable from the motherboard." },
+        { "order": 4, "action": "Lift out the fan and heatsink assembly." }
+      ]
+    },
+    {
+      "id": "dispose_fan",
+      "instructions": [
+        { "step": "Separate metal and plastic parts; take to a certified e-waste recycler." }
+      ]
+    },
+    {
+      "id": "storage_issue",
+      "text": "Which storage device?",
+      "options": [
+        { "label": "Hard Drive (HDD)",       "next": "hdd_flow" },
+        { "label": "SSD (NVMe M.2)",         "next": "nvme_flow" },
+        { "label": "SSD (2.5″ SATA)",        "next": "sata_flow" },
+        { "label": "Unsure / Other",         "next": "normal_flow" }
+      ]
+    },
+    {
+      "id": "hdd_flow",
+      "text": "Is the HDD connected via a ribbon-cable with a flip-up locking flap?",
+      "options": [
+        { "label": "Yes", "next": "hdd_motherboard" },
+        { "label": "No",  "next": "hdd_default" }
+      ]
+    },
+    {
+      "id": "hdd_motherboard",
+      "steps": [
+        { "order": 1, "action": "Flip up the locking flap on the cable connector to release it." },
+        { "order": 2, "action": "Remove mounting screws, then slide the drive out." }
+      ]
+    },
+    {
+      "id": "hdd_default",
+      "steps": [
+        { "order": 1, "action": "Remove the battery and open the HDD access door." },
+        { "order": 2, "action": "Slide the drive out by pulling its connector tab." }
+      ]
+    },
+    {
+      "id": "nvme_flow",
+      "steps": [
+        { "order": 1, "action": "Open the cover to expose the M.2 slot." },
+        { "order": 2, "action": "Unscrew the standoff, lift the SSD at an angle, and slide it out." }
+      ]
+    },
+    {
+      "id": "sata_flow",
+      "steps": [
+        { "order": 1, "action": "Remove chassis screws and unplug SATA cables." },
+        { "order": 2, "action": "Remove drive mounting screws, then slide the SSD from its bay." }
+      ]
+    },
+    {
+      "id": "ram_issue",
+      "text": "Is the RAM module held in by spring clips?",
+      "options": [
+        { "label": "Yes", "next": "extract_ram_clips" },
+        { "label": "No",  "next": "ram_soldered" }
+      ]
+    },
+    {
+      "id": "extract_ram_clips",
+      "steps": [
+        { "order": 1, "action": "Push side clips outward; the RAM pops up at 45°." },
+        { "order": 2, "action": "Pull the module straight out of its slot." }
+      ]
+    },
+    {
+      "id": "ram_soldered",
+      "text": "This RAM is soldered to the board—requires specialized tools; extraction may not be possible."
+    },
+    {
+      "id": "other_issue",
+      "text": "Would you like to extract the Wi-Fi card?",
+      "options": [
+        { "label": "Yes", "next": "extract_wifi" },
+        { "label": "No",  "next": "dispose_wifi" }
+      ]
+    },
+    {
+      "id": "extract_wifi",
+      "steps": [
+        { "order": 1, "action": "Remove the service door and locate the mini-PCIe wireless card." },
+        { "order": 2, "action": "Unscrew the mounting screw and lift off antenna leads." },
+        { "order": 3, "action": "Slide the card out at a slight angle." }
+      ]
+    },
+    {
+      "id": "dispose_wifi",
+      "instructions": [
+        { "step": "Recycle the PCB and metal components at a certified e-waste center." }
+      ]
+    },
+    {
+      "id": "end",
+      "text": "Need guidance on another part? Return to the main menu."
+    }
+  ]
+}
