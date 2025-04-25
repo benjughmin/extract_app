@@ -100,7 +100,23 @@
           { "order": 2, "action": "Use a plastic tool or finger to gently pop it out of the socket." },
           { "order": 3, "action": "Handle with care and recycle responsibly." }
         ]
+      },
+      {
+        "id": "completion",
+        "text": "Component successfully removed! What would you like to do next?",
+        "options": [
+          { "label": "Remove another component", "next": "start" },
+          { "label": "Get reassembly instructions", "next": "reassembly_options" },
+          { "label": "Exit", "next": "exit" }
+        ]
+      },
+      {
+        "id": "exit",
+        "text": "Thank you for using the Computer Component Guide! Close this window when ready.",
+        "final": true
       }
+
+
     ]
   }
   
