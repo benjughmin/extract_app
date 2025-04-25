@@ -1,0 +1,44 @@
+{
+    "nodes": [
+        {
+            "id": "start",
+            "text": "Which smartphone component would you like to dismantle?",
+            "options": [
+                { "label": "Battery", "next": "battery" },
+                { "label": "Camera",  "next": "camera" },
+                { "label": "SIM Card", "next": "sim_card" },
+                { "label": "Vibration Motor", "next": "vibration_motor" },
+                { "label": "Charging Port", "next": "charging_port" }
+            ]
+        },
+        {
+            "id": "battery",
+            "steps": [
+                { "order": 1, "action": "Power off the smartphone and remove the SIM card." },
+                { "order": 2, "action": "Use a heat gun or hair dryer to soften the adhesive." },
+                { "order": 3, "action": "Gently pry open the back cover using a plastic tool." },
+                { "order": 4, "action": "Disconnect the battery connector from the motherboard." },
+                { "order": 5, "action": "Carefully lift the battery out of its compartment." }
+            ]
+        },
+        {
+            "id": "camera",
+            "steps": [
+                { "order": 1, "action": "Power off the smartphone and remove the SIM card." },
+                { "order": 2, "action": "Use a heat gun or hair dryer to soften the adhesive." },
+                { "order": 3, "action": "Gently pry open the back cover using a plastic tool." },
+                { "order": 4, "action": "Disconnect the camera connector from the motherboard." },
+                { "order": 5, "action": "Carefully lift the camera module out of its compartment." }
+            ]
+        },
+        {
+            "id": "sim_card",
+            "steps": [
+                { "order": 1, "action": "Power off the smartphone." },
+                { "order": 2, "action": "Locate the SIM card tray on the side of the device." },
+                { "order": 3, "action": "Use a SIM eject tool or paperclip to push into the small hole next to the tray." },
+                { "order": 4, "action": "Gently pull out the SIM card tray and remove the SIM card." }
+            ]
+        }
+    ]
+}

@@ -126,110 +126,96 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                   const SizedBox(height: 16),
                   // Input Image and Processed Image side by side
                   if (widget.initialComponentImages.isNotEmpty)
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Original Image
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Input Images:',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: [
-                                      for (var imagePath in widget.initialComponentImages.keys)
-                                        Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: GestureDetector(
-                                            onTap: () => _showImageOverlay(context, imagePath),
-                                            child: AspectRatio(
-                                              aspectRatio: 1.0,
-                                              child: Image.file(
-                                                File(imagePath),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                        // Input Images Section
+                        Text(
+                          'Input Images:',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white70,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        // Processed Image with Detections
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Detected Parts:',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: [
-                                      for (var entry in widget.initialComponentImages.entries)
-                                        for (var componentEntry in entry.value.entries)
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: GestureDetector(
-                                              onTap: () => _showImageOverlay(context, componentEntry.value),
-                                              child: Column(
-                                                children: [
-                                                  Expanded(
-                                                    child: Image.file(
-                                                      File(componentEntry.value),
-                                                      fit: BoxFit.contain,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    componentEntry.key.split('_')[0],
-                                                    style: GoogleFonts.montserrat(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                for (var imagePath in widget.initialComponentImages.keys)
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: GestureDetector(
+                                      onTap: () => _showImageOverlay(context, imagePath),
+                                      child: Image.file(
+                                        File(imagePath),
+                                        fit: BoxFit.contain, // Ensures the whole image is visible
+                                        width: MediaQuery.of(context).size.width * 0.8, // Adjust width to fill space
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Detected Parts Section
+                        Text(
+                          'Detected Parts:',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                for (var entry in widget.initialComponentImages.entries)
+                                  for (var componentEntry in entry.value.entries)
+                                    Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: GestureDetector(
+                                        onTap: () => _showImageOverlay(context, componentEntry.value),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: Image.file(
+                                                File(componentEntry.value),
+                                                fit: BoxFit.contain,
                                               ),
                                             ),
-                                          ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                                            Text(
+                                              componentEntry.key.split('_')[0],
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 12,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
