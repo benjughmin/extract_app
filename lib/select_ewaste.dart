@@ -13,7 +13,7 @@ class SelectEwaste extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (fromChatbotRedo) {
+        if (fromChatbotRedo) {  
           Navigator.pop(context); // Return to the previous ChatbotRedo instance
           return false;
         }
