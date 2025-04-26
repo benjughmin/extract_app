@@ -1,0 +1,120 @@
+{
+    "nodes": [
+      {
+        "id": "start",
+        "text": "Which part would you like to extract?",
+        "options": [
+          { "label": "HDD (Hard Drive)", "next": "extract_hdd" },
+          { "label": "SSD (Solid State Drive)", "next": "extract_ssd" },
+          { "label": "Case", "next": "extract_case" },
+          { "label": "CMOS Battery", "next": "extract_cmos" },
+          { "label": "Cooler (CPU Cooler)", "next": "extract_cooler" },
+          { "label": "CPU (Processor)", "next": "extract_cpu" },
+          { "label": "Fan (Case Fan)", "next": "extract_fan" },
+          { "label": "GPU (Graphics Card)", "next": "extract_gpu" },
+          { "label": "Motherboard", "next": "extract_motherboard" },
+          { "label": "PSU (Power Supply Unit)", "next": "extract_psu" },
+          { "label": "RAM (Memory)", "next": "extract_ram" }
+        ]
+      },
+      {
+        "id": "extract_hdd",
+        "steps": [
+          { "order": 1, "action": "Locate the hard drive bay inside the case." },
+          { "order": 2, "action": "Unscrew or unlatch the HDD mount." },
+          { "order": 3, "action": "Unplug SATA power and data cables." },
+          { "order": 4, "action": "Slide the HDD out carefully." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_ssd",
+        "steps": [
+          { "order": 1, "action": "Identify the SSD mount (2.5\" bay or M.2 slot)." },
+          { "order": 2, "action": "For 2.5\", unplug SATA power and data cables. For M.2, remove screw." },
+          { "order": 3, "action": "Gently pull out the SSD." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_case",
+        "steps": [
+          { "order": 1, "action": "Remove all connected components first (PSU, motherboard, drives)." },
+          { "order": 2, "action": "Unscrew external panels, feet, and accessories if needed." },
+          { "order": 3, "action": "Disassemble case parts for recycling or reuse." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_cmos",
+        "steps": [
+          { "order": 1, "action": "Locate the CMOS battery on the motherboard." },
+          { "order": 2, "action": "Use a plastic tool or fingernail to gently pop it out." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_cooler",
+        "steps": [
+          { "order": 1, "action": "Unplug the fan cable connected to the motherboard." },
+          { "order": 2, "action": "Unscrew or unlatch the cooler mounting mechanism." },
+          { "order": 3, "action": "Twist gently and lift off the cooler from the CPU." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_cpu",
+        "steps": [
+          { "order": 1, "action": "Remove the CPU cooler first." },
+          { "order": 2, "action": "Release the CPU socket latch/lever." },
+          { "order": 3, "action": "Lift the CPU carefully from the socket, avoiding bending pins." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_fan",
+        "steps": [
+          { "order": 1, "action": "Locate the case fan(s)." },
+          { "order": 2, "action": "Unplug the fan's power cable from the motherboard or PSU." },
+          { "order": 3, "action": "Unscrew the fan from the case frame." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_gpu",
+        "steps": [
+          { "order": 1, "action": "Unscrew the GPU from the case bracket." },
+          { "order": 2, "action": "Unplug any auxiliary power connectors." },
+          { "order": 3, "action": "Press the PCIe slot release clip and pull the GPU out carefully." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_motherboard",
+        "steps": [
+          { "order": 1, "action": "Disconnect all cables (power, data, front panel connectors)." },
+          { "order": 2, "action": "Unscrew all standoffs securing the motherboard." },
+          { "order": 3, "action": "Lift the motherboard straight out from the case." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_psu",
+        "steps": [
+          { "order": 1, "action": "Unplug all PSU cables connected to components." },
+          { "order": 2, "action": "Unscrew the PSU from the case (usually 4 screws at the rear)." },
+          { "order": 3, "action": "Slide the PSU out carefully." }
+        ],
+        "next_component": "start"
+      },
+      {
+        "id": "extract_ram",
+        "steps": [
+          { "order": 1, "action": "Press down the latches at each end of the RAM slot." },
+          { "order": 2, "action": "The RAM module will pop up; pull it out at an angle." }
+        ],
+        "next_component": "start"
+      }
+    ]
+  }
+  

@@ -2,58 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'upload_or_camera.dart';
 import 'base.dart';
+import 'chatbot_redo.dart';
 
 class SelectEwaste extends StatelessWidget {
-  const SelectEwaste({super.key});
+  final bool fromChatbotRedo;
+
+  const SelectEwaste({super.key, this.fromChatbotRedo = false});
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions for responsive layout
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    
-    return Base(
-      title: 'Select E-Waste Type',
-      child: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.04),
-        child: Column(
-          children: [
-            SizedBox(height: screenHeight * 0.02),
-            Text(
-              'Select a device type below to get started with part extraction and recycling instructions.',
-              style: GoogleFonts.montserrat(
-                fontSize: screenHeight * 0.022,
-                fontWeight: FontWeight.w600,
-                color: Colors.white70,
+    return WillPopScope(
+      onWillPop: () async {
+        if (fromChatbotRedo) {  
+          Navigator.pop(context); // Return to the previous ChatbotRedo instance
+          return false;
+        }
+        return true;
+      },
+      child: Base(
+        title: 'Select E-Waste Type',
+        child: Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              Text(
+                'Select a device type below to get started with part extraction and recycling instructions.',
+                style: GoogleFonts.montserrat(
+                  fontSize: MediaQuery.of(context).size.height * 0.022,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white70,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: screenHeight * 0.03),
-            Expanded(
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                crossAxisSpacing: screenWidth * 0.04,
-                mainAxisSpacing: screenHeight * 0.02,
-                children: [
-                  _buildCategoryButton(context, 'Smartphone', Icons.smartphone),
-                  _buildCategoryButton(context, 'Laptop', Icons.laptop_mac),
-                  _buildCategoryButton(context, 'Desktop', Icons.desktop_windows),
-                  _buildCategoryButton(context, 'Router', Icons.router),
-                ],
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              Expanded(
+                child: GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  crossAxisSpacing: MediaQuery.of(context).size.width * 0.04,
+                  mainAxisSpacing: MediaQuery.of(context).size.height * 0.02,
+                  children: [
+                    _buildCategoryButton(context, 'Smartphone', Icons.smartphone),
+                    _buildCategoryButton(context, 'Laptop', Icons.laptop_mac),
+                    _buildCategoryButton(context, 'Desktop', Icons.desktop_windows),
+                    _buildCategoryButton(context, 'Router', Icons.router),
+                  ],
+                ),
               ),
-            ),
-            _buildFullWidthButton(context, 'Landline Phone', Icons.phone),
-            SizedBox(height: screenHeight * 0.02),
-          ],
+              _buildFullWidthButton(context, 'Landline Phone', Icons.phone),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildCategoryButton(BuildContext context, String label, IconData icon) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
@@ -82,13 +88,13 @@ class SelectEwaste extends StatelessWidget {
             Icon(
               icon, 
               color: Colors.white, 
-              size: screenHeight * 0.08,
+              size: MediaQuery.of(context).size.height * 0.08,
             ),
-            SizedBox(height: screenHeight * 0.01),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             Text(
               label,
               style: GoogleFonts.montserrat(
-                fontSize: screenHeight * 0.022,
+                fontSize: MediaQuery.of(context).size.height * 0.022,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -101,9 +107,6 @@ class SelectEwaste extends StatelessWidget {
   }
 
   Widget _buildFullWidthButton(BuildContext context, String label, IconData icon) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
@@ -112,7 +115,7 @@ class SelectEwaste extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.02),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
@@ -134,13 +137,13 @@ class SelectEwaste extends StatelessWidget {
             Icon(
               icon, 
               color: Colors.white, 
-              size: screenHeight * 0.08,
+              size: MediaQuery.of(context).size.height * 0.08,
             ),
-            SizedBox(width: screenWidth * 0.03),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.03),
             Text(
               label,
               style: GoogleFonts.montserrat(
-                fontSize: screenHeight * 0.022,
+                fontSize: MediaQuery.of(context).size.height * 0.022,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),

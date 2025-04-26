@@ -70,13 +70,17 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/knowledge-base.json
+    - assets/laptop_instructions.json
+    - assets/desktop_instructions.json
+    - assets/router_instructions.json 
+    - assets/landline_instructions.json
     - assets/models/laptop/best_laptop_float16.tflite
     - assets/models/laptop/labels.txt
     - assets/models/computer/best_computer_float16.tflite
     - assets/models/computer/labels.txt
     - assets/models/smartphone/best_phone_float16.tflite
     - assets/models/smartphone/labels.txt
-    - assets/models/telecom/best_router_float16.tflite
+    - assets/models/telecom/best_router-1_float16.tflite
     - assets/models/telecom/labels.txt
 
 
