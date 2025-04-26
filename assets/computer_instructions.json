@@ -22,7 +22,8 @@
           { "order": 3, "action": "Unscrew the bracket securing the GPU to the case." },
           { "order": 4, "action": "Press the PCIe slot release latch." },
           { "order": 5, "action": "Gently pull the graphics card straight out of the PCIe slot." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "ram",
@@ -30,7 +31,8 @@
           { "order": 1, "action": "Open the case and locate the RAM slots on the motherboard." },
           { "order": 2, "action": "Push the side clips outward to release the RAM sticks." },
           { "order": 3, "action": "Pull each RAM stick straight out of its slot." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "motherboard",
@@ -39,7 +41,8 @@
           { "order": 2, "action": "Remove all components (GPU, RAM, CPU cooler, SSD, etc.)." },
           { "order": 3, "action": "Unscrew the motherboard from the case standoffs." },
           { "order": 4, "action": "Lift the motherboard out carefully without bending it." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "cpu_cooler",
@@ -47,7 +50,8 @@
           { "order": 1, "action": "Disconnect the CPU fan cable from the motherboard." },
           { "order": 2, "action": "Unscrew or unlatch the CPU cooler depending on type (air or liquid)." },
           { "order": 3, "action": "Gently twist and lift the cooler off the CPU." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "cpu",
@@ -55,7 +59,8 @@
           { "order": 1, "action": "Lift the CPU socket retention lever." },
           { "order": 2, "action": "Carefully lift the CPU straight out of the socket by its edges." },
           { "order": 3, "action": "Place it in an antistatic container for protection." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "ssd",
@@ -64,7 +69,8 @@
           { "label": "2.5\" SATA",     "next": "ssd_sata" },
           { "label": "NVMe M.2",       "next": "ssd_nvme" },
           { "label": "Unsure/Other",   "next": "ssd_generic" }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "ssd_sata",
@@ -72,14 +78,16 @@
           { "order": 1, "action": "Unplug the SATA power and data cables." },
           { "order": 2, "action": "Remove any mounting screws or brackets." },
           { "order": 3, "action": "Slide the SSD out of its bay." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "ssd_nvme",
         "steps": [
           { "order": 1, "action": "Unscrew the M.2 standoff." },
           { "order": 2, "action": "Lift the SSD at an angle and slide it out of the slot." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "ssd_generic",
@@ -91,7 +99,8 @@
           { "order": 1, "action": "Unplug the SATA power and data cables from the HDD." },
           { "order": 2, "action": "Remove screws securing the HDD to its cage or bracket." },
           { "order": 3, "action": "Slide the HDD out of the bay." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "cmos",
@@ -99,7 +108,8 @@
           { "order": 1, "action": "Locate the coin-cell battery on the motherboard." },
           { "order": 2, "action": "Use a plastic tool or finger to gently pop it out of the socket." },
           { "order": 3, "action": "Handle with care and recycle responsibly." }
-        ]
+        ],
+        "next": "completion"
       },
       {
         "id": "completion",

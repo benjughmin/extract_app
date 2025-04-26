@@ -70,6 +70,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/knowledge-base.json
+    - assets/computer_instructions.json
     - assets/models/laptop/best_laptop_float16.tflite
     - assets/models/laptop/labels.txt
     - assets/models/computer/best_computer_float16.tflite
