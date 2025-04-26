@@ -123,6 +123,12 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
     return uniqueTypes.toList();
   }
 
+  // Add helper method to check if we're at the disposal cause selection
+  bool _isAtDisposalCauseSelection() {
+    return _assistant.currentNodeId == 'start' || 
+           _assistant.currentNodeId.endsWith('_issue');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Base(
@@ -448,7 +454,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Component Display
-                          if (_assistant.currentNodeId != 'start') ...[
+                          if (_assistant.currentNodeId != 'start' && !_isAtDisposalCauseSelection()) ...[
                             Row(
                               children: [
                                 Container(
@@ -492,7 +498,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                           ],
                           
                           // Component image (if available)
-                          if (_assistant.getCurrentComponentImage() != null) ...[
+                          if (_assistant.getCurrentComponentImage() != null && !_isAtDisposalCauseSelection()) ...[
                             Container(
                               height: 180,
                               width: double.infinity,

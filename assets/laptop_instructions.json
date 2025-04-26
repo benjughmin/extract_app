@@ -1,4 +1,29 @@
 {
+  "component_order": [
+    "battery",
+    "fan",
+    "ram",
+    "hard-drive",
+    "ssd-nvme",
+    "ssd-sata",
+    "wifi-card"
+  ],
+  "component_start_nodes": {
+    "battery": "battery_type",
+    "fan": "extract_fan",
+    "ram": "ram_type",
+    "hard-drive": "hdd_default",
+    "ssd-nvme": "nvme_flow",
+    "ssd-sata": "sata_flow",
+    "wifi-card": "extract_wifi"
+  },
+  "component_mapping": {
+    "battery_issue": "battery",
+    "fan_issue": "fan",
+    "ram_issue": "ram",
+    "storage_issue": ["hard-drive", "ssd-nvme", "ssd-sata"],
+    "other_issue": "wifi-card"
+  },
   "nodes": [
     {
       "id": "start",
@@ -6,14 +31,14 @@
       "options": [
         { "label": "Laptop is not powering on", "next": "battery_issue" },
         { "label": "Overheating", "next": "fan_issue" },
-        { "label": "Storage issue / Drive failure", "next": "storage_issue" },
         { "label": "Memory issue / RAM failure", "next": "ram_issue" },
+        { "label": "Storage issue / Drive failure", "next": "storage_issue" },
         { "label": "Other / Wi-Fi & misc.", "next": "other_issue" }
       ]
     },
     {
       "id": "battery_issue",
-      "text": "This may be caused by an issue with the battery. Would you still like to extract this part?",
+      "text": "A non-powering laptop may be caused by an issue with the battery. Would you still like to extract this part?",
       "options": [
         { "label": "Yes", "next": "battery_type" },
         { "label": "No", "next": "dispose_battery" }
@@ -61,7 +86,7 @@
     },
     {
       "id": "fan_issue",
-      "text": "Overheating may be caused by a cooling/fan issue. Would you still like to extract the fan assembly?",
+      "text": "Overheating may be caused by a cooling/fan issue. Would you still like to extract this part?",
       "options": [
         { "label": "Yes", "next": "extract_fan" },
         { "label": "No", "next": "dispose_fan" }
@@ -86,10 +111,27 @@
     },
     {
       "id": "ram_issue",
-      "text": "Is the RAM module held in by spring clips?",
+      "text": "Memory issues may be caused by a RAM failure. Would you still like to extract the RAM?",
       "options": [
-        { "label": "Yes", "next": "extract_ram_clips" },
-        { "label": "No", "next": "ram_soldered" }
+        { "label": "Yes", "next": "ram_type" },
+        { "label": "No", "next": "dispose_ram" }
+      ]
+    },
+    {
+      "id": "ram_type",
+      "text": "What type of RAM installation does this laptop have?",
+      "options": [
+        { "label": "Clip-mounted (removable)", "next": "extract_ram_clips" },
+        { "label": "Soldered to motherboard", "next": "ram_soldered" },
+        { "label": "Unsure", "next": "ram_check_type" }
+      ]
+    },
+    {
+      "id": "ram_check_type",
+      "text": "Look for metal clips on the sides of the RAM module. If there are no clips and the RAM appears to be part of the motherboard, it is likely soldered.",
+      "options": [
+        { "label": "I see clips", "next": "extract_ram_clips" },
+        { "label": "Appears soldered", "next": "ram_soldered" }
       ]
     },
     {
@@ -102,12 +144,33 @@
     },
     {
       "id": "ram_soldered",
-      "text": "This RAM is soldered to the board—requires specialized tools; extraction may not be possible.",
+      "text": "⚠️ WARNING: This RAM is soldered to the motherboard. Extraction requires specialized desoldering equipment and expertise. Consider disposing of the entire motherboard if RAM replacement is needed.",
+      "instructions": [
+        { "step": "Professional extraction requires: hot air station, specialized tips, flux" },
+        { "step": "Risk of motherboard damage is high without proper tools and experience" },
+        { "step": "Recommend consulting a professional repair service" }
+      ],
+      "next_component": "hard-drive"
+    },
+    {
+      "id": "dispose_ram",
+      "instructions": [
+        { "step": "Ensure RAM is free of sensitive data." },
+        { "step": "Take to an electronics recycling facility for proper disposal." }
+      ],
       "next_component": "hard-drive"
     },
     {
       "id": "storage_issue",
-      "text": "Which storage device?",
+      "text": "Storage issues detected. Would you like to extract storage devices?",
+      "options": [
+        { "label": "Yes", "next": "storage_type" },
+        { "label": "No", "next": "dispose_storage" }
+      ]
+    },
+    {
+      "id": "storage_type",
+      "text": "Which storage device type?",
       "options": [
         { "label": "Hard Drive (HDD)", "next": "hdd_flow" },
         { "label": "SSD (NVMe M.2)", "next": "nvme_flow" },
@@ -129,7 +192,7 @@
         { "order": 1, "action": "Flip up the locking flap on the cable connector to release it." },
         { "order": 2, "action": "Remove mounting screws, then slide the drive out." }
       ],
-      "next_component": "ssd-nvme"
+      "next_component": "wifi-card"
     },
     {
       "id": "hdd_default",
@@ -137,7 +200,7 @@
         { "order": 1, "action": "Remove the battery and open the HDD access door." },
         { "order": 2, "action": "Slide the drive out by pulling its connector tab." }
       ],
-      "next_component": "ssd-nvme"
+      "next_component": "wifi-card"
     },
     {
       "id": "nvme_flow",
@@ -145,13 +208,22 @@
         { "order": 1, "action": "Open the cover to expose the M.2 slot." },
         { "order": 2, "action": "Unscrew the standoff, lift the SSD at an angle, and slide it out." }
       ],
-      "next_component": "ssd-sata"
+      "next_component": "wifi-card"
     },
     {
       "id": "sata_flow",
       "steps": [
         { "order": 1, "action": "Remove chassis screws and unplug SATA cables." },
         { "order": 2, "action": "Remove drive mounting screws, then slide the SSD from its bay." }
+      ],
+      "next_component": "wifi-card"
+    },
+    {
+      "id": "dispose_storage",
+      "instructions": [
+        { "step": "⚠️ WARNING: Ensure all sensitive data is securely erased!" },
+        { "step": "Remove any labels containing sensitive information." },
+        { "step": "Take to certified e-waste recycler for proper disposal." }
       ],
       "next_component": "wifi-card"
     },
@@ -175,6 +247,7 @@
     {
       "id": "dispose_wifi",
       "instructions": [
+        { "step": "Remove any identifying stickers or labels." },
         { "step": "Recycle the PCB and metal components at a certified e-waste center." }
       ],
       "next_component": "end"

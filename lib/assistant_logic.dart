@@ -9,7 +9,11 @@ class AssistantLogic {
   Map<String, dynamic> _instructionData = {};
   String currentNodeId = 'start';
   List<String> _componentQueue = [];
+  List<String> _componentOrder = [];
   int _currentComponentIndex = -1;
+  bool _disposalCauseSelected = false;
+  Map<String, String> _componentStartNodes = {};
+  String? _selectedCause;
   
   AssistantLogic({
     required this.category,
@@ -22,10 +26,19 @@ class AssistantLogic {
     final jsonData = await _loadInstructionJson();
     _instructionData = jsonData;
     
-    // Initialize component queue based on detected components
+    // Load component order from JSON
+    if (_instructionData.containsKey('component_order')) {
+      _componentOrder = List<String>.from(_instructionData['component_order']);
+    }
+    
+    // Load component start nodes from JSON
+    if (_instructionData.containsKey('component_start_nodes')) {
+      _componentStartNodes = Map<String, String>.from(_instructionData['component_start_nodes']);
+    }
+
+    // Initialize component queue based on detected components and JSON-defined order
     _initializeComponentQueue();
     
-    // Start with the first component
     if (_componentQueue.isNotEmpty) {
       _currentComponentIndex = 0;
     }
@@ -65,10 +78,11 @@ class AssistantLogic {
   }
   
   void _initializeComponentQueue() {
-    // Filter out duplicates and create a queue of components to process
-    _componentQueue = detectedComponents
-        .map((comp) => comp.split('_')[0]) // Remove any suffix after underscore
-        .toSet()
+    // First, create queue with detected components in original order
+    _componentQueue = _componentOrder
+        .where((comp) => detectedComponents
+            .map((d) => d.split('_')[0])
+            .contains(comp))
         .toList();
   }
   
@@ -150,24 +164,46 @@ class AssistantLogic {
     
     final options = List<Map<String, dynamic>>.from(_getNode(currentNodeId)['options']);
     
-    // If we're at start node and Desktop category, filter options based on detected components
-    List<Map<String, dynamic>> filteredOptions = options;
-    if (currentNodeId == 'start' && category == 'Desktop') {
-      filteredOptions = options
-        .where((option) {
-          String labelLower = option['label'].toString().toLowerCase();
-          return _componentQueue.any((comp) => 
-            _normalizeComponentName(comp).toLowerCase() == _normalizeComponentName(labelLower).toLowerCase() ||
-            _normalizeComponentName(labelLower).toLowerCase().contains(_normalizeComponentName(comp).toLowerCase()) ||
-            _normalizeComponentName(comp).toLowerCase().contains(_normalizeComponentName(labelLower).toLowerCase()));
-        })
-        .toList();
+    // Store the selected cause when at start node
+    if (currentNodeId == 'start' && index >= 0 && index < options.length) {
+      _selectedCause = options[index]['next'];
+      _disposalCauseSelected = true;
+      _reorderComponentQueue();
+      currentNodeId = _selectedCause!;
+    } else if (index >= 0 && index < options.length) {
+      currentNodeId = options[index]['next'];
     }
+  }
+  
+  void _reorderComponentQueue() {
+    if (_selectedCause == null) return;
+
+    // Get the component mapping from JSON
+    final componentMapping = _instructionData['component_mapping'] as Map<String, dynamic>;
     
-    if (index >= 0 && index < filteredOptions.length) {
-      final nextNodeId = filteredOptions[index]['next'];
-      currentNodeId = nextNodeId;
+    // Get the related component(s) for the selected cause
+    final causeMapping = componentMapping[_selectedCause];
+    if (causeMapping == null) return;
+
+    String? causeComponent;
+    if (causeMapping is List) {
+      // For cases like storage where multiple components are mapped
+      causeComponent = _componentQueue.firstWhere(
+        (comp) => causeMapping.contains(comp),
+        orElse: () => '',
+      );
+    } else {
+      // For single component mapping
+      causeComponent = causeMapping as String;
     }
+
+    if (causeComponent.isEmpty) return;
+
+    // Remove the cause-related component from its current position
+    _componentQueue.remove(causeComponent);
+    
+    // Add it to the beginning of the queue
+    _componentQueue.insert(0, causeComponent);
   }
   
   bool hasMoreComponents() {
@@ -188,7 +224,18 @@ class AssistantLogic {
     if (_currentComponentIndex < 0 || _currentComponentIndex >= _componentQueue.length - 1) return;
     
     _currentComponentIndex++;
-    currentNodeId = 'start';  // Reset to start node for the next component
+    
+    // Only go to 'start' node if disposal cause hasn't been selected
+    if (!_disposalCauseSelected) {
+      currentNodeId = 'start';
+      _disposalCauseSelected = true;
+    } else {
+      // Get the starting node for the current component from JSON
+      String? nextComponent = getCurrentComponent();
+      if (nextComponent != null) {
+        currentNodeId = _componentStartNodes[nextComponent] ?? 'start';
+      }
+    }
   }
   
   String? getCurrentComponent() {
