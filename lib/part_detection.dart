@@ -121,7 +121,7 @@ class _PartDetectionScreenState extends State<PartDetectionScreen>
         return 'assets/models/computer/best_computer_float16.tflite';
       case 'Router':
       case 'Landline Phone':
-        return 'assets/models/telecom/best_telecom_float16.tflite';
+        return 'assets/models/telecom/best_router-1_float16.tflite';
       default:
         throw Exception("Model not found for category: $category");
     }

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'base.dart';
+import 'select_ewaste.dart';
+import 'upload_or_camera.dart';
 import 'assistant_logic.dart';
 
 class ChatbotRedo extends StatefulWidget {
@@ -25,6 +27,9 @@ class ChatbotRedo extends StatefulWidget {
 }
 
 class _ChatbotRedoState extends State<ChatbotRedo> {
+  late Map<String, Map<String, String>> allComponentImages;
+  late List<String> allDetections;
+  late List<int> allBatches;
   late AssistantLogic _assistant;
   bool _isInitialized = false;
   final ScrollController _scrollController = ScrollController();
@@ -33,7 +38,14 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
   @override
   void initState() {
     super.initState();
+    // Initialize state variables
+    allComponentImages = Map<String, Map<String, String>>.from(widget.initialComponentImages);
+    allDetections = List<String>.from(widget.initialDetections);
+    allBatches = List<int>.from(widget.initialBatch);
+    
     _initializeAssistant();
+    
+    print("ChatbotRedo initialized with ${allComponentImages.length} images");
   }
 
   Future<void> _initializeAssistant() async {
@@ -102,6 +114,18 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
     );
   }
 
+  void _addNewBatch({
+    required List<String> newDetections,
+    required Map<String, Map<String, String>> newComponentImages,
+    required List<int> newBatch,
+  }) {
+    setState(() {
+      allDetections.addAll(newDetections);
+      allComponentImages.addAll(newComponentImages);
+      allBatches.addAll(newBatch);
+    });
+  }
+
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -115,7 +139,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
   // Get list of unique component types
   List<String> _getUniqueComponentTypes() {
     Set<String> uniqueTypes = {};
-    for (var imageMap in widget.initialComponentImages.values) {
+    for (var imageMap in allComponentImages.values) {
       for (var component in imageMap.keys) {
         uniqueTypes.add(component.split('_')[0]);
       }
@@ -247,7 +271,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                   if (_isExpandedView) ...[
                     const SizedBox(height: 20),
                     // Input images
-                    if (widget.initialComponentImages.isNotEmpty) ...[
+                    if (allComponentImages.isNotEmpty) ...[
                       Text(
                         'Input Images',
                         style: GoogleFonts.poppins(
@@ -266,9 +290,9 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.all(8),
-                          itemCount: widget.initialComponentImages.keys.length,
+                          itemCount: allComponentImages.keys.length,
                           itemBuilder: (context, index) {
-                            String imagePath = widget.initialComponentImages.keys.elementAt(index);
+                            String imagePath = allComponentImages.keys.elementAt(index);
                             return Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: GestureDetector(
@@ -311,12 +335,12 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.all(8),
-                          itemCount: widget.initialComponentImages.values
+                          itemCount: allComponentImages.values
                               .expand((map) => map.entries)
                               .length,
                           itemBuilder: (context, index) {
                             // Get element at index from the expanded map entries
-                            var entry = widget.initialComponentImages.values
+                            var entry = allComponentImages.values
                                 .expand((map) => map.entries)
                                 .elementAt(index);
                             
@@ -683,6 +707,70 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                   ],
                 ),
               ),
+            
+            // Add buttons at the bottom
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SelectEwaste(fromChatbotRedo: true),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.change_circle),
+                          label: const Text('Change Device'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UploadOrCamera(
+                                  category: widget.initialCategory,
+                                  fromChatbotRedo: true,
+                                  existingComponentImages: allComponentImages,
+                                  existingDetections: allDetections,
+                                  existingBatch: allBatches,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.add_photo_alternate),
+                          label: const Text('Add Images'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF43A047),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -707,6 +795,12 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
         return Icons.sd_storage;
       case 'wifi-card':
         return Icons.wifi;
+      case 'phone speaker':
+      case 'speaker':
+        return Icons.speaker;
+      case 'phone board':
+      case 'board':
+        return Icons.developer_board;
       default:
         return Icons.hardware;
     }
@@ -727,6 +821,10 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
         return 'WiFi Card';
       case 'ram':
         return 'RAM';
+      case 'phone speaker':
+        return 'Phone Speaker';
+      case 'phone board':
+        return 'Circuit Board';
       default:
         // Capitalize first letter of each word
         return componentType.split('-')

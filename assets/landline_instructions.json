@@ -1,0 +1,69 @@
+{
+    "nodes": [
+      {
+        "id": "start",
+        "text": "What part of the landline phone are you working on?",
+        "options": [
+          { "label": "Phone Speaker (earpiece)", "next": "phone_speaker_flow" },
+          { "label": "Phone Board (main board)", "next": "phone_board_flow" }
+        ]
+      },
+      {
+        "id": "phone_speaker_flow",
+        "text": "Is the phone speaker accessible without tools?",
+        "options": [
+          { "label": "Yes, it is easily accessible.", "next": "remove_speaker_easy" },
+          { "label": "No, screws or clips are securing it.", "next": "remove_speaker_secured" }
+        ]
+      },
+      {
+        "id": "remove_speaker_easy",
+        "steps": [
+          { "order": 1, "action": "Carefully pry off the speaker cover using a plastic tool." },
+          { "order": 2, "action": "Gently lift and disconnect the speaker module from its housing or wires." }
+        ],
+        "next_component": "phone_board"
+      },
+      {
+        "id": "remove_speaker_secured",
+        "steps": [
+          { "order": 1, "action": "Unscrew the casing screws to open the phone body." },
+          { "order": 2, "action": "Locate the speaker and remove any additional securing screws or clips." },
+          { "order": 3, "action": "Unplug or cut the speaker wires carefully if no connector is present." }
+        ],
+        "next_component": "phone_board"
+      },
+      {
+        "id": "phone_board_flow",
+        "text": "Is the phone board immediately visible after opening the casing?",
+        "options": [
+          { "label": "Yes", "next": "remove_board_direct" },
+          { "label": "No, additional parts block access.", "next": "remove_board_blocked" }
+        ]
+      },
+      {
+        "id": "remove_board_direct",
+        "steps": [
+          { "order": 1, "action": "Unscrew the mounting screws holding the board in place." },
+          { "order": 2, "action": "Carefully disconnect attached components (keypad, speaker wires, handset cable)." },
+          { "order": 3, "action": "Lift the board straight out of the casing." }
+        ],
+        "next_component": "end"
+      },
+      {
+        "id": "remove_board_blocked",
+        "steps": [
+          { "order": 1, "action": "Remove any blocking parts (e.g., button pads, microphone module) gently." },
+          { "order": 2, "action": "Unscrew the board's mounting screws." },
+          { "order": 3, "action": "Detach all connected wires and cables." },
+          { "order": 4, "action": "Extract the board carefully without damaging connectors." }
+        ],
+        "next_component": "end"
+      },
+      {
+        "id": "end",
+        "text": "All selected components have been processed. Proceed to final disposal or recycling."
+      }
+    ]
+  }
+  
