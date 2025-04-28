@@ -396,11 +396,11 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
               Container(
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(0xFF1E1E1E),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: const Color.fromARGB(150, 0, 0, 0).withOpacity(0.08),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
@@ -479,7 +479,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                                         style: GoogleFonts.poppins(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
+                                          color: const Color.fromARGB(221, 255, 255, 255),
                                         ),
                                       ),
                                       Text(
@@ -505,7 +505,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.grey[300]!,
+                                  color: const Color(0xFF1E1E1E),
                                   width: 1,
                                 ),
                               ),
@@ -524,10 +524,10 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.grey[50],
+                              color: const Color.fromARGB(255, 48, 48, 48),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: Colors.grey[200]!,
+                                color: const Color.fromARGB(255, 48, 48, 48),
                               ),
                             ),
                             child: Column(
@@ -556,7 +556,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                                   _assistant.getCurrentInstruction(),
                                   style: GoogleFonts.poppins(
                                     fontSize: 15,
-                                    color: Colors.black87,
+                                    color: const Color.fromARGB(221, 255, 255, 255),
                                     height: 1.5,
                                   ),
                                 ),
@@ -573,7 +573,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black87,
+                                color: const Color.fromARGB(221, 255, 255, 255),
                               ),
                               textAlign: TextAlign.center,
                             ),
