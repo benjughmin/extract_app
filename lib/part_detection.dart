@@ -365,13 +365,63 @@ class _PartDetectionScreenState extends State<PartDetectionScreen>
 
               // No detections message
               if (!_isProcessing && _finalDetections.isEmpty)
-                Text(
-                  'No objects detected.',
-                  style: GoogleFonts.robotoCondensed(
-                    fontSize: screenHeight * 0.018,
-                    color: Colors.white70,
-                  ),
-                ),
+  Column(
+    children: [
+      Text(
+        'No components detected.',
+        style: GoogleFonts.robotoCondensed(
+          fontSize: screenHeight * 0.022,
+          color: Colors.white70,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      SizedBox(height: screenHeight * 0.018),
+      Text(
+        'Please try again with a clearer image or different angle.',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.robotoCondensed(
+          fontSize: screenHeight * 0.018,
+          color: Colors.white60,
+        ),
+      ),
+      SizedBox(height: screenHeight * 0.024),
+      GestureDetector(
+        onTap: () {
+          // Navigate back to UploadOrCamera screen
+          Navigator.pop(context);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.1,
+            vertical: screenHeight * 0.014,
+          ),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Colors.redAccent, Colors.red],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                offset: const Offset(0, 3),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Text(
+            'Try Another Image',
+            style: GoogleFonts.montserrat(
+              fontSize: screenHeight * 0.018,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
 
               // Detected objects list
               if (!_isProcessing && _finalDetections.isNotEmpty) ...[
@@ -427,56 +477,65 @@ class _PartDetectionScreenState extends State<PartDetectionScreen>
               const Spacer(),
 
               // Replace the Back button with one that returns detection results
-              GestureDetector(
-                onTap: () async {
-                  // Capture the processed image if we have detections
-                  if (_finalDetections.isNotEmpty && !_isProcessing) {
-                    await _captureProcessedImage();
-                  }
+              // Replace the existing GestureDetector for the Continue button with this one
 
-                  // Get the list of detected component names
-                  List<String> detectedComponents =
-                      _finalDetections
-                          .map((detection) => detection.className)
-                          .toList();
+// Continue button (disabled when no detections)
+  GestureDetector(
+    onTap: _finalDetections.isEmpty || _isProcessing 
+        ? null 
+        : () async {
+            // Capture the processed image if we have detections
+            if (_finalDetections.isNotEmpty && !_isProcessing) {
+              await _captureProcessedImage();
+            }
 
-                  // Return the processed image path, detected components, and cropped component images
-                  Navigator.pop(context, {
-                    'imagePath': _processedImagePath ?? widget.imagePath,
-                    'detectedComponents': detectedComponents,
-                    'croppedComponentImages': _croppedComponentImages,
-                  });
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.018),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        offset: const Offset(0, 4),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Continue',
-                      style: GoogleFonts.montserrat(
-                        fontSize: screenHeight * 0.02,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            // Get the list of detected component names
+            List<String> detectedComponents =
+                _finalDetections
+                    .map((detection) => detection.className)
+                    .toList();
+
+            // Return the processed image path, detected components, and cropped component images
+            Navigator.pop(context, {
+              'imagePath': _processedImagePath ?? widget.imagePath,
+              'detectedComponents': detectedComponents,
+              'croppedComponentImages': _croppedComponentImages,
+            });
+          },
+    child: Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.018),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: _finalDetections.isEmpty || _isProcessing
+              ? [Colors.grey.shade700, Colors.grey.shade600] // Grayed out when disabled
+              : [Color(0xFF34A853), Color(0xFF0F9D58)],      // Green when enabled
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          'Continue',
+          style: GoogleFonts.montserrat(
+            fontSize: screenHeight * 0.02,
+            fontWeight: FontWeight.bold,
+            color: _finalDetections.isEmpty || _isProcessing
+                ? Colors.grey.shade300
+                : Colors.white,
+          ),
+        ),
+      ),
+    ),
+  ),
             ],
           ),
         ),

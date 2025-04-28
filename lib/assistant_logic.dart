@@ -46,7 +46,7 @@ class AssistantLogic {
   
   Future<Map<String, dynamic>> _loadInstructionJson() async {
     String jsonPath;
-    
+
     // Determine which JSON file to load based on category
     switch (category) {
       case 'Smartphone':
@@ -67,7 +67,7 @@ class AssistantLogic {
       default:
         jsonPath = 'assets/generic_instructions.json';
     }
-    
+
     try {
       final String jsonString = await rootBundle.loadString(jsonPath);
       return jsonDecode(jsonString);
@@ -90,28 +90,28 @@ class AssistantLogic {
     if (_instructionData.isEmpty || !_nodeExists(currentNodeId)) {
       return 'No instructions available.';
     }
-    
+
     final currentNode = _getNode(currentNodeId);
-    
+
     // Check if the node has text
     if (currentNode.containsKey('text')) {
       return currentNode['text'];
     }
-    
+
     // Check if the node has steps
     if (currentNode.containsKey('steps')) {
       List<Map<String, dynamic>> steps = List<Map<String, dynamic>>.from(currentNode['steps']);
       steps.sort((a, b) => a['order'].compareTo(b['order']));
-      
+
       return steps.map((step) => '${step['order']}. ${step['action']}').join('\n\n');
     }
-    
+
     // Check if the node has instructions
     if (currentNode.containsKey('instructions')) {
       List<Map<String, dynamic>> instructions = List<Map<String, dynamic>>.from(currentNode['instructions']);
       return instructions.map((instruction) => '• ${instruction['step']}').join('\n\n');
     }
-    
+
     return 'Ready to process component.';
   }
   

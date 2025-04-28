@@ -1,0 +1,78 @@
+{
+    "component_order": [
+        "battery",
+        "camera"
+    ],
+    "component_start_nodes": {
+        "battery": "battery_issue",
+        "camera": "extract_camera"
+    },
+    "component_mapping": {
+        "battery_issue": "battery",
+        "camera_issue": "camera"
+    },
+    "nodes": [
+        {
+            "id": "start",
+            "text": "What is the cause of disposal?",
+            "options": [
+                { "label": "Battery issue", "next": "battery_issue" },
+                { "label": "Camera issue/damage", "next": "camera_issue" }
+            ]
+        },
+        {
+            "id": "battery_issue",
+            "text": "This may be caused by an issue with the battery. Would you still like to extract this part?",
+            "options": [
+                { "label": "Yes", "next": "extract_battery" },
+                { "label": "No", "next": "dispose_battery" }
+            ]
+        },
+        {
+            "id": "extract_battery",
+            "steps": [
+                { "order": 1, "action": "Power off the smartphone and remove the back cover." },
+                { "order": 2, "action": "Locate the battery and disconnect the battery connector." },
+                { "order": 3, "action": "Carefully pry the battery out using a plastic tool." }
+            ],
+            "next_component": "camera"
+        },
+        {
+            "id": "dispose_battery",
+            "instructions": [
+                { "step": "Tape battery terminals or place the battery in a separate plastic bag." },
+                { "step": "Bring to a designated hazardous-waste or electronics recycling drop-off." },
+                { "step": "⚠️ WARNING: Never dispose of lithium-ion batteries in regular trash bins!" }
+            ],
+            "next_component": "camera"
+        },
+        {
+            "id": "camera_issue",
+            "text": "This may be caused by a damaged camera. Would you still like to extract this part?",
+            "options": [
+                { "label": "Yes", "next": "extract_camera" },
+                { "label": "No", "next": "dispose_camera" }
+            ]
+        },
+        {
+            "id": "extract_camera",
+            "steps": [
+                { "order": 1, "action": "Power off the smartphone and remove the back cover." },
+                { "order": 2, "action": "Locate the camera module on the motherboard." },
+                { "order": 3, "action": "Disconnect the camera connector and carefully remove the module." }
+            ],
+            "next_component": "end"
+        },
+        {
+            "id": "dispose_camera",
+            "instructions": [
+                { "step": "Separate the camera module and recycle it at a certified e-waste center." }
+            ],
+            "next_component": "end"
+        },
+        {
+            "id": "end",
+            "text": "All detected components have been processed."
+        }
+    ]
+}
