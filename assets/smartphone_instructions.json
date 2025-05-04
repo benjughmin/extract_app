@@ -1,4 +1,25 @@
 {
+    "component_labels": {
+        "Battery": "battery",
+        "Camera": "camera"
+    },
+
+    "issue_component_mapping": {
+        "Battery issue": ["battery"],
+        "Camera issue/damage": ["camera"]
+    },
+
+    "component_values": {
+        "battery": {
+            "price": 10.00,
+            "notes": "Ensure the battery is not swollen or damaged before extraction"
+        },
+        "camera": {
+            "price": 8.00,
+            "notes": "Higher value for newer models or undamaged lenses"
+        }
+    },
+
     "nodes": [
         {
             "id": "start",
@@ -10,57 +31,81 @@
         },
         {
             "id": "battery_issue",
-            "text": "This may be caused by an issue with the battery. Would you still like to extract this part?",
+            "text": "This may be caused by an issue with the battery. Would you like to extract this part?",
             "options": [
                 { "label": "Yes", "next": "extract_battery" },
-                { "label": "No", "next": "dispose_battery" }
+                { "label": "No", "next": "component_extraction" }
             ]
         },
         {
             "id": "extract_battery",
             "steps": [
-                { "order": 1, "action": "Power off the smartphone and remove the back cover." },
-                { "order": 2, "action": "Locate the battery and disconnect the battery connector." },
-                { "order": 3, "action": "Carefully pry the battery out using a plastic tool." }
+                {
+                    "order": 1,
+                    "action": "Power off the smartphone and remove the back cover.",
+                    "image": "assets/img_assistance/battery_cover.png"
+                },
+                {
+                    "order": 2,
+                    "action": "Locate the battery and disconnect the battery connector.",
+                    "image": "assets/img_assistance/battery_connector.png"
+                },
+                {
+                    "order": 3,
+                    "action": "Carefully pry the battery out using a plastic tool.",
+                    "image": "assets/img_assistance/battery_pry.png"
+                }
             ],
-            "next_component": "camera"
-        },
-        {
-            "id": "dispose_battery",
-            "instructions": [
-                { "step": "Tape battery terminals or place the battery in a separate plastic bag." },
-                { "step": "Bring to a designated hazardous-waste or electronics recycling drop-off." },
-                { "step": "⚠️ WARNING: Never dispose of lithium-ion batteries in regular trash bins!" }
-            ],
-            "next_component": "camera"
+            "options": [
+                { "label": "Component Extraction", "next": "component_extraction" },
+                { "label": "End", "next": "end" }
+            ]
         },
         {
             "id": "camera_issue",
-            "text": "This may be caused by a damaged camera. Would you still like to extract this part?",
+            "text": "This may be caused by a damaged camera. Would you like to extract this part?",
             "options": [
                 { "label": "Yes", "next": "extract_camera" },
-                { "label": "No", "next": "dispose_camera" }
+                { "label": "No", "next": "component_extraction" }
             ]
         },
         {
             "id": "extract_camera",
             "steps": [
-                { "order": 1, "action": "Power off the smartphone and remove the back cover." },
-                { "order": 2, "action": "Locate the camera module on the motherboard." },
-                { "order": 3, "action": "Disconnect the camera connector and carefully remove the module." }
+                {
+                    "order": 1,
+                    "action": "Power off the smartphone and remove the back cover.",
+                    "image": "assets/img_assistance/camera_cover.png"
+                },
+                {
+                    "order": 2,
+                    "action": "Locate the camera module on the motherboard.",
+                    "image": "assets/img_assistance/camera_module.png"
+                },
+                {
+                    "order": 3,
+                    "action": "Disconnect the camera connector and carefully remove the module.",
+                    "image": "assets/img_assistance/camera_connector.png"
+                }
             ],
-            "next_component": "end"
+            "options": [
+                { "label": "Component Extraction", "next": "component_extraction" },
+                { "label": "End", "next": "end" }
+            ]
         },
         {
-            "id": "dispose_camera",
-            "instructions": [
-                { "step": "Separate the camera module and recycle it at a certified e-waste center." }
-            ],
-            "next_component": "end"
+            "id": "component_extraction",
+            "text": "What would you like to extract?",
+            "options": [
+                { "label": "Battery", "next": "extract_battery" },
+                { "label": "Camera", "next": "extract_camera" },
+                { "label": "Back", "next": "start" },
+                { "label": "End", "next": "end" }
+            ]
         },
         {
             "id": "end",
-            "text": "All detected components have been processed."
+            "text": "All selected components have been processed."
         }
     ]
 }
