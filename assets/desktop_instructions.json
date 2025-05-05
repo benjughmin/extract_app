@@ -1,4 +1,18 @@
 {
+  "guidelines": {
+    "safety": [
+      "Make sure that your device is powered off and unplugged.",
+      "Work in a bright, open, and well-ventilated area.",
+      "Keep track of screws and small parts.",
+      "Gloves are recommended for extra safety."
+    ],
+    "tools": [
+      "Phillips Head Scredriver",
+      "Flathead Screwdriver",
+      "Anti-static Wrist Strap (ESD strap)"
+    ]
+  },
+
   "component_labels": {
     "Graphics card": "gpu",
     "GPU": "gpu",
@@ -28,59 +42,50 @@
     "Power supply (PSU) failure": ["psu"],
     "RAM (Memory) issues": ["ram"]
   },
-
-  "guidelines": {
-    "safety": [
-      "Safety Test"
-    ],
-    "tools": [
-      "Tools Test"
-    ]
-  },
   
   "component_values": {
     "gpu": {
-      "price": 15.00,
+      "price": 7000.00,
       "notes": "High value component, check for damage on connectors"
     },
     "cooler": {
-      "price": 5.00,
+      "price": 200.00,
       "notes": "Verify fan operation and heatsink condition"
     },
     "fan": {
-      "price": 3.00,
+      "price": 100.00,
       "notes": "Test for smooth operation before valuing"
     },
     "hdd": {
-      "price": 4.00,
+      "price": 300.00,
       "notes": "Check SMART data for health status"
     },
     "ssd": {
-      "price": 8.00,
+      "price": 1000.00,
       "notes": "Higher value for NVMe versus SATA models"
     },
     "psu": {
-      "price": 7.00,
+      "price": 650.00,
       "notes": "Value varies by wattage and certification"
     },
     "mboard": {
-      "price": 12.00,
+      "price": 850.00,
       "notes": "Higher value for newer sockets and features"
     },
     "ram": {
-      "price": 6.00,
+      "price": 300.00,
       "notes": "Value depends on capacity and generation (DDR3/DDR4/DDR5)"
     },
     "cpu": {
-      "price": 20.00,
+      "price": 4500.00,
       "notes": "Highest value component, check for bent pins"
     },
     "cmos": {
-      "price": 0.50,
+      "price": 20.00,
       "notes": "Low value but essential for motherboard operation"
     },
     "case": {
-      "price": 5.00,
+      "price": 350.00,
       "notes": "Value depends on condition and features"
     }
   },
