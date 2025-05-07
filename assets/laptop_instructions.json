@@ -18,7 +18,8 @@
           { "label": "NVMe SSD not detected / failing", "next": "nvme_issue" },
           { "label": "SATA SSD not working / corrupted", "next": "sata_issue" },
           { "label": "Hard Drive clicking / not spinning", "next": "hdd_issue" },
-          { "label": "Connectivity issue (Wi-Fi)", "next": "other_issue" }
+          { "label": "Connectivity issue (Wi-Fi)", "next": "other_issue" },
+          { "label": "Typing problems / Keyboard issues", "next": "keyboard_issue" }
         ],
       "default_options": [
         { "label": "Back", "next": "start" },
@@ -36,6 +37,7 @@
         { "label": "SSD (NVMe M.2)", "next": "extract_ssd-nvme" },
         { "label": "Hard Drive (HDD)", "next": "hdd_flow" },
         { "label": "Wi-Fi Card", "next": "extract_wifi"},
+        { "label": "Keyboard", "next": "extract_keyboard" },
         { "label": "Back", "next": "start" },
         { "label": "End", "next": "end" }
       ]
@@ -116,9 +118,11 @@
     {
       "id": "dispose_battery",
       "steps": [
-        { "order": 1, "action": "Tape battery terminals or place each battery in a separate plastic bag." },
-        { "order": 2, "action": "Bring to a designated hazardous-waste or electronics recycling drop-off." },
-        { "order": 3, "action":  "⚠️ REMINDER: Never dispose of lithium-ion batteries in regular trash bins!" }
+        { "order": 1, "action": "After extracting the battery, place it in a fire-resistant container." },
+        { "order": 2, "action": "Cover the terminals (metal points) of the battery with non-conductive tape, such as electrical tape, to prevent short circuits." },
+        { "order": 3, "action": "Store in a safe and dry location away from flammable materials." },
+        { "order": 4, "action": "Take the battery to an authorized recycling center." },
+        { "order": 5, "action": "DO NOT dispose of laptop batteries in regular waste bins!" }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -202,7 +206,9 @@
     {
       "id": "dispose_fan",
       "steps": [
-        { "order": 1, "action": "Separate metal and plastic parts; take to a certified e-waste recycler." }
+        { "order": 1, "action": "Separate metal and plastic parts and place them in separate containers or bags." },
+        { "order": 2, "action": "If any blades have been broken or any wires are exposed, ensure that they are covered. Covering sharp edges with tape is recommended." },
+        { "order": 3, "action": "Dispose of the unusable parts in proper waste bins, such as recyclable or non-biodegradable." }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -262,8 +268,9 @@
     {
       "id": "dispose_ram",
       "steps": [
-        { "order": 1, "action": "Ensure RAM is free of sensitive data." },
-        { "order": 2, "action": "Take to an electronics recycling facility for proper disposal." }
+        { "order": 1, "action": "Unusable RAM modules can still have valuable metals, such as gold." },
+        { "order": 2, "action": "You can take broken RAM modules to e-waste recycling centers to inquire about recovering said metails from the modules." },
+        { "order": 3, "action": "If you are sure about disposal, place the RAM in a separate container and use proper disposal bins (recyclable or non-biodegradable)." }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -299,7 +306,7 @@
     },
     {
       "id": "hdd_flow",
-      "text": "Is the HDD connected via a ribbon-cable with a flip-up locking flap?",
+      "text": "Is the HDD connected to the laptop via a ribbon-cable with a flip-up locking flap?",
       "options": [
         { "label": "Yes", "next": "extract_hard-drive_motherboard" },
         { "label": "No", "next": "extract_hard-drive" }
@@ -309,7 +316,9 @@
       "id": "extract_hard-drive_motherboard",
       "steps": [
         { "order": 1, "action": "Flip up the locking flap on the cable connector to release it." },
-        { "order": 2, "action": "Remove mounting screws, then slide the drive out." }
+        { "order": 2, "action": "Remove the screws holding the hard drive down, then pull away the connecting cable." },
+        { "order": 3, "action": "Pull the hard drive out of the laptop." },
+        { "order": 4, "action": "Congratulations, you've successfully extracted the hard drive from your laptop!" }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -319,8 +328,9 @@
     {
       "id": "extract_hard-drive",
       "steps": [
-        { "order": 1, "action": "Remove the battery and open the HDD access door." },
-        { "order": 2, "action": "Slide the drive out by pulling its connector tab." }
+        { "order": 1, "action": "Remove the screws that are holding down the hard drive frame." },
+        { "order": 2, "action": "Pull the hard drive out of the laptop." },
+        { "order": 3, "action": "Congratulations, you've successfully extracted the hard drive from your laptop!" }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -341,8 +351,9 @@
     {
       "id": "extract_ssd-sata",
       "steps": [
-        { "order": 1, "action": "Remove chassis screws and unplug SATA cables." },
-        { "order": 2, "action": "Remove drive mounting screws, then slide the SSD from its bay." }
+        { "order": 1, "action": "Remove the screws around the chassis of the SATA drive." },
+        { "order": 2, "action": "Disconnect any connecting cables and slowly lift the drive out of the laptop." },
+        { "order": 3, "action": "Congratulations, you've successfully extracted the SATA SSD from your laptop!" }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -352,9 +363,11 @@
     {
       "id": "dispose_storage",
       "steps": [
-        { "order": 1, "action": "⚠️ WARNING: Ensure all sensitive data is securely erased!" },
-        { "order": 2, "action": "Remove any labels containing sensitive information." },
-        { "order": 3, "action": "Take to certified e-waste recycler for proper disposal." }
+        { "order": 1, "action": "If possible, ensure that all data from your storage drive is completely erased and unrecoverable." },
+        { "order": 2, "action": "If you have no way to wipe the data from your drives, physical destruction is an option." },
+        { "order": 3, "action": "To destroy your storage device safely, place it in a durable plastic container (such as a Ziploc bag) and wear protective equipment." },
+        { "order": 4, "action": "You can destroy your storage device by smashing it to pieces with a hammer or by using a drill to puncture the drive with multiple holes, making data recovery impossible." },
+        { "order": 5, "action": "Dispose of the destroyed parts in proper waste bins (recyclable or non-biodegradable)." }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -386,7 +399,42 @@
       "id": "dispose_wifi",
       "steps": [
         { "order": 1, "action": "Remove any identifying stickers or labels." },
-        { "order": 2, "action": "Recycle the PCB and metal components at a certified e-waste center." }
+        { "order": 2, "action": "Recycle the PCB and metal components at a certified e-waste center." },
+        { "order": 3, "action": "For direct disposal, place the Wi-Fi card in a separate container and use proper disposal bins (recyclable or non-biodegradable)." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Extraction", "next": "end" }
+      ]
+    },
+    {
+      "id": "keyboard_issue",
+      "text": "Keyboard issues are often caused by a faulty keyboard. Would you like to see disposal steps for this part?",
+      "options": [
+        { "label": "Yes", "next": "dispose_keyboard" },
+        { "label": "No", "next": "extract_keyboard" },
+        { "label": "Return", "next": "component_extraction" }
+      ]
+    },
+    {
+      "id": "extract_keyboard",
+      "steps": [
+        { "order": 1, "action": "Unscrew visible screws that are keeping the base of the keyboard in place." },
+        { "order": 2, "action": "If any clips or latches are visible, carefully release them to detach the keyboard from the laptop." },
+        { "order": 3, "action": "Carefully detach any ribbon cables connecting the keyboard to the motherboard." },
+        { "order": 4, "action": "Optionally, you can extract each individual keycap for better recycling or disposal." },
+        { "order": 5, "action": "Congratulations, you've successfully extracted the keyboard from your laptop!" }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Extraction", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_keyboard",
+      "steps": [
+        { "order": 2, "action": "Recycle the plastic and metal components at a certified e-waste center." },
+        { "order": 3, "action": "For direct disposal, place the keyboard in a separate container and use proper disposal bins (recyclable or non-biodegradable)." }
       ],
       "options": [
         { "label": "Return to Component List", "next": "component_extraction" },
@@ -406,7 +454,8 @@
     "SSD (2.5 SATA)": "ssd-sata",
     "SSD (NVMe M.2)": "ssd-nvme",
     "Hard Drive (HDD)": "hard-drive",
-    "Wi-Fi Card": "wifi-card"
+    "Wi-Fi Card": "wifi-card",
+    "Keyboard": "keyboard"
   },
 
   "issue_component_mapping": {
@@ -416,37 +465,342 @@
     "NVMe SSD not detected / failing": ["ssd-nvme"],
     "SATA SSD not working / corrupted": ["ssd-sata"],
     "Hard Drive clicking / not spinning": ["hard-drive"],
-    "Connectivity issue (Wi-Fi)": ["wifi-card"]
+    "Connectivity issue (Wi-Fi)": ["wifi-card"],
+    "Typing problems / Keyboard issues": ["keyboard"]
   },
 
   "component_values": {
     "ram": {
-      "price": 1200.00,
-      "notes": "Memory modules often retain value"
+      "default_base_price": 1200.00,
+      "notes": "Memory modules often retain value",
+      "parameters": {
+        "brand": {
+          "options": ["Kingston", "Crucial", "Samsung", "Corsair", "G.Skill", "TeamGroup", "ADATA", "Other"],
+          "multipliers": {
+            "Kingston": 1.0,
+            "Corsair": 1.15,
+            "G.Skill": 1.1,
+            "TeamGroup": 1.05,
+            "Crucial": 1.05,
+            "Samsung": 1.05,
+            "ADATA": 1.0,
+            "Other": 0.9
+          }
+        },
+        "capacity": {
+          "options": ["2GB", "4GB", "8GB", "16GB", "32GB", "64GB"],
+          "base_prices": {
+            "2GB": 200.00,
+            "4GB": 400.00,
+            "8GB": 800.00,
+            "16GB": 1600.00,
+            "32GB": 3200.00,
+            "64GB": 6400.00
+          }
+        },
+        "type": {
+          "options": ["DDR3", "DDR3L", "DDR4", "DDR5"],
+          "multipliers": {
+            "DDR3": 0.7,
+            "DDR3L": 0.8,
+            "DDR4": 1.2,
+            "DDR5": 1.5
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     },
     "ssd-nvme": {
-      "price": 800.00,
-      "notes": "High demand for SSDs"
+      "default_base_price": 800.00,
+      "notes": "High demand for SSDs",
+      "parameters": {
+        "brand": {
+          "options": ["Samsung", "Western Digital", "Crucial", "Intel", "Other"],
+          "multipliers": {
+            "Samsung": 1.2,
+            "Western Digital": 1.1,
+            "Crucial": 1.0,
+            "Intel": 1.15,
+            "Other": 0.9
+          }
+        },
+        "capacity": {
+          "options": ["128GB", "256GB", "512GB", "1TB", "2TB"],
+          "base_prices": {
+            "128GB": 300.00,
+            "256GB": 600.00,
+            "512GB": 1000.00,
+            "1TB": 1800.00,
+            "2TB": 3200.00
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     },
     "ssd-sata": {
-      "price": 900.00,
-      "notes": "Common in older laptops"
+      "default_base_price": 900.00,
+      "notes": "Common in older laptops",
+      "parameters": {
+        "brand": {
+          "options": ["Samsung", "Western Digital", "Crucial", "Kingston", "Sandisk", "ADATA", "TeamGroup", "PNY", "Other"],
+          "multipliers": {
+            "Samsung": 1.2,
+            "Western Digital": 1.1,
+            "Crucial": 1.1,
+            "Kingston": 1.0,
+            "Sandisk": 1.0,
+            "ADATA": 0.95,
+            "TeamGroup": 0.95,
+            "PNY": 0.95,
+            "Other": 0.85
+          }
+        },
+        "capacity": {
+          "options": ["128GB", "256GB", "512GB", "1TB", "2TB"],
+          "base_prices": {
+            "128GB": 300.00,
+            "256GB": 600.00,
+            "512GB": 1200.00,
+            "1TB": 2400.00,
+            "2TB": 4600.00
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     },
     "hard-drive": {
-      "price": 1500.00,
-      "notes": "Check for bad sectors"
+      "default_base_price": 1500.00,
+      "notes": "Check for bad sectors",
+      "parameters": {
+        "brand": {
+          "options": ["Seagate", "Western Digital", "Toshiba", "Hitachi", "Samsung", "Fujitsu", "Other"],
+          "multipliers": {
+            "Seagate": 1.0,
+            "Western Digital": 1.1,
+            "Toshiba": 0.95,
+            "Hitachi": 0.85,
+            "Samsung": 0.9,
+            "Fujitsu": 0.8,
+            "Other": 0.7
+          }
+        },
+        "capacity": {
+          "options": ["128GB", "256GB", "512GB", "1TB", "2TB"],
+          "base_prices": {
+            "128GB": 150.00,
+            "256GB": 250.00,
+            "512GB": 500.00,
+            "1TB": 800.00,
+            "2TB": 1500.00
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     },
     "battery": {
-      "price": 1500.00,
-      "notes": "Capacity test recommended"
+      "default_base_price": 1500.00,
+      "notes": "Capacity test recommended",
+      "parameters": {
+        "brand": {
+          "options": ["Dell", "HP", "Lenovo", "Asus", "Acer", "MSI", "Apple", "Other"],
+          "multipliers": {
+            "Dell": 1.2,
+            "HP": 1.1,
+            "Lenovo": 1.1,
+            "Asus": 1.0,
+            "Acer": 1.0,
+            "MSI": 1.0,
+            "Apple": 1.4,
+            "Other": 0.8
+          }
+        },
+        "capacity": {
+          "options": ["<2500mAh", "2500-4000mAh", "4001-6000mAh", ">6000mAh"],
+          "base_prices": {
+            "<2500mAh": 200.00,
+            "2500-4000mAh": 400.00,
+            "4001-6000mAh": 600.00,
+            ">6000mAh": 800.00
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.2
+          }
+        }
+      }
     },
     "fan": {
-      "price": 150.00,
-      "notes": "Common replacement part"
+      "base_price": 150.00,
+      "notes": "Common replacement part",
+      "parameters": {
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     },
     "wifi-card": {
-      "price": 70.00,
-      "notes": "Compatible with most laptops"
+      "base_price": 300.00,
+      "notes": "Wi-Fi cards hold modest resale value, but high-end or newer-generation models (e.g., Wi-Fi 6) from reliable brands may have more value.",
+      "parameters": {
+        "brand": {
+          "options": ["Intel", "Realtek", "Qualcomm Atheros", "Broadcom", "MediaTek", "Other"],
+          "multipliers": {
+            "Intel": 1.2,
+            "Realtek": 0.9,
+            "Qualcomm Atheros": 1.1,
+            "Broadcom": 1.0,
+            "MediaTek": 1.05,
+            "Other": 0.7
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.85,
+            "2-3 years": 0.65,
+            "3-5 years": 0.45,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
+    },
+    "keyboard": {
+      "base_price": 200.00,
+      "notes": "Check for compatibility",
+      "parameters": {
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     }
   },
 
