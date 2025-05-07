@@ -1249,7 +1249,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                     ),
                   ],
                 ),
-                const SizedBox(width: 12), // Space between the row and Summary button
+                const SizedBox(height: 9), // Space between the row and Summary button
                 
                 // Summary button
                 ElevatedButton(
@@ -1288,7 +1288,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                         const Icon(Icons.summarize, color: Colors.white),
                         const SizedBox(width: 8),
                         Text(
-                          'Summary',
+                          'Value Estimation',
                           style: GoogleFonts.montserrat(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -1299,7 +1299,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12), // Space between Summary and Save Session button
+                const SizedBox(height: 9), // Space between Summary and Save Session button
                 
                 // Save Session button
                 SizedBox(

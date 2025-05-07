@@ -5,6 +5,158 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import '/pages/base.dart';
 
+class ParameterDialog extends StatefulWidget {
+  final String componentName;
+  final Map<String, dynamic> componentData; // Component data containing base price and parameters
+  final Map<String, dynamic> parameters; // Parameters for the component, used for dropdown options and value multipliers
+  final Function(double, Map<String, String>) onValueCalculated; // Callback function that returns the calculated value and selected parameters
+
+  const ParameterDialog({
+    required this.componentName,
+    required this.componentData,
+    required this.parameters,
+    required this.onValueCalculated,
+    super.key,
+  });
+
+  @override
+  State<ParameterDialog> createState() => _ParameterDialogState();
+}
+
+class _ParameterDialogState extends State<ParameterDialog> {
+  final Map<String, String> _selectedValues = {}; // Store selected values for each parameter
+  double _currentValue = 0.0; // Stores latest calculated value based on parameters
+
+  void _calculateValue() { // Calculate the value based on selected parameters and multipliers
+    double basePrice = 0.0;
+    
+    // Handle components with and without capacity parameter
+    if (widget.parameters.containsKey('capacity')) { // For components with a capacity parameter, since options under capacity each have a base price
+      if (_selectedValues['capacity'] != null) { // Retrieves the base price for the selected capacity option
+        basePrice = widget.parameters['capacity']['base_prices'][_selectedValues['capacity']] ?? 0.0;
+      }
+    } else { // For components without a capacity parameter, use the base price (usually default_base_price) from component data
+      basePrice = widget.componentData['base_price'] ?? 
+                  widget.componentData['default_base_price'] ?? 
+                  0.0;
+    }
+
+    // Loops through each parameter and applies multipliers to the base price
+    widget.parameters.forEach((paramName, paramData) {
+      if (paramData['multipliers'] != null && // Checks if multipliers exist for the parameter
+          _selectedValues[paramName] != null) {
+        final multiplier = paramData['multipliers'][_selectedValues[paramName]] ?? 1.0; // Retrieves the multiplier for the selected value
+        basePrice *= multiplier; // Applies the multiplier to the base price
+      }
+    });
+
+    // Update the current value in the UI and call the callback function with the new value
+    setState(() {
+      _currentValue = basePrice;
+    });
+    widget.onValueCalculated(basePrice, Map<String, String>.from(_selectedValues));  // Pass selected values
+  }
+
+  // UI elements for popup dialog
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Value Parameters - ${widget.componentName}',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Estimated Value: ₱${_currentValue.toStringAsFixed(2)}',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                color: const Color(0xFF34A853),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...widget.parameters.entries.map((entry) {
+              final paramName = entry.key;
+              final options = entry.value['options'] as List<dynamic>;
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: paramName[0].toUpperCase() + paramName.substring(1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Color(0xFF34A853)),
+                    ),
+                    labelStyle: GoogleFonts.montserrat(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  value: _selectedValues[paramName],
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black87, // Add text color for selected value
+                  ),
+                  dropdownColor: Colors.white,
+                  icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF34A853)),
+                  items: options.map((option) {
+                    return DropdownMenuItem(
+                      value: option.toString(),
+                      child: Text(
+                        option.toString(),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.black87, // Add text color for dropdown items
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        _selectedValues[paramName] = value;
+                        _calculateValue();
+                      });
+                    }
+                  },
+                ),
+              );
+            }).toList(),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Done',
+                    style: GoogleFonts.montserrat(
+                      color: const Color(0xFF34A853),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class SummaryScreen extends StatefulWidget {
   final String deviceCategory;
   final List<String> extractedComponents;
@@ -27,26 +179,65 @@ class _SummaryScreenState extends State<SummaryScreen> {
   @override
   void initState() {
     super.initState();
-    _loadComponentValues();
+    _loadComponentValues().then((_) {
+      _showParameterDialogs(); // Opens popup dialog box for each detected part after loading component values
+    });
   }
 
+  // Load the JSON file, specifically the component_values node
   Future<void> _loadComponentValues() async {
     try {
-      // Normalize category name for file lookup
-      // Make sure that your json file has a component_values node!
       final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
-      final jsonPath = 'assets/${normalizedCategory}_instructions.json'; // Dynamic JSON loading based on e-waste category
+      final jsonPath = 'assets/${normalizedCategory}_instructions.json';
       
-      final String jsonString = await rootBundle.loadString(jsonPath); // Read JSON file contents
-      final Map<String, dynamic> jsonData = json.decode(jsonString); // json.decode converts JSON string into Dart objects
+      final String jsonString = await rootBundle.loadString(jsonPath);
+      final Map<String, dynamic> jsonData = json.decode(jsonString);
       
-      setState(() { // Updates state w/ loaded component values
+      setState(() {
         _componentValues = Map<String, Map<String, dynamic>>.from(
-          jsonData['component_values'] as Map<String, dynamic> // Casts JSON data to a Map<String, dynamic>
+          jsonData['component_values'] as Map<String, dynamic> // Loads the component_values node from the JSON file
         );
+
+        // Initialize default prices for all components
+        _componentValues?.forEach((key, value) {
+          value['price'] = value['base_price'] ?? 
+                          value['default_base_price'] ?? 
+                          0.0;
+        });
       });
     } catch (e) {
       print('Error loading component values for ${widget.deviceCategory}: $e');
+    }
+  }
+
+  // Opens a ParameterDialog for each component with configurable parameters
+  void _showParameterDialogs() async {
+    for (String component in _getUniqueComponents()) { // Loops through each unique component
+      final componentKey = component.toLowerCase();
+      final componentData = _componentValues?[componentKey]; // Retrieves the component data from the loaded JSON
+      if (componentData != null && componentData['parameters'] != null) { // Proceed if parameters exist
+        // ignore: use_build_context_synchronously
+        await showDialog(
+          context: context,
+          barrierDismissible: false, // Prevents closing the dialog by tapping outside
+          builder: (context) => ParameterDialog(
+            componentName: _formatComponentName(component),
+            componentData: componentData,
+            parameters: componentData['parameters'], // Used to build the dropdowns
+            onValueCalculated: (newValue, selectedParams) {  // Add selectedParams parameter
+              setState(() {
+                if (_componentValues != null) {
+                  var componentMap = _componentValues![componentKey];
+                  if (componentMap != null) {
+                    componentMap['price'] = newValue;
+                    componentMap['selected_parameters'] = selectedParams;  // Save selected parameters
+                  }
+                }
+              });
+            },
+          ),
+        );
+      }
     }
   }
 
@@ -149,8 +340,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
     double totalValue = 0;
     for (String component in uniqueComponents) {
       final values = _componentValues?[component.toLowerCase()];
-      if (values != null && values['price'] != null) {
-        totalValue += (values['price'] as double) * (componentCounts[component] ?? 1);
+      if (values != null) {
+        totalValue += ((values['price'] ?? 0.0) as double) * 
+                     (componentCounts[component] ?? 1);
       }
     }
 
@@ -265,7 +457,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '\₱${values['price'].toStringAsFixed(2)}',
+                        values['selected_parameters'] != null 
+                            ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}'  // Show price if configured
+                            : '⋯',  // Show ellipsis if not configured
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -273,7 +467,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         ),
                       ),
                       Text(
-                        'per piece (×$count)',
+                        values['selected_parameters'] != null 
+                            ? 'per piece (×$count)'
+                            : 'Not configured',
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -328,6 +524,98 @@ class _SummaryScreenState extends State<SummaryScreen> {
                               color: Colors.grey[600],
                             ),
                           ),
+                          // Component Parameters
+                          if (values['parameters'] != null) ...[
+                            const SizedBox(height: 16),
+                            const Divider(),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Configuration',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            // Show parameters if they exist and have been configured
+                            if (values['selected_parameters'] != null) ...[
+                              ...values['parameters'].entries.map((entry) {
+                                final paramName = entry.key;
+                                final selectedValue = (values['selected_parameters'] as Map<String, String>)[paramName] ?? 'Not configured';
+                                
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _formatParameterName(paramName),
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      Text(
+                                        selectedValue,
+                                        style: GoogleFonts.montserrat(
+                                          color: const Color(0xFF34A853),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              const SizedBox(height: 16),
+                            ] else ...[
+                              Text(
+                                'No parameters configured',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                            // Edit Parameters button will always show if parameters exist
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) => ParameterDialog(
+                                      componentName: _formatComponentName(component),
+                                      componentData: values,
+                                      parameters: values['parameters'],
+                                      onValueCalculated: (newValue, selectedParams) {
+                                        setState(() {
+                                          if (_componentValues != null) {
+                                            var componentMap = _componentValues![component.toLowerCase()];
+                                            if (componentMap != null) {
+                                              componentMap['price'] = newValue;
+                                              componentMap['selected_parameters'] = selectedParams;
+                                            }
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Color(0xFF34A853),
+                                  size: 20,
+                                ),
+                                label: Text(
+                                  values['selected_parameters'] != null ? 'Edit Parameters' : 'Configure Parameters',
+                                  style: GoogleFonts.montserrat(
+                                    color: const Color(0xFF34A853),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -381,5 +669,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
   String _formatComponentName(String name) {
     String firstPart = name.split('_')[0];
     return firstPart[0].toUpperCase() + firstPart.substring(1);
+  }
+
+  // Helper method to format parameter names
+  String _formatParameterName(String name) {
+    return name[0].toUpperCase() + name.substring(1).replaceAll('_', ' ');
   }
 }
