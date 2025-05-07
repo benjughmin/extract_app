@@ -17,20 +17,15 @@
       "notes": "Value varies by wattage and certification"
     }
   },
-
-    "guidelines": {
-    "safety": [
-      "Safety Test"
-    ],
-    "tools": [
-      "Tools Test"
-    ]
+  "guidelines": {
+    "safety": ["Safety Test"],
+    "tools": ["Tools Test"]
   },
   
   "nodes": [
     {
       "id": "start",
-      "text": "Would you like to indicate the reason/s you're disposing of the landline, or would you like to head straight to extraction?",
+      "text": "Would you like to start by noting why you're disposing of the landline, or would you prefer to jump straight to component extraction?",
       "options": [
         { "label": "Disposal Cause", "next": "issue" },
         { "label": "Detected Components List", "next": "component_extraction" }
@@ -57,141 +52,19 @@
       ]
     },
     {
-      "id": "speaker_issue",
-      "text": "The speaker issue could be caused by a faulty speaker component. Would you like to extract the speaker?",
+      "id": "end",
+      "text": "You have completed the extraction process. Thank you for responsibly recycling your electronic components!"
+    },
+    {
+      "id": "professional_assistance",
+      "text": "Some extractions are difficult by design and may require specialized tools or techniques such as soldering, preheating, or precision prying. For safety and to prevent damage to valuable components, consider seeking professional assistance for this component.",
       "options": [
-        { "label": "Yes", "next": "speaker_location" },
-        { "label": "No", "next": "start" }
-      ]
-    },
-    {
-      "id": "speaker_location",
-      "text": "Where is the speaker located?",
-      "options": [
-        { "label": "In the handset", "next": "extract_speaker_handset" },
-        { "label": "In the base", "next": "extract_speaker_base" },
-        { "label": "I'm not sure", "next": "identify_speaker" }
-      ]
-    },
-    {
-      "id": "identify_speaker",
-      "text": "The speaker is typically a small round or oval component with a mesh or perforated cover. It's usually located near the earpiece in the handset or near the ringer in the base.",
-      "options": [
-        { "label": "Found it in the handset", "next": "extract_speaker_handset" },
-        { "label": "Found it in the base", "next": "extract_speaker_base" },
-        { "label": "Still not sure", "next": "professional_assistance" }
-      ]
-    },
-    {
-      "id": "extract_speaker_handset",
-      "steps": [
-        {
-          "order": 1,
-          "action": "Locate the speaker in the handset. It's typically a small round or oval component near the earpiece."
-        },
-        {
-          "order": 2,
-          "action": "Check how the speaker is attached. It usually has small wire connections and may be held in place with clips or light adhesive."
-        },
-        {
-          "order": 3,
-          "action": "Gently disconnect any wires by pulling the connectors, not the wires themselves."
-        },
-        {
-          "order": 4,
-          "action": "Using your fingers or plastic opening tools, carefully pry the speaker from its housing. Avoid using metal tools as they may damage the components."
-        }
-      ],
-      "next": "speaker_extraction_confirmation"
-    },
-    {
-      "id": "extract_speaker_base",
-      "steps": [
-        {
-          "order": 1,
-          "action": "Locate the speaker in the base. It's typically near the ringer area."
-        },
-        {
-          "order": 2,
-          "action": "Identify any screws or clips securing the speaker. Remove screws with an appropriate screwdriver."
-        },
-        {
-          "order": 3,
-          "action": "If the speaker is clipped in, gently pry around the edges with a plastic opening tool until it releases."
-        },
-        {
-          "order": 4,
-          "action": "Carefully disconnect any wire connectors by pulling on the connector itself, not the wires."
-        },
-        {
-          "order": 5,
-          "action": "Lift the speaker out of its housing."
-        }
-      ],
-      "next": "speaker_extraction_confirmation"
-    },
-    {
-      "id": "speaker_extraction_confirmation",
-      "text": "Have you successfully extracted the speaker?",
-      "options": [
-        { "label": "Yes", "next": "speaker_extracted_success" },
-        { "label": "No, I'm having trouble", "next": "speaker_extraction_help" }
-      ]
-    },
-    {
-      "id": "speaker_extraction_help",
-      "text": "What issue are you experiencing with the speaker extraction?",
-      "options": [
-        { "label": "Can't disconnect the wires", "next": "speaker_wire_help" },
-        { "label": "Speaker seems glued in place", "next": "speaker_adhesive_help" },
-        { "label": "I need professional assistance", "next": "professional_assistance" },
-        { "label": "Try a different component", "next": "component_extraction" }
-      ]
-    },
-    {
-      "id": "speaker_wire_help",
-      "steps": [
-        {
-          "order": 1,
-          "action": "Look closely at the wire connections. These are typically small plug-in connectors or pressure contacts."
-        },
-        {
-          "order": 2,
-          "action": "Use a plastic opening tool or your fingernail to gently lift the connector straight up from the contact point."
-        },
-        {
-          "order": 3,
-          "action": "If the wires are soldered, it's best to leave them connected and remove the entire assembly together. Cutting should be avoided if possible."
-        }
-      ],
-      "next": "speaker_extraction_confirmation"
-    },
-    {
-      "id": "speaker_adhesive_help",
-      "steps": [
-        {
-          "order": 1,
-          "action": "If the speaker is lightly adhered, apply gentle but firm pressure around the edges while slowly lifting."
-        },
-        {
-          "order": 2,
-          "action": "For stronger adhesive, you can use a plastic card or opening tool to carefully separate the adhesive."
-        },
-        {
-          "order": 3,
-          "action": "Work slowly around the perimeter of the speaker, gradually releasing the adhesive."
-        }
-      ],
-      "next": "speaker_extraction_confirmation"
-    },
-    {
-      "id": "speaker_extracted_success",
-      "text": "Congratulations! You've successfully extracted the speaker. This component can be recycled or repurposed. Would you like to extract another component?",
-      "options": [
-        { "label": "Extract another component", "next": "component_extraction" },
+        { "label": "Back to components", "next": "component_extraction" },
         { "label": "End", "next": "end" }
       ]
     },
+
+
     {
       "id": "board_issue",
       "text": "The power issue could be caused by a faulty board. Would you like to extract the board?",
@@ -204,7 +77,7 @@
       "id": "board_location",
       "text": "Where is the phone board installed?",
       "options": [
-        { "label": "In the handset", "next": "board_integ_handset" },
+        { "label": "In the handset", "next": "extract_screwed_board_hand" },
         { "label": "In the base", "next": "board_integ_base" },
         { "label": "I'm not sure", "next": "identify_board" }
       ]
@@ -213,18 +86,9 @@
       "id": "identify_board",
       "text": "The phone board is a flat circuit board with electronic components. In handsets, it's usually a small board. In bases, it's typically larger with more components.",
       "options": [
-        { "label": "Found it in the handset", "next": "board_integ_handset" },
+        { "label": "Found it in the handset", "next": "extract_screwed_board_hand" },
         { "label": "Found it in the base", "next": "board_integ_base" },
         { "label": "Still not sure", "next": "professional_assistance" }
-      ]
-    },
-    {
-      "id": "board_integ_handset",
-      "text": "How is the phone board attached in the handset?",
-      "options": [
-        { "label": "Secured with screws", "next": "extract_screwed_board_hand" },
-        { "label": "Held by plastic clips", "next": "extract_clipped_board_hand" },
-        { "label": "I'm not sure", "next": "board_attachment_help" }
       ]
     },
     {
@@ -240,9 +104,7 @@
       "id": "board_attachment_help",
       "text": "Look for small screws around the board's perimeter or plastic tabs that might be holding it in place. If you see screw heads, it's screwed in. If you see plastic tabs or hooks, it's clipped in.",
       "options": [
-        { "label": "I see screws in the handset", "next": "extract_screwed_board_hand" },
-        { "label": "I see screws in the base", "next": "extract_screwed_board_base" },
-        { "label": "I see plastic clips in the handset", "next": "extract_clipped_board_hand" },
+        { "label": "I see screw heads in the base", "next": "extract_screwed_board_base" },
         { "label": "I see plastic clips in the base", "next": "extract_clipped_board_base" },
         { "label": "Still not sure", "next": "professional_assistance" }
       ]
@@ -254,7 +116,6 @@
           "order": 1,
           "action": "Locate all screws securing the board to the handset. They are typically small and may be located at the corners or along the edges of the board.",
           "image": "assets/img_assistance/unscrew_board_hand1.png"
-          
         },
         {
           "order": 2,
@@ -272,76 +133,93 @@
     },
     {
       "id": "board_connector_removal",
+      "text": "What type of connector do you see?",
+      "options": [
+        { "label": "Ribbon cable", "next": "board_connector_removal_ribbon" },
+        { "label": "Wire harness", "next": "board_connector_removal_wire" }
+      ]
+    },
+
+    {
+      "id": "board_connector_removal_ribbon",
       "steps": [
         {
           "order": 1,
-          "action": "For ribbon cables: Carefully lift the small locking tab (if present) that secures the ribbon, then gently pull the ribbon straight out of its connector."
+          "action": "If the motherboard is secured with sliding or flipping clamps, slide the clamp in the opposite direction of the cable or connector, or flip it open using a plastic tool or your fingers.",
+          "image": "assets/img_assistance/rc.png"
         },
         {
           "order": 2,
-          "action": "For wire harnesses: Grip the plastic connector (not the wires) and gently pull straight up or away from its socket."
+          "action": "Ensure that the clamp is fully disengaged from the connector or board."
         },
         {
           "order": 3,
-          "action": "For spring contacts or charging pins: Simply lifting the board should disconnect these; no special action needed.",
-          "image": "assets/img_assistance/charging_port.png"
+          "action": "Do not force the clamp if it resists; check for any additional locking mechanisms or latches before proceeding to avoid damage. "
+        },
+        {
+          "order": 4,
+          "action": "Once disengaged, gently pull the component free."
+        },
+        {
+          "order": 5,
+          "action": "Are there still any cables or connectors attached to the board?"
         }
       ],
-      "next": "extract_screwed_board_hand_lift"
+      "options": [
+        { "label": "I see wire or cable connectors", "next": "board_connector_removal" },
+        { "label": "No visible connectors", "next": "extract_screwed_board_hand_lift" }
+      ]
+    },
+    {
+      "id": "board_connector_removal_wire",
+      "steps": [
+        {
+          "order": 1,
+          "action": "Grip the plastic connector (not the wires) and pull straight away from its socket.",
+          "image": "assets/img_assistance/wire-harness-hand.png"
+        },
+        {
+          "order": 2,
+          "action": "Ensure you pull in the direction the connector is designed to come out, avoiding any twisting or angled motion that could damage the connector or wires."
+        },
+        {
+          "order": 3,
+          "action": "If resistance is felt, check for any locking tabs or latches that may need to be disengaged before pulling."
+        },
+        {
+          "order": 4,
+          "action": "If you come across soldered wires, leave them connected and remove the entire assembly as one unit. These wires can look similar to non-soldered ones, so exercise caution to avoid accidental disconnection or damage."
+        },
+        {
+          "order": 5,
+          "action": "Are there still any cables or connectors attached to the board?"
+        }
+      ],
+      "options": [
+        { "label": "I see wire or cable connectors", "next": "board_connector_removal" },
+        { "label": "No visible connectors", "next": "extract_screwed_board_hand_lift" }
+      ]
     },
     {
       "id": "extract_screwed_board_hand_lift",
       "steps": [
         {
           "order": 1,
-          "action": "Gently lift one edge of the board using your fingers or a plastic opening tool."
+          "action": "For spring contacts or charging pins: Simply lifting should disconnect these; no special action needed.",
+          "image": "assets/img_assistance/charging_port.png"
         },
         {
           "order": 2,
+          "action": "Gently lift the board using your fingers or a plastic opening tool.",
+          "image": "assets/img_assistance/lift-hand.png"
+        },
+        {
+          "order": 3,
           "action": "If the board lifts easily, continue lifting until it's free from the handset."
         },
         {
-          "order": 3,
-          "action": "If you feel resistance, stop and check for any remaining screws, clips, or connections you might have missed."
-        }
-      ],
-      "next": "board_extraction_confirmation"
-    },
-    {
-      "id": "extract_clipped_board_hand",
-      "steps": [
-        {
-          "order": 1,
-          "action": "Identify the plastic clips holding the board in place. These are usually located along the edges of the board."
-        },
-        {
-          "order": 2,
-          "action": "Using a plastic opening tool or your fingernail, carefully press or release one clip at a time while gently lifting that section of the board."
-        },
-        {
-          "order": 3,
-          "action": "Work your way around all clips until the board is free from the clips."
-        },
-        {
           "order": 4,
-          "action": "Check for any connectors such as ribbon cables or wire harnesses attached to the board."
-        }
-      ],
-      "options": [
-        { "label": "I see wire or ribbon connectors", "next": "board_connector_removal" },
-        { "label": "No visible connectors", "next": "extract_clipped_board_hand_lift" }
-      ]
-    },
-    {
-      "id": "extract_clipped_board_hand_lift",
-      "steps": [
-        {
-          "order": 1,
-          "action": "Gently lift the board out of its housing."
-        },
-        {
-          "order": 2,
-          "action": "If you feel resistance, stop and check for any remaining clips or connections you might have missed."
+          "action": "If you feel resistance, stop and check for any remaining screws, clips, or connections you might have missed."
         }
       ],
       "next": "board_extraction_confirmation"
@@ -359,7 +237,7 @@
         },
         {
           "order": 3,
-          "action": "Check for any connectors such as ribbon cables, wire harnesses, or the phone line connector attached to the board."
+          "action": "Check for any connectors such as ribbon cables or wire harnesses attached to the board."
         }
       ],
       "options": [
@@ -372,15 +250,13 @@
       "steps": [
         {
           "order": 1,
-          "action": "For ribbon cables: Carefully lift the small locking tab (if present) that secures the ribbon, then gently pull the ribbon straight out of its connector."
+          "action": "For ribbon cables: Carefully lift the small locking tab (if present) that secures the ribbon, then gently pull the ribbon straight out of its connector.",
+          "image": "assets/img_assistance/base-rc.png"
         },
         {
           "order": 2,
-          "action": "For wire harnesses: Grip the plastic connector (not the wires) and gently pull straight up or away from its socket."
-        },
-        {
-          "order": 3,
-          "action": "For the phone line connector: This is usually a modular connector (RJ11) that should stay with the board when removed."
+          "action": "For wire harnesses: Grip the plastic connector (not the wires) and gently pull straight up or away from its socket.",
+          "image": "assets/img_assistance/wire-harness-base.png"
         }
       ],
       "next": "extract_screwed_board_base_lift"
@@ -390,7 +266,8 @@
       "steps": [
         {
           "order": 1,
-          "action": "Gently lift one edge of the board using your fingers or a plastic opening tool."
+          "action": "Gently lift the board using your fingers or a plastic opening tool.",
+          "image": "assets/img_assistance/lift-mb-base.png"
         },
         {
           "order": 2,
@@ -408,11 +285,13 @@
       "steps": [
         {
           "order": 1,
-          "action": "Identify the plastic clips holding the board in place. These are usually located along the edges of the board."
+          "action": "Identify the plastic clips holding the board in place. These are usually located along the edges of the board.",
+          "image": "assets/img_assistance/clip-base.png"
         },
         {
           "order": 2,
-          "action": "Using a plastic opening tool or your fingernail, carefully press or release one clip at a time while gently lifting that section of the board."
+          "action": "Using a plastic opening tool or your fingernail, carefully press or release one clip at a time while gently lifting that section of the board.",
+          "image": "assets/img_assistance/clip-flick.png"
         },
         {
           "order": 3,
@@ -433,7 +312,8 @@
       "steps": [
         {
           "order": 1,
-          "action": "Gently lift the board out of its housing."
+          "action": "Gently lift the board out of its housing using your fingers or a plastic opening tool.",
+          "image": "assets/img_assistance/lift-board-base.png"
         },
         {
           "order": 2,
@@ -455,8 +335,8 @@
       "text": "What issue are you experiencing with the board extraction?",
       "options": [
         { "label": "Board won't come free", "next": "board_stuck_help" },
-        { "label": "Can't disconnect a cable or connector", "next": "board_connector_help" },
-        { "label": "I need professional assistance", "next": "professional_assistance" },
+        { "label": "Can't disconnect a cable or connector", "next": "what_connector_help" },
+        { "label": "Other", "next": "professional_assistance" },
         { "label": "Try a different component", "next": "component_extraction" }
       ]
     },
@@ -465,29 +345,119 @@
       "steps": [
         {
           "order": 1,
-          "action": "Double-check for any remaining screws, especially hidden ones under labels or in recessed areas."
+          "action": "Try gently rocking the board to feel where the resistance is coming from. This can help pinpoint what's holding it."
         },
         {
           "order": 2,
-          "action": "Look for any plastic retention clips that might still be engaged."
+          "action": "Confirm that no screws remain—check under stickers, labels, or in recessed screw holes often overlooked during teardown."
         },
         {
           "order": 3,
-          "action": "Check if any components on the board are caught on the housing structure."
+          "action": "Check for plastic retention clips along the board edges. Some may flex, others require slight spreading of the casing."
         },
         {
           "order": 4,
-          "action": "Gently rock the board back and forth to help identify where it's stuck."
+          "action": "Look for components pressed against or wedged into the housing—connectors, shielding, or tall parts may be catching."
         }
       ],
       "next": "board_extraction_confirmation"
+    },
+    {
+      "id": "what_connector_help",
+      "text": "What type of connector are you having trouble with?",
+      "options": [
+        { "label": "Ribbon cable", "next": "ribbon_connector_help" },
+        { "label": "Wire harness", "next": "wh_connector_help" },
+        { "label": "I'm not sure", "next": "board_connector_help" }
+      ]
+    },
+    {
+      "id": "ribbon_connector_help",
+      "steps": [
+        {
+          "order": 1,
+          "action": "Identify the type of ribbon connector: flip or slide."
+        },
+        {
+          "order": 2,
+          "action": "For flip-ribbon cables: Use your fingernails or a small, non-metallic tool (like a plastic spudger) to carefully lift or flip the latch. Be gentle; these latches can be fragile especially the chip can be damaged if you use metallic tools such as screwdriver. Lift both sides evenly if there are latches on both sides.",
+          "image": "assets/img_assistance/flip_cable.jpeg"
+        },
+        {
+          "order": 3,
+          "action": "For slide-ribbon cables: Gently push the tabs on the sides of the connector away from the ribbon cable. They usually don't need to move very far.",
+          "image": "assets/img_assistance/slide-cable.png"
+        },
+        {
+          "order": 4,
+          "action": "Once the latch is released, gently pull the ribbon cable straight out of the connector."
+        },
+        {
+          "order": 5,
+          "action": "If the ribbon cable is stuck, try gently wiggling the cable side-to-side and up-and-down while lightly pulling."
+        },
+        {
+          "order": 5,
+          "action": "Were you able to remove the connector?"
+        }
+      ],
+      "options": [
+        { "label": "Yes", "next": "board_extraction_confirmation" },
+        { "label": "No", "next": "ribbon_failed" }
+      ]
+    },
+    {
+      "id": "wh_connector_help",
+      "steps": [
+        {
+          "order": 1,
+          "action": "Ensure you're pulling on the plastic connector body, not the wires themselves.",
+          "image": "assets/img_assistance/wh.png"
+        },
+        {
+          "order": 2,
+          "action": "Grip the plastic connector (not the wires) and gently pull straight up or away from its socket."
+        },
+        {
+          "order": 3,
+          "action": "Pull straight out in the direction of the connector's design, avoiding twisting or angled pulling."
+        },
+        {
+          "order": 4,
+          "action": "If the connector is stuck, check for any locking tabs or clips that may need to be released first."
+        },
+        {
+          "order": 5,
+          "action": "Were you able to remove the connector?"
+        }
+      ],
+      "options": [
+        { "label": "Yes", "next": "board_extraction_confirmation" },
+        { "label": "No", "next": "wh_connector_failed" }
+      ]
+    },
+    {
+      "id": "wh_connector_failed",
+      "text": "If you still can't remove it, do not apply excessive force. It may be secured with adhesive, soldered, or have a hidden latch. Forcing it could damage the connector or board—seek expert assistance instead.",
+      "options": [
+        { "label": "Try a different component", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "ribbon_failed",
+      "text": "If the cable remains stuck, do not apply force. It may be secured with adhesive, have a hidden latch, or suffer from internal damage like bent pins. Forcing it could tear the cable, break connector parts, or damage nearby circuit components—seek expert assistance instead.",
+      "options": [
+        { "label": "Try a different component", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
+      ]
     },
     {
       "id": "board_connector_help",
       "steps": [
         {
           "order": 1,
-          "action": "Identify the type of connector: ribbon cable, wire harness, or modular connector."
+          "action": "Identify the type of connector: ribbon cable, or wire harnesses."
         },
         {
           "order": 2,
@@ -495,10 +465,20 @@
         },
         {
           "order": 3,
-          "action": "For wire harnesses: Ensure you're pulling on the plastic connector body, not the wires themselves."
+          "action": "For flip-ribbon cables: Use your fingernails or a small, non-metallic tool (like a plastic spudger) to carefully lift or flip the latch. Be gentle; these latches can be fragile. Lift both sides evenly if there are latches on both sides.",
+          "image": "assets/img_assistance/flip_cable.jpeg"
         },
         {
           "order": 4,
+          "action": "For slide-ribbon cables: Gently push the tabs on the sides of the connector away from the ribbon cable. They usually don't need to move very far.",
+          "image": "assets/img_assistance/slide-cable.png"
+        },
+        {
+          "order": 5,
+          "action": "For wire harnesses: Ensure you're pulling on the plastic connector body, not the wires themselves."
+        },
+        {
+          "order": 6,
           "action": "Pull straight out in the direction of the connector's design, avoiding twisting or angled pulling."
         }
       ],
@@ -512,15 +492,191 @@
         { "label": "End", "next": "end" }
       ]
     },
+
+
     {
-      "id": "end",
-      "text": "You have completed the extraction process. Thank you for responsibly recycling your electronic components!"
+      "id": "speaker_issue",
+      "text": "A faulty speaker might be causing the sound issue. Would you like to extract it?",
+      "options": [
+        { "label": "Yes", "next": "speaker_location" },
+        { "label": "No", "next": "start" }
+      ]
     },
     {
-      "id": "professional_assistance",
-      "text": "Some extractions can be challenging. For safety and to avoid damage to valuable components, consider seeking professional assistance with this extraction.",
+      "id": "speaker_location",
+      "text": "Where is the speaker located?",
       "options": [
-        { "label": "Back to components", "next": "component_extraction" },
+        { "label": "In the handset", "next": "extract_speaker_handset" },
+        { "label": "In the base", "next": "extract_speaker_base" },
+        { "label": "I'm not sure", "next": "identify_speaker" }
+      ]
+    },
+    {
+      "id": "identify_speaker",
+      "text": "The speaker is a small circular or oval component with a mesh cover. You can verify what yours looks like in the detected components list",
+      "options": [
+        { "label": "Found it in the handset", "next": "extract_speaker_handset" },
+        { "label": "Found it in the base", "next": "extract_speaker_base" },
+        { "label": "Still not sure", "next": "professional_assistance" }
+      ]
+    },
+    {
+      "id": "extract_speaker_handset",
+      "steps": [
+        {
+          "order": 1,
+          "action": "Start by checking how the speaker is secured to the device—it's commonly attached with small wires and may be secured by clips, adhesive, or screws. Identifying the method will help determine the next steps."
+        },
+        {
+          "order": 2,
+          "action": "If the speaker is secured with screws, use a screwdriver to carefully remove them. Keep the screws in a safe, organized place to prevent losing them during the process.",
+          "image": "assets/img_assistance/speaker-screw-hand.png"
+        },
+        {
+          "order": 3,
+          "action": "For glued-in speakers, use a plastic opening tool to gently pry it out. Exercise caution to avoid damaging nearby components or breaking the adhesive bond."
+        },
+        {
+          "order": 4,
+          "action": "If the speaker is held by clips, work slowly around the edges with a plastic opening tool, applying even pressure until it releases without breaking the clips."
+        },
+        {
+          "order": 5,
+          "action": "Carefully use your fingers or a plastic spudger to pry the speaker from its housing. Avoid metal tools, as they can scratch or damage sensitive components inside."
+        },
+        {
+          "order": 6,
+          "action": "Some speakers are connected with wire connectors, while others are soldered. If you find a connector, gently disconnect it by pulling the plastic housing—never tug on the wires themselves to avoid damaging them."
+        },
+        {
+          "order": 7,
+          "action": "If the speaker is soldered to the board, it's often best to leave the wires intact and remove the entire assembly. Attempting to disconnect the soldered connections requires proficiency, technique, and caution. If you're a beginner, it's advisable to avoid this step to prevent damage to the components and ensure your safety."
+        }   
+      ],
+      "next": "speaker_extraction_confirmation"
+    },
+    {
+      "id": "extract_speaker_base",
+      "steps": [
+        {
+          "order": 1,
+          "action": "Start by checking how the speaker is secured to the device—it's commonly attached with small wires and may be secured by clips, adhesive, or screws. Identifying the method will help determine the next steps."
+        },
+        {
+          "order": 2,
+          "action": "If the speaker is secured with clips, use a plastic opening tool to gently pry around the edges until it releases."
+        },
+        {
+          "order": 3,
+          "action": "If the speaker is screwed in, remove the screws and gently lift the speaker out of its housing.",
+          "image": "assets/img_assistance/speaker-screw-base.png"
+        },
+
+        {
+          "order": 4,
+          "action": "Carefully lift the speaker out of its housing using your fingers or a plastic opening tool."
+        },
+        {
+          "order": 5,
+          "action": "If the speaker is soldered, consider leaving it connected and removing the entire assembly instead."
+        }
+      ],
+      "next": "speaker_extraction_confirmation"
+    },
+    {
+      "id": "speaker_extraction_confirmation",
+      "text": "Have you successfully extracted the speaker?",
+      "options": [
+        { "label": "Yes", "next": "speaker_extracted_success" },
+        { "label": "No, I'm having trouble", "next": "speaker_extraction_help" }
+      ]
+    },
+    {
+      "id": "speaker_extraction_help",
+      "text": "What issue are you experiencing with the speaker extraction?",
+      "options": [
+        { "label": "Can't disconnect the wires", "next": "speaker_wire_help" },
+        { "label": "Speaker seems glued in place", "next": "speaker_adhesive_help" },
+        { "label": "Other", "next": "professional_assistance" },
+        { "label": "Try a different component", "next": "component_extraction" }
+      ]
+    },
+    {
+      "id": "speaker_wire_help",
+      "steps": [
+        {
+          "order": 1,
+          "action": "Look closely at the wire connections. These are typically small plug-in connectors or pressure contacts."
+        },
+        {
+          "order": 2,
+          "action": "Use a plastic opening tool or your fingernail to gently lift the connector straight up from the contact point."
+        },
+        {
+          "order": 3,
+          "action": "If the wires are soldered, it's best to leave them connected and remove the entire assembly together. Cutting should be avoided if possible."
+        },
+        {
+          "order": 5,
+          "action": "Were you able to remove the speaker?"
+        }
+      ],
+      "options": [
+        { "label": "Yes", "next": "speaker_extracted_success" },
+        { "label": "No", "next": "speaker_failed" }
+      ]
+    },
+    {
+      "id": "speaker_wire_failed",
+      "text": "If the wires remain stuck, do not apply excessive force. They may be secured with adhesive or soldered. Forcing them could damage the speaker or nearby components—seek expert assistance instead.",
+      "options": [
+        { "label": "Try a different component", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "speaker_adhesive_help",
+      "steps": [
+        {
+          "order": 1,
+          "action": "If the speaker is lightly adhered, apply gentle but firm pressure around the edges while slowly lifting."
+        },
+        {
+          "order": 2,
+          "action": "For stronger adhesive, you can use a plastic card or opening tool to carefully separate the adhesive."
+        },
+        {
+          "order": 3,
+          "action": "Work slowly around the perimeter of the speaker, gradually releasing the adhesive."
+        },
+        {
+          "order": 4,
+          "action": "If the adhesive is too strong, consider using a heat source (like a hairdryer) to soften it before attempting to pry it off."
+        },
+        {
+          "order": 5,
+          "action": "Were you able to remove the speaker?"
+        }
+      ],
+      "options": [
+        { "label": "Yes", "next": "speaker_extracted_success" },
+        { "label": "No", "next": "speaker_failed" }
+      ],
+      "next": "speaker_extraction_confirmation"
+    },
+    {
+      "id": "speaker_failed",
+      "text": "If the speaker remains stuck, do not apply excessive force. It may be secured with strong adhesive or have a hidden latch. Forcing it could damage the speaker or nearby components—seek expert assistance instead.",
+      "options": [
+        { "label": "Try a different component", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
+      ]   
+    },
+    {
+      "id": "speaker_extracted_success",
+      "text": "Congratulations! You've successfully extracted the speaker. This component can be recycled or repurposed. Would you like to extract another component?",
+      "options": [
+        { "label": "Extract another component", "next": "component_extraction" },
         { "label": "End", "next": "end" }
       ]
     }

@@ -36,69 +36,11 @@ flutter:
   assets:
 
     - assets/splash.json
-    # Guide images
-    - assets/guides/open_phone.png #phone 
-    - assets/guides/dark_phone.png
-    - assets/guides/light_phone.png
-    - assets/guides/blur_phone.png
-    - assets/guides/unblur_phone.png
-    - assets/guides/mul_phone1.png
-    - assets/guides/mul_phone2.png
-    - assets/guides/mul_phone3.png
-    - assets/guides/open_laptop.png #laptop
-    - assets/guides/dark_laptop.png
-    - assets/guides/light_laptop.png
-    - assets/guides/blur_laptop.png
-    - assets/guides/unblur_laptop.png
-    - assets/guides/mul_laptop1.png
-    - assets/guides/mul_laptop2.png
-    - assets/guides/mul_laptop3.png
-    - assets/guides/open_desktop.png #desktop
-    - assets/guides/dark_desktop.png
-    - assets/guides/light_desktop.png
-    - assets/guides/blur_desktop.png
-    - assets/guides/unblur_desktop.png
-    - assets/guides/mul_desktop1.png
-    - assets/guides/mul_desktop2.png
-    - assets/guides/mul_desktop3.png
-    - assets/guides/open_router.png #router
-    - assets/guides/light_router.png
-    - assets/guides/dark_router.png
-    - assets/guides/blur_router.png
-    - assets/guides/unblur_router.png
-    - assets/guides/open_landline.png #landline
-    - assets/guides/light_landline.png
-    - assets/guides/dark_landline.png
-    - assets/guides/blur_landline.png
-    - assets/guides/unblur_landline.png
-    - assets/guides/add_img.png #extra
+    # Guide images + app icon
+    - assets/guides/
 
     # Assistance images
-    - assets/img_assistance/ssd_screw.jpg #desktop  
-    - assets/img_assistance/ssd_lift.png
-    - assets/img_assistance/cpu_cooler_socket.png
-    - assets/img_assistance/hdd_plug.png
-    - assets/img_assistance/hdd_screw.png
-    - assets/img_assistance/cmos_lever.png
-    - assets/img_assistance/intel_pins.jpg
-    - assets/img_assistance/amd_screw.png
-    - assets/img_assistance/other_lever.png
-    - assets/img_assistance/fan_socket.png
-    - assets/img_assistance/cpu_lever.png
-    - assets/img_assistance/gpu_screw.png
-    - assets/img_assistance/gpu_cable.png
-    - assets/img_assistance/gpu_lock.png
-    - assets/img_assistance/mboard_screws.png
-    - assets/img_assistance/psu_screw.png
-    - assets/img_assistance/psu_mobo_cable.jpg
-    - assets/img_assistance/psu_cable.png
-    - assets/img_assistance/ram_pull.png
-    - assets/img_assistance/ram_pull_down.png
-    - assets/img_assistance/mobo_cable_clip.png
-    - assets/img_assistance/unscrew_board_hand1.png #landline
-    - assets/img_assistance/unscrew_board_hand2.png
-    - assets/img_assistance/unscrew_board_hand3.png
-    - assets/img_assistance/charging_port.png
+    - assets/img_assistance/
 
     # Knowledge-base
     - assets/desktop_instructions.json
