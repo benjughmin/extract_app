@@ -1,0 +1,36 @@
+{
+  "e_waste_locations": [
+    {
+      "id": 1,
+      "name": "Green Earth Recycling Center",
+      "address": "123 Eco Street, Quezon City",
+      "latitude": 14.6760,
+      "longitude": 121.0437,
+      "phone": "+63 2 8123 4567",
+      "hours": "Mon-Fri: 9AM-5PM, Sat: 9AM-1PM",
+      "accepted_materials": [
+        "batteries",
+        "circuit_boards",
+        "laptop_components",
+        "monitors"
+      ],
+      "website": "https://greenearth-recycling.ph",
+      "notes": "Free drop-off for residential e-waste"
+    },
+    {
+      "id": 2,
+      "name": "Metro Manila E-Waste Facility",
+      "address": "456 Environment Ave, Mandaluyong",
+      "latitude": 14.5832,
+      "longitude": 121.0409,
+      "phone": "+63 2 8765 4321",
+      "hours": "Mon-Sat: 8AM-6PM",
+      "accepted_materials": [
+        "all_electronics",
+        "appliances"
+      ],
+      "website": "https://mmewaste.gov.ph",
+      "notes": "Government-run facility with certification services"
+    }
+  ]
+}

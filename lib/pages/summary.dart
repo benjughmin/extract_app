@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import '/pages/base.dart';
+import '/pages/ewaste_map_screen.dart';
 
 class ParameterDialog extends StatefulWidget {
   final String componentName;
@@ -330,12 +333,64 @@ class _SummaryScreenState extends State<SummaryScreen> {
         .toList();
   }
 
+  Widget _buildEWasteDisposalSection() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: const CircleAvatar(
+          backgroundColor: Color(0xFF34A853),
+          child: Icon(Icons.map, color: Colors.white),
+        ),
+        title: Text(
+          'E-Waste Disposal Locations',
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          'Find certified e-waste recycling centers near you',
+          style: GoogleFonts.montserrat(
+            color: Colors.grey[600],
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () async {
+          try {
+            final jsonString = await rootBundle.loadString('assets/e_waste_locations.json');
+            final jsonData = json.decode(jsonString);
+            final locations = jsonData['e_waste_locations'] as List<dynamic>;
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EWasteMapScreen(locations: locations),
+              ),
+            );
+          } catch (e) {
+            print('Error loading e-waste locations: $e');
+          }
+        },
+      ),
+    );
+  }
+
   // UI stuff
   @override
   Widget build(BuildContext context) {
     final componentCounts = _getComponentCounts();
     final uniqueComponents = _getUniqueComponents();
-    
+
     // Calculate total estimated value before building UI
     double totalValue = 0;
     for (String component in uniqueComponents) {
@@ -353,7 +408,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Device info card
+            // Existing UI components...
             Container(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
@@ -418,6 +473,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
             ),
 
             const SizedBox(height: 24),
+
+            // Add the e-waste disposal section here
+            _buildEWasteDisposalSection(),
 
             // Components List
             ...uniqueComponents.map((component) {
