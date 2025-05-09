@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_core: ^3.13.0  # Required for initializing Firebase
+  cloud_firestore: ^5.6.7
   cupertino_icons: ^1.0.2
   image_picker: ^1.0.5  # For picking images from gallery or camera
   tflite_flutter: ^0.11.0  # For TensorFlow Lite model inference
@@ -33,7 +35,7 @@ dev_dependencies:
 
 flutter_icons:
   android: true
-  image_path: "assets/guides/app_icon.png"
+  image_path: "assets/guides/app_icon_2.png"
 
 flutter:
   uses-material-design: true

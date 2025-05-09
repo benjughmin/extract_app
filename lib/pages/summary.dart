@@ -5,6 +5,8 @@ import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import '/pages/base.dart';
 import '/pages/ewaste_map_screen.dart';
 
@@ -30,34 +32,41 @@ class _ParameterDialogState extends State<ParameterDialog> {
   final Map<String, String> _selectedValues = {}; // Store selected values for each parameter
   double _currentValue = 0.0; // Stores latest calculated value based on parameters
 
-  void _calculateValue() { // Calculate the value based on selected parameters and multipliers
+  void _calculateValue() {
     double basePrice = 0.0;
     
-    // Handle components with and without capacity parameter
-    if (widget.parameters.containsKey('capacity')) { // For components with a capacity parameter, since options under capacity each have a base price
-      if (_selectedValues['capacity'] != null) { // Retrieves the base price for the selected capacity option
-        basePrice = widget.parameters['capacity']['base_prices'][_selectedValues['capacity']] ?? 0.0;
+    // For components with capacity parameter
+    if (widget.parameters.containsKey('capacity')) {
+      if (_selectedValues['capacity'] != null) {
+        // Convert the capacity price to double, regardless of whether it's int or double
+        final capacityPriceRaw = widget.parameters['capacity']['base_prices']?[_selectedValues['capacity']] ?? 0.0;
+        final capacityPrice = capacityPriceRaw is int ? capacityPriceRaw.toDouble() : (capacityPriceRaw as double);
+        print('💰 Capacity base price: $capacityPrice');
+        basePrice = capacityPrice;
       }
-    } else { // For components without a capacity parameter, use the base price (usually default_base_price) from component data
-      basePrice = widget.componentData['base_price'] ?? 
-                  widget.componentData['default_base_price'] ?? 
-                  0.0;
+    } else {
+      // For components without capacity, use default_base_price
+      final defaultPriceRaw = widget.componentData['default_base_price'] ?? 0.0;
+      basePrice = defaultPriceRaw is int ? defaultPriceRaw.toDouble() : (defaultPriceRaw as double);
+      print('💰 Default base price: $basePrice');
     }
 
-    // Loops through each parameter and applies multipliers to the base price
+    // Apply all parameter multipliers
     widget.parameters.forEach((paramName, paramData) {
-      if (paramData['multipliers'] != null && // Checks if multipliers exist for the parameter
-          _selectedValues[paramName] != null) {
-        final multiplier = paramData['multipliers'][_selectedValues[paramName]] ?? 1.0; // Retrieves the multiplier for the selected value
-        basePrice *= multiplier; // Applies the multiplier to the base price
+      if (paramData['multipliers'] != null && _selectedValues[paramName] != null) {
+        final multiplierRaw = paramData['multipliers'][_selectedValues[paramName]] ?? 1.0;
+        final multiplier = multiplierRaw is int ? multiplierRaw.toDouble() : (multiplierRaw as double);
+        basePrice *= multiplier;
+        print('🔢 Applied $paramName multiplier: $multiplier');
       }
     });
 
-    // Update the current value in the UI and call the callback function with the new value
+    print('💵 Final calculated value: $basePrice');
+
     setState(() {
       _currentValue = basePrice;
     });
-    widget.onValueCalculated(basePrice, Map<String, String>.from(_selectedValues));  // Pass selected values
+    widget.onValueCalculated(_currentValue, Map<String, String>.from(_selectedValues));
   }
 
   // UI elements for popup dialog
@@ -178,39 +187,128 @@ class SummaryScreen extends StatefulWidget {
 
 class _SummaryScreenState extends State<SummaryScreen> {
   Map<String, Map<String, dynamic>>? _componentValues;
+  bool _hasInternet = false;
+  StreamSubscription<DocumentSnapshot>? _firestoreSubscription;
 
   @override
   void initState() {
     super.initState();
-    _loadComponentValues().then((_) {
-      _showParameterDialogs(); // Opens popup dialog box for each detected part after loading component values
-    });
+    _checkConnectivity();
   }
 
-  // Load the JSON file, specifically the component_values node
+  // Check internet connectivity
+  Future<void> _checkConnectivity() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      setState(() {
+        _hasInternet = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+      });
+    } on SocketException catch (_) {
+      setState(() {
+        _hasInternet = false;
+      });
+    }
+    _loadComponentValues();
+  }
+
+  // Modified _loadComponentValues to handle both online and offline data
   Future<void> _loadComponentValues() async {
     try {
+      // Load local JSON data first
       final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
       final jsonPath = 'assets/${normalizedCategory}_instructions.json';
-      
       final String jsonString = await rootBundle.loadString(jsonPath);
       final Map<String, dynamic> jsonData = json.decode(jsonString);
-      
+
+      print('📱 Local JSON Data loaded: ${jsonData['component_values']['ram']?['default_base_price']}');
+
+      // Initialize with local data
       setState(() {
         _componentValues = Map<String, Map<String, dynamic>>.from(
-          jsonData['component_values'] as Map<String, dynamic> // Loads the component_values node from the JSON file
+          jsonData['component_values'] as Map<String, dynamic>
         );
 
-        // Initialize default prices for all components
+        // Set default price value
         _componentValues?.forEach((key, value) {
-          value['price'] = value['base_price'] ?? 
-                          value['default_base_price'] ?? 
-                          0.0;
+          value['price'] = value['base_price'] ??
+                           value['default_base_price'] ??
+                           0.0;
         });
       });
+
+      print('💾 Initial Component Values: ${_componentValues?['ram']?['default_base_price']}');
+
+      // If internet is available, set up real-time listener
+      if (_hasInternet) {
+        _firestoreSubscription = FirebaseFirestore.instance
+            .collection('pricing')
+            .doc(normalizedCategory)
+            .snapshots()
+            .listen((doc) {
+          if (doc.exists) {
+            final firestoreData = doc.data()?['component_values'] as Map<String, dynamic>?;
+            if (firestoreData != null) {
+              print('🔥 Firestore RAM Data: ${firestoreData['ram']}');
+              
+              setState(() {
+                firestoreData.forEach((component, values) {
+                  print('🔄 Updating component: $component');
+                  final localComponent = _componentValues?[component];
+                  if (localComponent != null && values is Map<String, dynamic>) {
+                    // Update base price
+                    if (values['default_base_price'] != null) {
+                      localComponent['default_base_price'] = values['default_base_price'];
+                      print('💰 Updated base price for $component: ${values['default_base_price']}');
+                    }
+
+                    // Update notes - Add this part
+                    if (values['notes'] != null) {
+                      localComponent['notes'] = values['notes'];
+                      print('📝 Updated notes for $component: ${values['notes']}');
+                    }
+
+                    // Handle parameters
+                    final firestoreParams = values['parameters'] as Map<String, dynamic>?;
+                    final localParams = localComponent['parameters'] as Map<String, dynamic>?;
+
+                    if (firestoreParams != null && localParams != null) {
+                      firestoreParams.forEach((paramName, paramData) {
+                        print('🔧 Updating parameter: $paramName');
+                        final localParam = localParams[paramName];
+                        if (localParam != null && paramData is Map<String, dynamic>) {
+                          if (paramData['multipliers'] != null) {
+                            localParam['multipliers'] = paramData['multipliers'];
+                          }
+                          if (paramData['base_prices'] != null) {
+                            localParam['base_prices'] = paramData['base_prices'];
+                          }
+                        }
+                      });
+                    }
+                  }
+                });
+              });
+              
+              print('✅ Final Component Values: ${_componentValues?['ram']?['default_base_price']}');
+            }
+          }
+        });
+      } else {
+        print('📡 No internet connection, using local data only');
+      }
+
+      // Always show parameter dialogs at the end
+      _showParameterDialogs();
+
     } catch (e) {
-      print('Error loading component values for ${widget.deviceCategory}: $e');
+      print('❌ Error loading local data: $e');
     }
+  }
+
+  @override
+  void dispose() {
+    _firestoreSubscription?.cancel();
+    super.dispose();
   }
 
   // Opens a ParameterDialog for each component with configurable parameters
