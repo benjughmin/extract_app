@@ -8,18 +8,28 @@
     "Phone not powering on": ["board"]
   },
   "component_values": {
-    "board_handset": {
-      "default_base_price": 12.00,
-      "notes": "Smaller board typically found in the handset",
+    "board": {
+      "default_base_price": 700.00,
+      "notes": "Value varies by wattage and certification",
       "parameters": {
-        "brand": {
-          "options": ["Panasonic", "AT&T", "VTech", "Uniden", "Other"],
+        "wattage": {
+          "options": ["<2W", "2W-4W", "5W-7W", ">7W", "Unknown"],
           "multipliers": {
-            "Panasonic": 1.2,
-            "AT&T": 1.1,
-            "VTech": 1.0,
-            "Uniden": 0.9,
-            "Other": 0.8
+            "<2W": 0.6,
+            "2W-4W": 1.0,
+            "5W-7W": 1.2,
+            ">7W": 1.5,
+            "Unknown": 1
+          }
+        },
+        "brand": {
+          "options": ["Panasonic", "AT&T", "Cisco", "VTech", "General"],
+          "multipliers": {
+            "Panasonic": 1.15,
+            "AT&T": 1.2,
+            "Cisco": 1.25,
+            "VTech": 0.9,
+            "General": 1
           }
         },
         "age": {
@@ -27,9 +37,8 @@
           "multipliers": {
             "Less than 1 year": 1.0,
             "1-2 years": 0.8,
-            "2-3 years": 0.6,
-            "3-5 years": 0.4,
-            "Over 5 years": 0.3
+            "3-4 years": 0.6,
+            "Over 4 years": 0.4
           }
         },
         "condition": {
@@ -40,40 +49,12 @@
             "Fair": 0.6,
             "Poor": 0.4
           }
-        }
-      }
-    },
-    "board_base": {
-      "default_base_price": 1800.00,
-      "notes": "Larger board typically found in the base unit",
-      "parameters": {
-        "brand": {
-          "options": ["Panasonic", "AT&T", "VTech", "Uniden", "Other"],
-          "multipliers": {
-            "Panasonic": 1.2,
-            "AT&T": 1.1,
-            "VTech": 1.0,
-            "Uniden": 0.9,
-            "Other": 0.8
-          }
         },
-        "age": {
-          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+        "location": {
+          "options": ["Handset", "Base"],
           "multipliers": {
-            "Less than 1 year": 1.0,
-            "1-2 years": 0.8,
-            "2-3 years": 0.6,
-            "3-5 years": 0.4,
-            "Over 5 years": 0.3
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.4
+            "Handset": 1.0,
+            "Base": 1.5
           }
         }
       }
@@ -95,7 +76,7 @@
         "brand": {
           "options": ["Panasonic", "AT&T", "Cisco", "VTech", "General"],
           "multipliers": {
-            "Panasonic": 1.25,
+            "Panasonic": 1.15,
             "AT&T": 1.2,
             "Cisco": 1.25,
             "VTech": 0.9,
