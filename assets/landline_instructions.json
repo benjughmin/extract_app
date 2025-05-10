@@ -8,13 +8,126 @@
     "Phone not powering on": ["board"]
   },
   "component_values": {
-    "board": {
-      "price": 15.00,
-      "notes": "High value component, check for damage on connectors"
+    "board_handset": {
+      "default_base_price": 12.00,
+      "notes": "Smaller board typically found in the handset",
+      "parameters": {
+        "brand": {
+          "options": ["Panasonic", "AT&T", "VTech", "Uniden", "Other"],
+          "multipliers": {
+            "Panasonic": 1.2,
+            "AT&T": 1.1,
+            "VTech": 1.0,
+            "Uniden": 0.9,
+            "Other": 0.8
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
+    },
+    "board_base": {
+      "default_base_price": 1800.00,
+      "notes": "Larger board typically found in the base unit",
+      "parameters": {
+        "brand": {
+          "options": ["Panasonic", "AT&T", "VTech", "Uniden", "Other"],
+          "multipliers": {
+            "Panasonic": 1.2,
+            "AT&T": 1.1,
+            "VTech": 1.0,
+            "Uniden": 0.9,
+            "Other": 0.8
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "2-3 years": 0.6,
+            "3-5 years": 0.4,
+            "Over 5 years": 0.3
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     },
     "speaker": {
-      "price": 7.00,
-      "notes": "Value varies by wattage and certification"
+      "default_base_price": 700.00,
+      "notes": "Value varies by wattage and certification",
+      "parameters": {
+        "wattage": {
+          "options": ["<2W", "2W-4W", "5W-7W", ">7W", "Unknown"],
+          "multipliers": {
+            "<2W": 0.6,
+            "2W-4W": 1.0,
+            "5W-7W": 1.2,
+            ">7W": 1.5,
+            "Unknown": 1
+          }
+        },
+        "brand": {
+          "options": ["Panasonic", "AT&T", "Cisco", "VTech", "General"],
+          "multipliers": {
+            "Panasonic": 1.25,
+            "AT&T": 1.2,
+            "Cisco": 1.25,
+            "VTech": 0.9,
+            "General": 1
+          }
+        },
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "3-4 years": 0.6,
+            "Over 4 years": 0.4
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        },
+        "location": {
+          "options": ["Handset", "Base"],
+          "multipliers": {
+            "Handset": 1.0,
+            "Base": 1.5
+          }
+        }
+      }
     }
   },
   "guidelines": {
@@ -91,7 +204,7 @@
       "id": "board_location",
       "text": "Where is the phone board installed?",
       "options": [
-        { "label": "In the handset", "next": "extract_screwed_board_hand" },
+        { "label": "In the handset", "next": "extract_board_screwed_hand" },
         { "label": "In the base", "next": "board_integ_base" },
         { "label": "I'm not sure", "next": "identify_board" }
       ]
@@ -100,7 +213,7 @@
       "id": "identify_board",
       "text": "The phone board is a flat circuit board with electronic components. In handsets, it's usually a small board. In bases, it's typically larger with more components.",
       "options": [
-        { "label": "Found it in the handset", "next": "extract_screwed_board_hand" },
+        { "label": "Found it in the handset", "next": "extract_board_screwed_hand" },
         { "label": "Found it in the base", "next": "board_integ_base" },
         { "label": "Still not sure", "next": "professional_assistance" }
       ]
@@ -124,7 +237,7 @@
       ]
     },
     {
-      "id": "extract_screwed_board_hand",
+      "id": "extract_board_screwed_hand",
       "steps": [
         {
           "order": 1,
@@ -142,7 +255,7 @@
       ],
       "options": [
         { "label": "I see wire or ribbon connectors", "next": "board_connector_removal" },
-        { "label": "No visible connectors", "next": "extract_screwed_board_hand_lift" }
+        { "label": "No visible connectors", "next": "extract_board_screwed_hand_lift" }
       ]
     },
     {
@@ -183,7 +296,7 @@
       ],
       "options": [
         { "label": "I see wire or cable connectors", "next": "board_connector_removal" },
-        { "label": "No visible connectors", "next": "extract_screwed_board_hand_lift" }
+        { "label": "No visible connectors", "next": "extract_board_screwed_hand_lift" }
       ]
     },
     {
@@ -213,11 +326,11 @@
       ],
       "options": [
         { "label": "I see wire or cable connectors", "next": "board_connector_removal" },
-        { "label": "No visible connectors", "next": "extract_screwed_board_hand_lift" }
+        { "label": "No visible connectors", "next": "extract_board_screwed_hand_lift" }
       ]
     },
     {
-      "id": "extract_screwed_board_hand_lift",
+      "id": "extract_board_screwed_hand_lift",
       "steps": [
         {
           "order": 1,
@@ -258,7 +371,7 @@
         }
       ],
       "options": [
-        { "label": "I see wire or cable connectors", "next": "board_base_connector_removal" },
+        { "label": "I see wire or cable connectors", "next": "what_connector_help" },
         { "label": "No visible connectors", "next": "extract_screwed_board_base_lift" }
       ]
     },
@@ -267,12 +380,12 @@
       "steps": [
         {
           "order": 1,
-          "action": "For ribbon cables: Carefully lift the small locking tab (if present) that secures the ribbon, then gently pull the ribbon straight out of its connector.",
+          "action": "A ribbon cable is a flat strip that looks like a thin ribbon with straight lines running along it, which represents the wires inside.",
           "image": "assets/img_assistance/base-rc.png"
         },
         {
           "order": 2,
-          "action": "For wire harnesses: Grip the plastic connector (not the wires) and gently pull straight up or away from its socket.",
+          "action": "A wire harness looks like a bundle of wires grouped together, often wrapped in plastic or tape to keep them neat. Each wire is usually a different color, and the bundle ends in a plastic connector that plugs into a component or circuit board.",
           "image": "assets/img_assistance/wire-harness-base.png"
         },
         {
@@ -281,7 +394,7 @@
         }
       ],
       "options": [
-        { "label": "Yes", "next": "extract_screwed_board_base_lift" },
+        { "label": "Yes", "next": "what_connector_help" },
         { "label": "No", "next": "wh_none"}
       ]
     },
