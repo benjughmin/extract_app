@@ -395,7 +395,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   // New method to filter unwanted components based on category
   bool _shouldIncludeComponent(String componentName) {
     if ((widget.category == 'Landline' && componentName == 'antenna') ||
-        (widget.category == 'Router' && componentName == 'Speaker')) {
+        (widget.category == 'Router' && componentName == 'speaker')) {
       return false;
     }
     return true;

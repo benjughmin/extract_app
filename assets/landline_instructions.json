@@ -9,7 +9,7 @@
   },
   "component_values": {
     "board": {
-      "default_base_price": 700.00,
+      "default_base_price": 5.00,
       "notes": "Value varies by wattage and certification",
       "parameters": {
         "wattage": {
@@ -60,7 +60,7 @@
       }
     },
     "speaker": {
-      "default_base_price": 700.00,
+      "default_base_price": 10.00,
       "notes": "Value varies by wattage and certification",
       "parameters": {
         "wattage": {
