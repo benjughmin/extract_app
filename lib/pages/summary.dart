@@ -44,11 +44,11 @@ class _ParameterDialogState extends State<ParameterDialog> {
     // For components with capacity parameter
     if (widget.parameters.containsKey('capacity')) {
       if (_selectedValues['capacity'] != null) {
-        // Convert the capacity price to double, regardless of whether it's int or double
+        // Support both 'base_prices' and 'base_price' keys
+        final capacityParam = widget.parameters['capacity'];
+        final basePrices = capacityParam['base_prices'] ?? capacityParam['base_price'];
         final capacityPriceRaw =
-            widget
-                .parameters['capacity']['base_prices']?[_selectedValues['capacity']] ??
-            0.0;
+            basePrices?[_selectedValues['capacity']] ?? 0.0;
         final capacityPrice =
             capacityPriceRaw is int
                 ? capacityPriceRaw.toDouble()
