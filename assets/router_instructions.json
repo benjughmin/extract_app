@@ -12,11 +12,51 @@
   "component_values": {
     "board": {
       "price": 25.00,
-      "notes": "High value component, contains primary circuitry and processing chips"
+      "notes": "High value component, contains primary circuitry and processing chips",
+      "parameters": {
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "3-4 years", "Over 4 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "3-4 years": 0.6,
+            "Over 4 years": 0.2
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     },
     "antenna": {
       "price": 8.00,
-      "notes": "Value varies by type (internal/external) and signal frequency range"
+      "notes": "Value varies by type (internal/external) and signal frequency range",
+      "parameters": {
+        "age": {
+          "options": ["Less than 1 year", "1-2 years", "3-4 years", "Over 4 years"],
+          "multipliers": {
+            "Less than 1 year": 1.0,
+            "1-2 years": 0.8,
+            "3-4 years": 0.6,
+            "Over 4 years": 0.4
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.6,
+            "Poor": 0.4
+          }
+        }
+      }
     }
   },
   "guidelines": {
