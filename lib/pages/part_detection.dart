@@ -33,7 +33,8 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   List<List<Detection>> _allDetections = [];
   List<Map<String, String>> _allCroppedComponents = [];
   
-  int _currentImageIndex = 0;
+  int _displayedImageIndex = 0; // Add this new variable to track the displayed image index separately
+  int _currentImageIndex = 0; // This will now only be used for processing
   late PageController _pageController;
   List<GlobalKey> _imageWithBoxesKeys = [];
   late AnimationController _animationController;
@@ -43,12 +44,18 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   void initState() {
     super.initState();
     
+    _displayedImageIndex = 0; // Initialize displayed index
+    
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     )..repeat();
     
-    _pageController = PageController(initialPage: 0);
+    // Make sure viewportFraction is set to 1.0 to avoid any partial views
+    _pageController = PageController(
+      initialPage: 0,
+      viewportFraction: 1.0,
+    );
     
     _imageWithBoxesKeys = List.generate(
       widget.selectedImages.length,
@@ -140,10 +147,6 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
       _currentImageIndex++;
       if (_currentImageIndex < widget.selectedImages.length) {
         _processNextImage();
-      } else {
-        setState(() {
-          _currentImageIndex = 0;
-        });
       }
     }
   }
@@ -416,75 +419,70 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
           ),
           child: Column(
             children: [
-              RepaintBoundary(
-                key: _currentImageIndex < widget.selectedImages.length 
-                    ? _imageWithBoxesKeys[_currentImageIndex]
-                    : GlobalKey(),
-                child: Container(
-                  width: double.infinity,
-                  height: screenHeight * 0.3,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.greenAccent.withOpacity(0.3)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: widget.selectedImages.length,
-                    onPageChanged: (index) {
-                      print("PAGE CHANGED TO: $index");
-                      setState(() {
-                        _currentImageIndex = index;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.file(
-                            widget.selectedImages[index],
-                            fit: BoxFit.contain,
-                          ),
-                          
-                          _processingStatus[index]
-                              ? const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.greenAccent,
-                                  ),
-                                )
-                              : _buildBoundingBoxes(index),
-                              
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${index + 1}/${widget.selectedImages.length}',
-                                style: GoogleFonts.robotoCondensed(
-                                  color: Colors.white,
-                                  fontSize: 12,
+              Container(
+                width: double.infinity,
+                height: screenHeight * 0.3,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.greenAccent.withOpacity(0.3)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: widget.selectedImages.length,
+                  onPageChanged: (index) {
+                    print("PAGE CHANGED TO: $index");
+                    setState(() {
+                      _displayedImageIndex = index; // Update the displayed index
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.file(
+                          widget.selectedImages[index],
+                          fit: BoxFit.contain,
+                        ),
+                        
+                        _processingStatus[index]
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.greenAccent,
                                 ),
+                              )
+                            : _buildBoundingBoxes(index),
+                            
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${index + 1}/${widget.selectedImages.length}',
+                              style: GoogleFonts.robotoCondensed(
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               SizedBox(height: screenHeight * 0.024),
@@ -507,8 +505,8 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
                 onTap: () async {
                   // Disable tap if processing is ongoing or no detections exist for the current image
                   if (_processingStatus.contains(true) ||
-                      (_currentImageIndex < _allDetections.length &&
-                       _allDetections[_currentImageIndex].isEmpty)) {
+                      (_displayedImageIndex < _allDetections.length &&
+                       _allDetections[_displayedImageIndex].isEmpty)) {
                     return;
                   }
 
@@ -560,8 +558,8 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: (_processingStatus.contains(true) ||
-                              (_currentImageIndex < _allDetections.length &&
-                               _allDetections[_currentImageIndex].isEmpty))
+                              (_displayedImageIndex < _allDetections.length &&
+                               _allDetections[_displayedImageIndex].isEmpty))
                           ? [Colors.grey.shade700, Colors.grey.shade600]
                           : [Color(0xFF34A853), Color(0xFF0F9D58)],
                       begin: Alignment.topLeft,
@@ -583,8 +581,8 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
                         fontSize: screenHeight * 0.02,
                         fontWeight: FontWeight.bold,
                         color: (_processingStatus.contains(true) ||
-                                (_currentImageIndex < _allDetections.length &&
-                                 _allDetections[_currentImageIndex].isEmpty))
+                                (_displayedImageIndex < _allDetections.length &&
+                                 _allDetections[_displayedImageIndex].isEmpty))
                             ? Colors.grey.shade300
                             : Colors.white,
                       ),
@@ -601,7 +599,15 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   
   Widget _buildBoundingBoxes(int imageIndex) {
     if (imageIndex >= _allDetections.length || _allDetections[imageIndex].isEmpty) {
-      return Container();
+      return Center(
+        child: Text(
+          'Processing image...',
+          style: GoogleFonts.montserrat(
+            fontSize: 16,
+            color: Colors.white70,
+          ),
+        ),
+      );
     }
 
     return LayoutBuilder(
@@ -662,7 +668,26 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   }
   
   Widget _buildDetectedPartsList() {
-    if (_processingStatus[_currentImageIndex]) {
+    if (_displayedImageIndex >= _allDetections.length) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(color: Colors.greenAccent),
+            const SizedBox(height: 16),
+            Text(
+              'Waiting for image analysis...',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_processingStatus[_displayedImageIndex]) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -683,9 +708,12 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
         ),
       );
     }
-    
-    if (_currentImageIndex >= _allDetections.length || 
-        _allDetections[_currentImageIndex].isEmpty) {
+
+    final filteredDetections = _allDetections[_displayedImageIndex]
+        .where((detection) => _shouldIncludeComponent(detection.className))
+        .toList();
+
+    if (filteredDetections.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -746,18 +774,11 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      itemCount: _allDetections[_currentImageIndex]
-          .where((detection) => _shouldIncludeComponent(detection.className))
-          .toList()
-          .length,
+      itemCount: filteredDetections.length,
       itemBuilder: (context, index) {
-        final filteredDetections = _allDetections[_currentImageIndex]
-            .where((detection) => _shouldIncludeComponent(detection.className))
-            .toList();
-
         final detection = filteredDetections[index];
 
         return Card(
