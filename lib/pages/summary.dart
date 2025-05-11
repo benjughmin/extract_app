@@ -9,12 +9,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import '/pages/base.dart';
 import '/pages/ewaste_map_screen.dart';
+import '/pages/feedback_service.dart';
 
 class ParameterDialog extends StatefulWidget {
   final String componentName;
-  final Map<String, dynamic> componentData; // Component data containing base price and parameters
-  final Map<String, dynamic> parameters; // Parameters for the component, used for dropdown options and value multipliers
-  final Function(double, Map<String, String>) onValueCalculated; // Callback function that returns the calculated value and selected parameters
+  final Map<String, dynamic>
+  componentData; // Component data containing base price and parameters
+  final Map<String, dynamic>
+  parameters; // Parameters for the component, used for dropdown options and value multipliers
+  final Function(double, Map<String, String>)
+  onValueCalculated; // Callback function that returns the calculated value and selected parameters
 
   const ParameterDialog({
     required this.componentName,
@@ -29,35 +33,53 @@ class ParameterDialog extends StatefulWidget {
 }
 
 class _ParameterDialogState extends State<ParameterDialog> {
-  final Map<String, String> _selectedValues = {}; // Store selected values for each parameter
-  double _currentValue = 0.0; // Stores latest calculated value based on parameters
+  final Map<String, String> _selectedValues =
+      {}; // Store selected values for each parameter
+  double _currentValue =
+      0.0; // Stores latest calculated value based on parameters
 
   void _calculateValue() {
     double basePrice = 0.0;
-    
+
     // For components with capacity parameter
     if (widget.parameters.containsKey('capacity')) {
       if (_selectedValues['capacity'] != null) {
         // Convert the capacity price to double, regardless of whether it's int or double
-        final capacityPriceRaw = widget.parameters['capacity']['base_prices']?[_selectedValues['capacity']] ?? 0.0;
-        final capacityPrice = capacityPriceRaw is int ? capacityPriceRaw.toDouble() : (capacityPriceRaw as double);
+        final capacityPriceRaw =
+            widget
+                .parameters['capacity']['base_prices']?[_selectedValues['capacity']] ??
+            0.0;
+        final capacityPrice =
+            capacityPriceRaw is int
+                ? capacityPriceRaw.toDouble()
+                : (capacityPriceRaw as double);
         print('💰 Capacity base price: $capacityPrice');
         basePrice = capacityPrice;
       }
     } else {
       // For components without capacity, use default_base_price
       final defaultPriceRaw = widget.componentData['default_base_price'] ?? 0.0;
-      basePrice = defaultPriceRaw is int ? defaultPriceRaw.toDouble() : (defaultPriceRaw as double);
+      basePrice =
+          defaultPriceRaw is int
+              ? defaultPriceRaw.toDouble()
+              : (defaultPriceRaw as double);
       print('💰 Default base price: $basePrice');
     }
 
     // Apply all parameter multipliers
     widget.parameters.forEach((paramName, paramData) {
-      if (paramData['multipliers'] != null && _selectedValues[paramName] != null) {
-        final multiplierRaw = paramData['multipliers'][_selectedValues[paramName]] ?? 1.0;
-        final multiplier = multiplierRaw is int ? multiplierRaw.toDouble() : (multiplierRaw as double);
-        basePrice *= multiplier;
-        print('🔢 Applied $paramName multiplier: $multiplier');
+      if (_selectedValues[paramName] != null) {
+        // Handle both 'multipliers' and 'multiplier' keys
+        final multipliers = paramData['multipliers'] ?? paramData['multiplier'];
+        if (multipliers != null) {
+          final multiplierRaw = multipliers[_selectedValues[paramName]] ?? 1.0;
+          final multiplier =
+              multiplierRaw is int
+                  ? multiplierRaw.toDouble()
+                  : (multiplierRaw as double);
+          basePrice *= multiplier;
+          print('🔢 Applied $paramName multiplier: $multiplier');
+        }
       }
     });
 
@@ -66,16 +88,17 @@ class _ParameterDialogState extends State<ParameterDialog> {
     setState(() {
       _currentValue = basePrice;
     });
-    widget.onValueCalculated(_currentValue, Map<String, String>.from(_selectedValues));
+    widget.onValueCalculated(
+      _currentValue,
+      Map<String, String>.from(_selectedValues),
+    );
   }
 
   // UI elements for popup dialog
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -106,7 +129,8 @@ class _ParameterDialogState extends State<ParameterDialog> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-                    labelText: paramName[0].toUpperCase() + paramName.substring(1),
+                    labelText:
+                        paramName[0].toUpperCase() + paramName.substring(1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -114,27 +138,31 @@ class _ParameterDialogState extends State<ParameterDialog> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Color(0xFF34A853)),
                     ),
-                    labelStyle: GoogleFonts.montserrat(
-                      color: Colors.grey[600],
-                    ),
+                    labelStyle: GoogleFonts.montserrat(color: Colors.grey[600]),
                   ),
                   value: _selectedValues[paramName],
                   style: GoogleFonts.montserrat(
                     color: Colors.black87, // Add text color for selected value
                   ),
                   dropdownColor: Colors.white,
-                  icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF34A853)),
-                  items: options.map((option) {
-                    return DropdownMenuItem(
-                      value: option.toString(),
-                      child: Text(
-                        option.toString(),
-                        style: GoogleFonts.montserrat(
-                          color: Colors.black87, // Add text color for dropdown items
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Color(0xFF34A853),
+                  ),
+                  items:
+                      options.map((option) {
+                        return DropdownMenuItem(
+                          value: option.toString(),
+                          child: Text(
+                            option.toString(),
+                            style: GoogleFonts.montserrat(
+                              color:
+                                  Colors
+                                      .black87, // Add text color for dropdown items
+                            ),
+                          ),
+                        );
+                      }).toList(),
                   onChanged: (value) {
                     if (value != null) {
                       setState(() {
@@ -173,12 +201,14 @@ class SummaryScreen extends StatefulWidget {
   final String deviceCategory;
   final List<String> extractedComponents;
   final Map<String, Map<String, String>> componentImages;
+  final String originalImagePath; // Add this line
 
   const SummaryScreen({
     super.key,
     required this.deviceCategory,
     required this.extractedComponents,
     required this.componentImages,
+    required this.originalImagePath, // Add this line
   });
 
   @override
@@ -214,23 +244,30 @@ class _SummaryScreenState extends State<SummaryScreen> {
   // Modified _loadComponentValues to handle both online and offline data
   Future<void> _loadComponentValues() async {
     try {
-      final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
+      final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(
+        ' ',
+        '_',
+      );
 
       // Try Firestore first if internet is available
       if (_hasInternet) {
         try {
           print('📡 Attempting to load from Firestore first...');
-          final doc = await FirebaseFirestore.instance
-              .collection('pricing')
-              .doc(normalizedCategory)
-              .get();
+          final doc =
+              await FirebaseFirestore.instance
+                  .collection('pricing')
+                  .doc(normalizedCategory)
+                  .get();
 
           if (doc.exists) {
-            final firestoreData = doc.data()?['component_values'] as Map<String, dynamic>?;
+            final firestoreData =
+                doc.data()?['component_values'] as Map<String, dynamic>?;
             if (firestoreData != null) {
               print('🔥 Firestore data loaded successfully');
               setState(() {
-                _componentValues = Map<String, Map<String, dynamic>>.from(firestoreData);
+                _componentValues = Map<String, Map<String, dynamic>>.from(
+                  firestoreData,
+                );
               });
 
               // Set up real-time listener for future updates
@@ -240,10 +277,15 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   .snapshots()
                   .listen((snapshot) {
                     if (snapshot.exists) {
-                      final updatedData = snapshot.data()?['component_values'] as Map<String, dynamic>?;
+                      final updatedData =
+                          snapshot.data()?['component_values']
+                              as Map<String, dynamic>?;
                       if (updatedData != null) {
                         setState(() {
-                          _componentValues = Map<String, Map<String, dynamic>>.from(updatedData);
+                          _componentValues =
+                              Map<String, Map<String, dynamic>>.from(
+                                updatedData,
+                              );
                         });
                       }
                     }
@@ -267,14 +309,13 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
       setState(() {
         _componentValues = Map<String, Map<String, dynamic>>.from(
-          jsonData['component_values'] as Map<String, dynamic>
+          jsonData['component_values'] as Map<String, dynamic>,
         );
       });
 
       print('📄 Local JSON loaded successfully');
       // Show parameter dialogs with JSON data
       _showParameterDialogs();
-
     } catch (e) {
       print('❌ Error loading component values: $e');
     }
@@ -288,30 +329,38 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   // Opens a ParameterDialog for each component with configurable parameters
   void _showParameterDialogs() async {
-    for (String component in _getUniqueComponents()) { // Loops through each unique component
+    for (String component in _getUniqueComponents()) {
+      // Loops through each unique component
       final componentKey = component.toLowerCase();
-      final componentData = _componentValues?[componentKey]; // Retrieves the component data from the loaded JSON
-      if (componentData != null && componentData['parameters'] != null) { // Proceed if parameters exist
+      final componentData =
+          _componentValues?[componentKey]; // Retrieves the component data from the loaded JSON
+      if (componentData != null && componentData['parameters'] != null) {
+        // Proceed if parameters exist
         // ignore: use_build_context_synchronously
         await showDialog(
           context: context,
-          barrierDismissible: false, // Prevents closing the dialog by tapping outside
-          builder: (context) => ParameterDialog(
-            componentName: _formatComponentName(component),
-            componentData: componentData,
-            parameters: componentData['parameters'], // Used to build the dropdowns
-            onValueCalculated: (newValue, selectedParams) {  // Add selectedParams parameter
-              setState(() {
-                if (_componentValues != null) {
-                  var componentMap = _componentValues![componentKey];
-                  if (componentMap != null) {
-                    componentMap['price'] = newValue;
-                    componentMap['selected_parameters'] = selectedParams;  // Save selected parameters
-                  }
-                }
-              });
-            },
-          ),
+          barrierDismissible:
+              false, // Prevents closing the dialog by tapping outside
+          builder:
+              (context) => ParameterDialog(
+                componentName: _formatComponentName(component),
+                componentData: componentData,
+                parameters:
+                    componentData['parameters'], // Used to build the dropdowns
+                onValueCalculated: (newValue, selectedParams) {
+                  // Add selectedParams parameter
+                  setState(() {
+                    if (_componentValues != null) {
+                      var componentMap = _componentValues![componentKey];
+                      if (componentMap != null) {
+                        componentMap['price'] = newValue;
+                        componentMap['selected_parameters'] =
+                            selectedParams; // Save selected parameters
+                      }
+                    }
+                  });
+                },
+              ),
         );
       }
     }
@@ -320,9 +369,13 @@ class _SummaryScreenState extends State<SummaryScreen> {
   // Get images for a specific component
   List<String> _getComponentImages(String component) {
     List<String> images = []; // Create an empty list to store image paths
-    for (var entry in widget.componentImages.entries) { // entry.key = source image path, entry.value = map of detected components
+    for (var entry in widget.componentImages.entries) {
+      // entry.key = source image path, entry.value = map of detected components
       for (var componentEntry in entry.value.entries) {
-        if (componentEntry.key.toLowerCase().startsWith(component.toLowerCase())) { // Checks if component entry matches target component
+        if (componentEntry.key.toLowerCase().startsWith(
+          component.toLowerCase(),
+        )) {
+          // Checks if component entry matches target component
           images.add(componentEntry.value);
         }
       }
@@ -360,16 +413,17 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       child: InteractiveViewer(
                         minScale: 0.5,
                         maxScale: 4.0,
-                        child: Image.file(
-                          File(imagePath),
-                          fit: BoxFit.contain,
-                        ),
+                        child: Image.file(File(imagePath), fit: BoxFit.contain),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -383,8 +437,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   // Counts how many times a component appears
   Map<String, int> _getComponentCounts() {
-    Map<String, int> counts = {}; // Creates a list that stores the number of times a component appears
-    for (String component in widget.extractedComponents) { // Loops through each component in the list
+    Map<String, int> counts =
+        {}; // Creates a list that stores the number of times a component appears
+    for (String component in widget.extractedComponents) {
+      // Loops through each component in the list
       // Get base component name by:
       // 1. Splitting on underscore (e.g., "ram_1" becomes ["ram", "1"])
       // 2. Taking first part [0]
@@ -408,7 +464,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   Widget _buildEWasteDisposalSection() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      margin: const EdgeInsets.only(bottom: 1),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -427,20 +483,18 @@ class _SummaryScreenState extends State<SummaryScreen> {
         ),
         title: Text(
           'E-Waste Disposal Locations',
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
-          ),
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           'Not looking to sell? Find certified e-waste recycling centers near you for safe disposal.',
-          style: GoogleFonts.montserrat(
-            color: Colors.grey[600],
-          ),
+          style: GoogleFonts.montserrat(color: Colors.grey[600]),
         ),
         trailing: const Icon(Icons.chevron_right),
         onTap: () async {
           try {
-            final jsonString = await rootBundle.loadString('assets/e_waste_locations.json');
+            final jsonString = await rootBundle.loadString(
+              'assets/e_waste_locations.json',
+            );
             final jsonData = json.decode(jsonString);
             final locations = jsonData['e_waste_locations'] as List<dynamic>;
 
@@ -458,6 +512,155 @@ class _SummaryScreenState extends State<SummaryScreen> {
     );
   }
 
+  Widget _buildFeedbackButton() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF34A853),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: _showFeedbackDialog,
+        icon: const Icon(Icons.upload_rounded, color: Colors.white),
+        label: Text(
+          'Share Detection Results',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // User feedback dialog
+  void _showFeedbackDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Help Improve Detection',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Share your device images to help improve our detection model:',
+                  style: GoogleFonts.montserrat(),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Preview of original image
+              Container(
+                height: 150,
+                width: 150,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    File(widget.originalImagePath),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ButtonBar(
+                alignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.montserrat(color: Colors.grey),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF34A853),
+                    ),
+                    onPressed: () {
+                      _uploadDetectionFeedback();
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Share Images',
+                      style: GoogleFonts.montserrat(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _uploadDetectionFeedback() async {
+    try {
+      final feedbackService = FeedbackService();
+      await feedbackService.uploadDetectionImage(
+        imagePath: widget.originalImagePath,
+        detectionData: {
+          'deviceCategory': widget.deviceCategory,
+          'detectedComponents': widget.extractedComponents,
+          'componentImages': widget.componentImages,
+        },
+        deviceCategory: widget.deviceCategory,
+      );
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Thank you for helping improve our detection!',
+              style: GoogleFonts.montserrat(),
+            ),
+            backgroundColor: const Color(0xFF34A853),
+          ),
+        );
+      }
+    } catch (e) {
+      print('❌ Error uploading feedback: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to upload images. Please try again.',
+              style: GoogleFonts.montserrat(),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   // UI stuff
   @override
   Widget build(BuildContext context) {
@@ -469,8 +672,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
     for (String component in uniqueComponents) {
       final values = _componentValues?[component.toLowerCase()];
       if (values != null) {
-        totalValue += ((values['price'] ?? 0.0) as double) * 
-                     (componentCounts[component] ?? 1);
+        final price = values['price'];
+        double safePrice = 0.0;
+        if (price != null) {
+          if (price is int) {
+            safePrice = price.toDouble();
+          } else if (price is double) {
+            safePrice = price;
+          }
+        }
+        totalValue += safePrice * (componentCounts[component] ?? 1);
       }
     }
 
@@ -550,10 +761,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
             // Add the e-waste disposal section here
             _buildEWasteDisposalSection(),
 
+            // Add the feedback button here
+            _buildFeedbackButton(),
+
             // Components List
             ...uniqueComponents.map((component) {
-              final values = _componentValues?[component.toLowerCase()] ?? 
-                          {'price': 0.0, 'notes': 'No data available'};
+              final values =
+                  _componentValues?[component.toLowerCase()] ??
+                  {'price': 0.0, 'notes': 'No data available'};
               final count = componentCounts[component] ?? 1;
 
               return Container(
@@ -579,18 +794,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   ),
                   title: Text(
                     _formatComponentName(component),
-                    style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        values['selected_parameters'] != null 
-                            ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}'  // Show price if configured
-                            : '⋯',  // Show ellipsis if not configured
+                        values['selected_parameters'] != null
+                            ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}' // Show price if configured
+                            : '⋯', // Show ellipsis if not configured
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -598,7 +811,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         ),
                       ),
                       Text(
-                        values['selected_parameters'] != null 
+                        values['selected_parameters'] != null
                             ? 'per piece (×$count)'
                             : 'Not configured',
                         style: GoogleFonts.montserrat(
@@ -620,21 +833,33 @@ class _SummaryScreenState extends State<SummaryScreen> {
                               height: 120,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _getComponentImages(component).length,
+                                itemCount:
+                                    _getComponentImages(component).length,
                                 itemBuilder: (context, index) {
-                                  String imagePath = _getComponentImages(component)[index];
+                                  String imagePath =
+                                      _getComponentImages(component)[index];
                                   return Padding(
                                     padding: EdgeInsets.only(right: 8),
                                     child: GestureDetector(
-                                      onTap: () => _showImageOverlay(context, imagePath),
+                                      onTap:
+                                          () => _showImageOverlay(
+                                            context,
+                                            imagePath,
+                                          ),
                                       child: Container(
                                         width: 120,
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey.shade300),
-                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                           child: Image.file(
                                             File(imagePath),
                                             fit: BoxFit.cover,
@@ -672,12 +897,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
                             if (values['selected_parameters'] != null) ...[
                               ...values['parameters'].entries.map((entry) {
                                 final paramName = entry.key;
-                                final selectedValue = (values['selected_parameters'] as Map<String, String>)[paramName] ?? 'Not configured';
-                                
+                                final selectedValue =
+                                    (values['selected_parameters']
+                                        as Map<String, String>)[paramName] ??
+                                    'Not configured';
+
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 4),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         _formatParameterName(paramName),
@@ -714,22 +943,32 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                   showDialog(
                                     context: context,
                                     barrierDismissible: false,
-                                    builder: (context) => ParameterDialog(
-                                      componentName: _formatComponentName(component),
-                                      componentData: values,
-                                      parameters: values['parameters'],
-                                      onValueCalculated: (newValue, selectedParams) {
-                                        setState(() {
-                                          if (_componentValues != null) {
-                                            var componentMap = _componentValues![component.toLowerCase()];
-                                            if (componentMap != null) {
-                                              componentMap['price'] = newValue;
-                                              componentMap['selected_parameters'] = selectedParams;
-                                            }
-                                          }
-                                        });
-                                      },
-                                    ),
+                                    builder:
+                                        (context) => ParameterDialog(
+                                          componentName: _formatComponentName(
+                                            component,
+                                          ),
+                                          componentData: values,
+                                          parameters: values['parameters'],
+                                          onValueCalculated: (
+                                            newValue,
+                                            selectedParams,
+                                          ) {
+                                            setState(() {
+                                              if (_componentValues != null) {
+                                                var componentMap =
+                                                    _componentValues![component
+                                                        .toLowerCase()];
+                                                if (componentMap != null) {
+                                                  componentMap['price'] =
+                                                      newValue;
+                                                  componentMap['selected_parameters'] =
+                                                      selectedParams;
+                                                }
+                                              }
+                                            });
+                                          },
+                                        ),
                                   );
                                 },
                                 icon: const Icon(
@@ -738,7 +977,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                   size: 20,
                                 ),
                                 label: Text(
-                                  values['selected_parameters'] != null ? 'Edit Parameters' : 'Configure Parameters',
+                                  values['selected_parameters'] != null
+                                      ? 'Edit Parameters'
+                                      : 'Configure Parameters',
                                   style: GoogleFonts.montserrat(
                                     color: const Color(0xFF34A853),
                                     fontWeight: FontWeight.w500,
