@@ -717,8 +717,8 @@
       }
     },
     "fan": {
-      "base_price": 150.00,
-      "notes": "Working laptop fans can be reused in other devices within custom cooling setups",
+      "default_base_price": 150.00,
+      "notes": "Working laptop fans can be reused in other devices within custom cooling setups.",
       "parameters": {
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
@@ -742,7 +742,7 @@
       }
     },
     "wifi-card": {
-      "base_price": 300.00,
+      "default_base_price": 300.00,
       "notes": "Similar to SSDs, Wi-Fi cards can be reused in other devices or even as part of custom builds due to their great compatibility.",
       "parameters": {
         "brand": {
@@ -778,7 +778,7 @@
       }
     },
     "keyboard": {
-      "base_price": 200.00,
+      "default_base_price": 200.00,
       "notes": "Keyboards can also be reused in DIY projects, especially those involving input systems.",
       "parameters": {
         "age": {

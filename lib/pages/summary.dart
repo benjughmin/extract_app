@@ -214,94 +214,69 @@ class _SummaryScreenState extends State<SummaryScreen> {
   // Modified _loadComponentValues to handle both online and offline data
   Future<void> _loadComponentValues() async {
     try {
-      // Load local JSON data first
       final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
+
+      // Try Firestore first if internet is available
+      if (_hasInternet) {
+        try {
+          print('📡 Attempting to load from Firestore first...');
+          final doc = await FirebaseFirestore.instance
+              .collection('pricing')
+              .doc(normalizedCategory)
+              .get();
+
+          if (doc.exists) {
+            final firestoreData = doc.data()?['component_values'] as Map<String, dynamic>?;
+            if (firestoreData != null) {
+              print('🔥 Firestore data loaded successfully');
+              setState(() {
+                _componentValues = Map<String, Map<String, dynamic>>.from(firestoreData);
+              });
+
+              // Set up real-time listener for future updates
+              _firestoreSubscription = FirebaseFirestore.instance
+                  .collection('pricing')
+                  .doc(normalizedCategory)
+                  .snapshots()
+                  .listen((snapshot) {
+                    if (snapshot.exists) {
+                      final updatedData = snapshot.data()?['component_values'] as Map<String, dynamic>?;
+                      if (updatedData != null) {
+                        setState(() {
+                          _componentValues = Map<String, Map<String, dynamic>>.from(updatedData);
+                        });
+                      }
+                    }
+                  });
+
+              // Show parameter dialogs with Firestore data
+              _showParameterDialogs();
+              return; // Exit if Firestore load was successful
+            }
+          }
+        } catch (e) {
+          print('❌ Firestore load failed: $e');
+        }
+      }
+
+      // Fallback to local JSON if Firestore failed or no internet
+      print('📱 Falling back to local JSON...');
       final jsonPath = 'assets/${normalizedCategory}_instructions.json';
       final String jsonString = await rootBundle.loadString(jsonPath);
       final Map<String, dynamic> jsonData = json.decode(jsonString);
 
-      print('📱 Local JSON Data loaded: ${jsonData['component_values']['ram']?['default_base_price']}');
-
-      // Initialize with local data
       setState(() {
         _componentValues = Map<String, Map<String, dynamic>>.from(
           jsonData['component_values'] as Map<String, dynamic>
         );
-
-        // Set default price value
-        _componentValues?.forEach((key, value) {
-          value['price'] = value['base_price'] ??
-                           value['default_base_price'] ??
-                           0.0;
-        });
       });
 
-      print('💾 Initial Component Values: ${_componentValues?['ram']?['default_base_price']}');
-
-      // If internet is available, set up real-time listener
-      if (_hasInternet) {
-        _firestoreSubscription = FirebaseFirestore.instance
-            .collection('pricing')
-            .doc(normalizedCategory)
-            .snapshots()
-            .listen((doc) {
-          if (doc.exists) {
-            final firestoreData = doc.data()?['component_values'] as Map<String, dynamic>?;
-            if (firestoreData != null) {
-              print('🔥 Firestore RAM Data: ${firestoreData['ram']}');
-              
-              setState(() {
-                firestoreData.forEach((component, values) {
-                  print('🔄 Updating component: $component');
-                  final localComponent = _componentValues?[component];
-                  if (localComponent != null && values is Map<String, dynamic>) {
-                    // Update base price
-                    if (values['default_base_price'] != null) {
-                      localComponent['default_base_price'] = values['default_base_price'];
-                      print('💰 Updated base price for $component: ${values['default_base_price']}');
-                    }
-
-                    // Update notes - Add this part
-                    if (values['notes'] != null) {
-                      localComponent['notes'] = values['notes'];
-                      print('📝 Updated notes for $component: ${values['notes']}');
-                    }
-
-                    // Handle parameters
-                    final firestoreParams = values['parameters'] as Map<String, dynamic>?;
-                    final localParams = localComponent['parameters'] as Map<String, dynamic>?;
-
-                    if (firestoreParams != null && localParams != null) {
-                      firestoreParams.forEach((paramName, paramData) {
-                        print('🔧 Updating parameter: $paramName');
-                        final localParam = localParams[paramName];
-                        if (localParam != null && paramData is Map<String, dynamic>) {
-                          if (paramData['multipliers'] != null) {
-                            localParam['multipliers'] = paramData['multipliers'];
-                          }
-                          if (paramData['base_prices'] != null) {
-                            localParam['base_prices'] = paramData['base_prices'];
-                          }
-                        }
-                      });
-                    }
-                  }
-                });
-              });
-              
-              print('✅ Final Component Values: ${_componentValues?['ram']?['default_base_price']}');
-            }
-          }
-        });
-      } else {
-        print('📡 No internet connection, using local data only');
-      }
-
-      // Always show parameter dialogs at the end
+      print('📄 Local JSON loaded successfully');
+      // Show parameter dialogs with JSON data
       _showParameterDialogs();
 
     } catch (e) {
-      print('❌ Error loading local data: $e');
+      print('❌ Error loading component values: $e');
     }
   }
 
@@ -457,7 +432,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           ),
         ),
         subtitle: Text(
-          'Find certified e-waste recycling centers near you',
+          'Not looking to sell? Find certified e-waste recycling centers near you for safe disposal.',
           style: GoogleFonts.montserrat(
             color: Colors.grey[600],
           ),
