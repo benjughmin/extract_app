@@ -1,111 +1,239 @@
 {
-    "component_labels": {
-        "Battery": "battery",
-        "Camera": "camera"
-    },
+  "component_labels": {
+    "Battery": "battery",
+    "Camera": "camera",
+    "Charging Port": "charging_port",
+    "Speaker": "speaker",
+    "Vibrator/Haptic Engine": "vibrator",
+    "Logic Board": "logic_board"
+  },
 
-    "issue_component_mapping": {
-        "Battery issue": ["battery"],
-        "Camera issue/damage": ["camera"]
-    },
+  "issue_component_mapping": {
+    "Battery issues": ["battery"],
+    "Camera issues": ["camera"],
+    "Charging problems": ["charging_port", "battery"],
+    "Audio issues": ["speaker"],
+    "Vibration failure": ["vibrator"],
+    "Device not powering on": ["logic_board", "battery"]
+  },
 
-    "component_values": {
-        "battery": {
-            "price": 10.00,
-            "notes": "Ensure the battery is not swollen or damaged before extraction"
+  "component_values": {
+    "battery": {
+      "default_base_price": 800.00,
+      "notes": "Smartphone batteries can be reused in DIY projects if they still hold a charge. Ensure proper storage to prevent swelling.",
+      "parameters": {
+        "brand": {
+          "options": ["Samsung", "Apple", "LG", "Sony", "OEM", "Other"],
+          "multipliers": {
+            "Samsung": 1.2,
+            "Apple": 1.3,
+            "LG": 1.0,
+            "Sony": 1.1,
+            "OEM": 0.9,
+            "Other": 0.8
+          }
         },
-        "camera": {
-            "price": 8.00,
-            "notes": "Higher value for newer models or undamaged lenses"
+        "capacity": {
+          "options": ["<2000mAh", "2000-3000mAh", "3001-4000mAh", ">4000mAh"],
+          "base_prices": {
+            "<2000mAh": 200.00,
+            "2000-3000mAh": 400.00,
+            "3001-4000mAh": 600.00,
+            ">4000mAh": 800.00
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.5,
+            "Poor": 0.2
+          }
         }
+      }
     },
-
-    "nodes": [
-        {
-            "id": "start",
-            "text": "What is the cause of disposal?",
-            "options": [
-                { "label": "Battery issue", "next": "battery_issue" },
-                { "label": "Camera issue/damage", "next": "camera_issue" }
-            ]
+    "camera": {
+      "default_base_price": 500.00,
+      "notes": "Higher value for newer models or undamaged lenses. Camera modules can be repurposed for DIY projects.",
+      "parameters": {
+        "type": {
+          "options": ["Single", "Dual", "Triple", "Quad"],
+          "multipliers": {
+            "Single": 1.0,
+            "Dual": 1.3,
+            "Triple": 1.6,
+            "Quad": 2.0
+          }
         },
-        {
-            "id": "battery_issue",
-            "text": "This may be caused by an issue with the battery. Would you like to extract this part?",
-            "options": [
-                { "label": "Yes", "next": "extract_battery" },
-                { "label": "No", "next": "component_extraction" }
-            ]
-        },
-        {
-            "id": "extract_battery",
-            "steps": [
-                {
-                    "order": 1,
-                    "action": "Power off the smartphone and remove the back cover.",
-                    "image": "assets/img_assistance/battery_cover.png"
-                },
-                {
-                    "order": 2,
-                    "action": "Locate the battery and disconnect the battery connector.",
-                    "image": "assets/img_assistance/battery_connector.png"
-                },
-                {
-                    "order": 3,
-                    "action": "Carefully pry the battery out using a plastic tool.",
-                    "image": "assets/img_assistance/battery_pry.png"
-                }
-            ],
-            "options": [
-                { "label": "Component Extraction", "next": "component_extraction" },
-                { "label": "End", "next": "end" }
-            ]
-        },
-        {
-            "id": "camera_issue",
-            "text": "This may be caused by a damaged camera. Would you like to extract this part?",
-            "options": [
-                { "label": "Yes", "next": "extract_camera" },
-                { "label": "No", "next": "component_extraction" }
-            ]
-        },
-        {
-            "id": "extract_camera",
-            "steps": [
-                {
-                    "order": 1,
-                    "action": "Power off the smartphone and remove the back cover.",
-                    "image": "assets/img_assistance/camera_cover.png"
-                },
-                {
-                    "order": 2,
-                    "action": "Locate the camera module on the motherboard.",
-                    "image": "assets/img_assistance/camera_module.png"
-                },
-                {
-                    "order": 3,
-                    "action": "Disconnect the camera connector and carefully remove the module.",
-                    "image": "assets/img_assistance/camera_connector.png"
-                }
-            ],
-            "options": [
-                { "label": "Component Extraction", "next": "component_extraction" },
-                { "label": "End", "next": "end" }
-            ]
-        },
-        {
-            "id": "component_extraction",
-            "text": "What would you like to extract?",
-            "options": [
-                { "label": "Battery", "next": "extract_battery" },
-                { "label": "Camera", "next": "extract_camera" },
-                { "label": "Back", "next": "start" },
-                { "label": "End", "next": "end" }
-            ]
-        },
-        {
-            "id": "end",
-            "text": "All selected components have been processed."
+        "resolution": {
+          "options": ["<8MP", "8-12MP", "12-20MP", ">20MP"],
+          "base_prices": {
+            "<8MP": 200.00,
+            "8-12MP": 400.00,
+            "12-20MP": 600.00,
+            ">20MP": 800.00
+          }
         }
+      }
+    },
+    "charging_port": {
+      "default_base_price": 300.00,
+      "notes": "USB-C ports have higher reuse value than older micro-USB ports.",
+      "parameters": {
+        "type": {
+          "options": ["USB-C", "Lightning", "Micro-USB", "Other"],
+          "multipliers": {
+            "USB-C": 1.2,
+            "Lightning": 1.3,
+            "Micro-USB": 0.8,
+            "Other": 0.5
+          }
+        }
+      }
+    },
+    "speaker": {
+      "default_base_price": 200.00,
+      "notes": "Stereo speakers or those from premium devices have higher value.",
+      "parameters": {
+        "type": {
+          "options": ["Bottom-firing", "Stereo", "Front-firing", "Other"],
+          "multipliers": {
+            "Bottom-firing": 1.0,
+            "Stereo": 1.3,
+            "Front-firing": 1.2,
+            "Other": 0.8
+          }
+        }
+      }
+    },
+    "vibrator": {
+      "default_base_price": 150.00,
+      "notes": "Linear vibration motors have higher precision and value.",
+      "parameters": {
+        "type": {
+          "options": ["Eccentric Rotating Mass", "Linear Resonant Actuator"],
+          "multipliers": {
+            "Eccentric Rotating Mass": 1.0,
+            "Linear Resonant Actuator": 1.4
+          }
+        }
+      }
+    },
+    "logic_board": {
+      "default_base_price": 2000.00,
+      "notes": "Value depends heavily on processor generation and physical condition.",
+      "parameters": {
+        "condition": {
+          "options": ["No visible damage", "Minor corrosion", "Bent components", "Liquid damage"],
+          "multipliers": {
+            "No visible damage": 1.0,
+            "Minor corrosion": 0.5,
+            "Bent components": 0.3,
+            "Liquid damage": 0.1
+          }
+        }
+      }
+    }
+  },
+
+  "nodes": [
+    {
+      "id": "start",
+      "text": "What is the cause of disposal?",
+      "options": [
+        { "label": "Battery issues", "next": "battery_issue" },
+        { "label": "Camera issues", "next": "camera_issue" },
+        { "label": "Charging problems", "next": "charging_issue" },
+        { "label": "Audio issues", "next": "audio_issue" },
+        { "label": "Vibration failure", "next": "vibration_issue" },
+        { "label": "Device not powering on", "next": "power_issue" }
+      ]
+    },
+    {
+      "id": "battery_issue",
+      "text": "Battery issues may include swelling, rapid discharge, or failure to charge. Would you like to extract this component?",
+      "options": [
+        { "label": "Extract battery", "next": "extract_battery" },
+        { "label": "Battery disposal info", "next": "dispose_battery" },
+        { "label": "Back", "next": "start" }
+      ]
+    },
+    {
+      "id": "extract_battery",
+      "steps": [
+        {
+          "order": 1,
+          "action": "Power off device completely. If unresponsive, let battery drain fully."
+        },
+        {
+          "order": 2,
+          "action": "Warm edges with heat gun (60-70°C) for 1-2 minutes if device is sealed."
+        },
+        {
+          "order": 3,
+          "action": "Insert plastic tool between back cover and frame to release adhesive."
+        },
+        {
+          "order": 4,
+          "action": "Disconnect battery connector using plastic tweezers."
+        },
+        {
+          "order": 5,
+          "action": "Use isopropyl alcohol to weaken adhesive before lifting battery out."
+        }
+      ],
+      "options": [
+        { "label": "Component menu", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_battery",
+      "steps": [
+        { "order": 1, "action": "Place in fire-proof container immediately" },
+        { "order": 2, "action": "Cover terminals with electrical tape" },
+        { "order": 3, "action": "Store away from flammable materials" },
+        { "order": 4, "action": "Take to certified e-waste center" }
+      ],
+      "options": [
+        { "label": "Back", "next": "battery_issue" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "component_extraction",
+      "text": "Select component to extract:",
+      "options": [
+        { "label": "Battery", "next": "extract_battery" },
+        { "label": "Camera", "next": "extract_camera" },
+        { "label": "Charging Port", "next": "extract_charging_port" },
+        { "label": "Speaker", "next": "extract_speaker" },
+        { "label": "Vibrator", "next": "extract_vibrator" },
+        { "label": "Logic Board", "next": "extract_logic_board" },
+        { "label": "Back", "next": "start" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "end",
+      "text": "Processing complete. Remember to:\n1. Store components properly\n2. Recycle through certified channels\n3. Wipe any personal data"
+    }
+  ],
+
+  "guidelines": {
+    "safety": [
+      "Power off device before disassembly",
+      "Use anti-static wrist strap",
+      "Handle batteries with extreme care",
+      "Work in well-ventilated area"
+    ],
+    "tools": [
+      "Precision screwdriver set",
+      "Plastic spudgers",
+      "Anti-static tweezers",
+      "Isopropyl alcohol (90%+)",
+      "Heat gun/hairdryer"
     ]
+  }
 }

@@ -4,6 +4,163 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import '/pages/base.dart';
+import '/pages/ewaste_map_screen.dart';
+
+// Parameter Dialog remains unchanged
+class ParameterDialog extends StatefulWidget {
+  final String componentName;
+  final Map<String, dynamic> componentData;
+  final Map<String, dynamic> parameters;
+  final Function(double, Map<String, String>) onValueCalculated;
+
+  const ParameterDialog({
+    required this.componentName,
+    required this.componentData,
+    required this.parameters,
+    required this.onValueCalculated,
+    super.key,
+  });
+
+  @override
+  State<ParameterDialog> createState() => _ParameterDialogState();
+}
+
+class _ParameterDialogState extends State<ParameterDialog> {
+  final Map<String, String> _selectedValues = {};
+  double _currentValue = 0.0;
+
+  void _calculateValue() {
+    double basePrice = 0.0;
+    
+    if (widget.parameters.containsKey('capacity')) {
+      if (_selectedValues['capacity'] != null) {
+        final capacityPriceRaw = widget.parameters['capacity']['base_prices']?[_selectedValues['capacity']] ?? 0.0;
+        final capacityPrice = capacityPriceRaw is int ? capacityPriceRaw.toDouble() : (capacityPriceRaw as double);
+        print('💰 Capacity base price: $capacityPrice');
+        basePrice = capacityPrice;
+      }
+    } else {
+      final defaultPriceRaw = widget.componentData['default_base_price'] ?? 0.0;
+      basePrice = defaultPriceRaw is int ? defaultPriceRaw.toDouble() : (defaultPriceRaw as double);
+      print('💰 Default base price: $basePrice');
+    }
+
+    widget.parameters.forEach((paramName, paramData) {
+      if (paramData['multipliers'] != null && _selectedValues[paramName] != null) {
+        final multiplierRaw = paramData['multipliers'][_selectedValues[paramName]] ?? 1.0;
+        final multiplier = multiplierRaw is int ? multiplierRaw.toDouble() : (multiplierRaw as double);
+        basePrice *= multiplier;
+        print('🔢 Applied $paramName multiplier: $multiplier');
+      }
+    });
+
+    print('💵 Final calculated value: $basePrice');
+
+    setState(() {
+      _currentValue = basePrice;
+    });
+    widget.onValueCalculated(_currentValue, Map<String, String>.from(_selectedValues));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Dialog UI remains unchanged
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Value Parameters - ${widget.componentName}',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Estimated Value: ₱${_currentValue.toStringAsFixed(2)}',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                color: const Color(0xFF34A853),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...widget.parameters.entries.map((entry) {
+              final paramName = entry.key;
+              final options = entry.value['options'] as List<dynamic>;
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: paramName[0].toUpperCase() + paramName.substring(1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Color(0xFF34A853)),
+                    ),
+                    labelStyle: GoogleFonts.montserrat(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  value: _selectedValues[paramName],
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black87,
+                  ),
+                  dropdownColor: Colors.white,
+                  icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF34A853)),
+                  items: options.map((option) {
+                    return DropdownMenuItem(
+                      value: option.toString(),
+                      child: Text(
+                        option.toString(),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.black87,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        _selectedValues[paramName] = value;
+                        _calculateValue();
+                      });
+                    }
+                  },
+                ),
+              );
+            }).toList(),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Done',
+                    style: GoogleFonts.montserrat(
+                      color: const Color(0xFF34A853),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class SummaryScreen extends StatefulWidget {
   final String deviceCategory;
@@ -23,39 +180,168 @@ class SummaryScreen extends StatefulWidget {
 
 class _SummaryScreenState extends State<SummaryScreen> {
   Map<String, Map<String, dynamic>>? _componentValues;
+  bool _isLoading = true;
+  StreamSubscription<DocumentSnapshot>? _firestoreSubscription;
 
   @override
   void initState() {
     super.initState();
+    // Enable Firestore offline persistence if not already enabled
+    _enableOfflinePersistence();
     _loadComponentValues();
   }
 
-  Future<void> _loadComponentValues() async {
+  // Setup offline persistence
+  Future<void> _enableOfflinePersistence() async {
     try {
-      // Normalize category name for file lookup
-      // Make sure that your json file has a component_values node!
-      final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
-      final jsonPath = 'assets/${normalizedCategory}_instructions.json'; // Dynamic JSON loading based on e-waste category
-      
-      final String jsonString = await rootBundle.loadString(jsonPath); // Read JSON file contents
-      final Map<String, dynamic> jsonData = json.decode(jsonString); // json.decode converts JSON string into Dart objects
-      
-      setState(() { // Updates state w/ loaded component values
-        _componentValues = Map<String, Map<String, dynamic>>.from(
-          jsonData['component_values'] as Map<String, dynamic> // Casts JSON data to a Map<String, dynamic>
-        );
-      });
+      // This only needs to be set once in the app, typically in main.dart
+      // but we add it here for completeness since we're focusing on summary.dart
+      FirebaseFirestore.instance.settings = Settings(
+        persistenceEnabled: true,
+        cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+      );
+      print('✅ Firestore offline persistence enabled');
     } catch (e) {
-      print('Error loading component values for ${widget.deviceCategory}: $e');
+      print('⚠️ Firestore settings may have already been set: $e');
+      // This is fine, as settings can only be set once
+    }
+  }
+
+  Future<void> _loadComponentValues() async {
+    final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
+    
+    try {
+      // Try to get data from Firestore (works offline if cached)
+      final docRef = FirebaseFirestore.instance
+          .collection('pricing')
+          .doc(normalizedCategory);
+          
+      final docSnapshot = await docRef.get();
+      
+      if (docSnapshot.exists) {
+        // If document exists in Firestore (or offline cache), use it
+        final firestoreData = docSnapshot.data();
+        
+        if (firestoreData != null && firestoreData['component_values'] != null) {
+          setState(() {
+            _componentValues = Map<String, Map<String, dynamic>>.from(
+              firestoreData['component_values'] as Map<String, dynamic>
+            );
+            _isLoading = false;
+          });
+          
+          print('🔥 Loaded component values from Firestore: ${_componentValues?.length} components');
+        } else {
+          setState(() {
+            _isLoading = false;
+            _componentValues = {};
+          });
+          print('⚠️ No component values data found in Firestore document');
+        }
+      } else {
+        // Document doesn't exist in Firestore
+        setState(() {
+          _isLoading = false;
+          _componentValues = {};
+        });
+        print('⚠️ No document found in Firestore for category: $normalizedCategory');
+      }
+      
+      // Set up real-time listener for updates
+      _firestoreSubscription = docRef.snapshots().listen((doc) {
+        if (doc.exists) {
+          final firestoreData = doc.data();
+          if (firestoreData != null && firestoreData['component_values'] != null) {
+            setState(() {
+              _componentValues = Map<String, Map<String, dynamic>>.from(
+                firestoreData['component_values'] as Map<String, dynamic>
+              );
+            });
+            print('🔄 Updated component values from Firestore');
+          }
+        }
+      }, onError: (e) {
+        print('❌ Error listening to Firestore updates: $e');
+      });
+      
+      // Once data is loaded, show parameter dialogs
+      _showParameterDialogs();
+      
+    } catch (e) {
+      print('❌ Error loading from Firestore: $e');
+      setState(() {
+        _isLoading = false;
+        _componentValues = {};
+      });
+    }
+  }
+
+  
+  // Save JSON data to Firestore for future offline access
+  Future<void> _saveToFirestore(String category, Map<String, dynamic> data) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('pricing')
+          .doc(category)
+          .set({
+            'component_values': data,
+            'last_updated': FieldValue.serverTimestamp(),
+          });
+      print('💾 Saved local data to Firestore for future offline access');
+    } catch (e) {
+      print('❌ Error saving to Firestore: $e');
+      // This is fine, we already have the data locally
+    }
+  }
+
+  @override
+  void dispose() {
+    _firestoreSubscription?.cancel();
+    super.dispose();
+  }
+
+  // Opens a ParameterDialog for each component with configurable parameters
+  void _showParameterDialogs() async {
+    if (_componentValues == null || _isLoading) {
+      print('⏳ Waiting for component values to load before showing dialogs');
+      return;
+    }
+    
+    for (String component in _getUniqueComponents()) {
+      final componentKey = component.toLowerCase();
+      final componentData = _componentValues?[componentKey];
+      if (componentData != null && componentData['parameters'] != null) {
+        // ignore: use_build_context_synchronously
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => ParameterDialog(
+            componentName: _formatComponentName(component),
+            componentData: componentData,
+            parameters: componentData['parameters'],
+            onValueCalculated: (newValue, selectedParams) {
+              setState(() {
+                if (_componentValues != null) {
+                  var componentMap = _componentValues![componentKey];
+                  if (componentMap != null) {
+                    componentMap['price'] = newValue;
+                    componentMap['selected_parameters'] = selectedParams;
+                  }
+                }
+              });
+            },
+          ),
+        );
+      }
     }
   }
 
   // Get images for a specific component
   List<String> _getComponentImages(String component) {
-    List<String> images = []; // Create an empty list to store image paths
-    for (var entry in widget.componentImages.entries) { // entry.key = source image path, entry.value = map of detected components
+    List<String> images = [];
+    for (var entry in widget.componentImages.entries) {
       for (var componentEntry in entry.value.entries) {
-        if (componentEntry.key.toLowerCase().startsWith(component.toLowerCase())) { // Checks if component entry matches target component
+        if (componentEntry.key.toLowerCase().startsWith(component.toLowerCase())) {
           images.add(componentEntry.value);
         }
       }
@@ -64,6 +350,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   void _showImageOverlay(BuildContext context, String imagePath) {
+    // Image overlay implementation remains unchanged
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -116,16 +403,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   // Counts how many times a component appears
   Map<String, int> _getComponentCounts() {
-    Map<String, int> counts = {}; // Creates a list that stores the number of times a component appears
-    for (String component in widget.extractedComponents) { // Loops through each component in the list
-      // Get base component name by:
-      // 1. Splitting on underscore (e.g., "ram_1" becomes ["ram", "1"])
-      // 2. Taking first part [0]
-      // 3. Converting to lowercase for consistent comparison
+    Map<String, int> counts = {};
+    for (String component in widget.extractedComponents) {
       String baseComponent = component.split('_')[0].toLowerCase();
-      // Increment count for this component
-      // ?? 0 provides default value of 0 if component doesn't exist in map yet
-      // Then add 1 to current/default count
       counts[baseComponent] = (counts[baseComponent] ?? 0) + 1;
     }
     return counts;
@@ -139,9 +419,90 @@ class _SummaryScreenState extends State<SummaryScreen> {
         .toList();
   }
 
+  Widget _buildEWasteDisposalSection() {
+    // E-waste disposal section remains unchanged
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: const CircleAvatar(
+          backgroundColor: Color(0xFF34A853),
+          child: Icon(Icons.map, color: Colors.white),
+        ),
+        title: Text(
+          'E-Waste Disposal Locations',
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          'Find certified e-waste recycling centers near you',
+          style: GoogleFonts.montserrat(
+            color: Colors.grey[600],
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () async {
+          try {
+            final jsonString = await rootBundle.loadString('assets/e_waste_locations.json');
+            final jsonData = json.decode(jsonString);
+            final locations = jsonData['e_waste_locations'] as List<dynamic>;
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EWasteMapScreen(locations: locations),
+              ),
+            );
+          } catch (e) {
+            print('Error loading e-waste locations: $e');
+          }
+        },
+      ),
+    );
+  }
+
+  // UI for loading state
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF34A853)),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Loading component data...',
+            style: GoogleFonts.montserrat(
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // UI stuff
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Base(
+        title: 'Extraction Summary',
+        child: _buildLoadingState(),
+      );
+    }
+
     final componentCounts = _getComponentCounts();
     final uniqueComponents = _getUniqueComponents();
     
@@ -265,7 +626,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '\₱${values['price'].toStringAsFixed(2)}',
+                        values['selected_parameters'] != null 
+                            ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}'
+                            : '⋯',
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -282,6 +645,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     ],
                   ),
                   children: [
+                    // Component details remain unchanged
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -328,6 +692,98 @@ class _SummaryScreenState extends State<SummaryScreen> {
                               color: Colors.grey[600],
                             ),
                           ),
+                          // Component Parameters
+                          if (values['parameters'] != null) ...[
+                            const SizedBox(height: 16),
+                            const Divider(),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Configuration',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            // Show parameters if they exist and have been configured
+                            if (values['selected_parameters'] != null) ...[
+                              ...values['parameters'].entries.map((entry) {
+                                final paramName = entry.key;
+                                final selectedValue = (values['selected_parameters'] as Map<String, String>)[paramName] ?? 'Not configured';
+                                
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _formatParameterName(paramName),
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      Text(
+                                        selectedValue,
+                                        style: GoogleFonts.montserrat(
+                                          color: const Color(0xFF34A853),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              const SizedBox(height: 16),
+                            ] else ...[
+                              Text(
+                                'No parameters configured',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                            // Edit Parameters button
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) => ParameterDialog(
+                                      componentName: _formatComponentName(component),
+                                      componentData: values,
+                                      parameters: values['parameters'],
+                                      onValueCalculated: (newValue, selectedParams) {
+                                        setState(() {
+                                          if (_componentValues != null) {
+                                            var componentMap = _componentValues![component.toLowerCase()];
+                                            if (componentMap != null) {
+                                              componentMap['price'] = newValue;
+                                              componentMap['selected_parameters'] = selectedParams;
+                                            }
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Color(0xFF34A853),
+                                  size: 20,
+                                ),
+                                label: Text(
+                                  values['selected_parameters'] != null ? 'Edit Parameters' : 'Configure Parameters',
+                                  style: GoogleFonts.montserrat(
+                                    color: const Color(0xFF34A853),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -335,7 +791,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 ),
               );
             }).toList(),
-
             const SizedBox(height: 24),
           ],
         ),
@@ -343,41 +798,41 @@ class _SummaryScreenState extends State<SummaryScreen> {
     );
   }
 
-  // Helper method to get icons (copy from assistant.dart)
+  // Helper method to get icons
   IconData _getIconForComponent(String component) {
     switch (component.toLowerCase()) {
       case 'ram':
-        return Icons.memory; // Memory stick icon
+        return Icons.memory;
       case 'battery':
       case 'cmos':
-        return Icons.battery_full; // Battery icon
+        return Icons.battery_full;
       case 'fan':
       case 'cooler':
-        return Icons.air; // Fan/air icon
+        return Icons.air;
       case 'wifi':
       case 'card':
-        return Icons.wifi; // WiFi icon
+        return Icons.wifi;
       case 'drive':
       case 'hdd':
       case 'ssd':
       case 'disk':
-        return Icons.storage; // Storage icon
+        return Icons.storage;
       case 'cpu':
-        return Icons.developer_board; // Circuit board icon
+        return Icons.developer_board;
       case 'gpu':
-        return Icons.videogame_asset; // Graphics/gaming icon
+        return Icons.videogame_asset;
       case 'psu':
-        return Icons.power; // Power icon
+        return Icons.power;
       case 'mboard':
-        return Icons.dashboard; // Dashboard icon for motherboard
+        return Icons.dashboard;
       case 'case':
-        return Icons.computer; // Computer case icon
+        return Icons.computer;
       default:
-        return Icons.memory; // Default fallback icon
+        return Icons.memory;
     }
   }
 
-  // Helper method to format component names (copy from assistant.dart)
+  // Helper method to format component names
   String _formatComponentName(String name) {
     String firstPart = name.split('_')[0];
     return firstPart[0].toUpperCase() + firstPart.substring(1);
