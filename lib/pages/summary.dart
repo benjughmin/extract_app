@@ -447,7 +447,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Widget _buildEWasteDisposalSection() {
-    // E-waste disposal section remains unchanged
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
@@ -481,9 +480,28 @@ class _SummaryScreenState extends State<SummaryScreen> {
         trailing: const Icon(Icons.chevron_right),
         onTap: () async {
           try {
-            final jsonString = await rootBundle.loadString('assets/e_waste_locations.json');
-            final jsonData = json.decode(jsonString);
-            final locations = jsonData['e_waste_locations'] as List<dynamic>;
+            // Fetch data from Firestore
+            final querySnapshot = await FirebaseFirestore.instance
+                .collection('ewaste_locations')
+                .get();
+
+            // Convert Firestore documents to a list of maps
+            final locations = querySnapshot.docs.map((doc) {
+              final data = doc.data();
+              final latLong = data['lat_long'] as GeoPoint; // Treat as GeoPoint
+
+              return {
+                'id': doc.id,
+                'name': data['name'],
+                'address': data['address'],
+                'latitude': latLong.latitude, // Extract latitude
+                'longitude': latLong.longitude, // Extract longitude
+                'phone': data['phone'],
+                'hours': data['hours'],
+                'website': data['website'],
+                'notes': data['notes'],
+              };
+            }).toList();
 
             Navigator.push(
               context,
@@ -492,7 +510,13 @@ class _SummaryScreenState extends State<SummaryScreen> {
               ),
             );
           } catch (e) {
-            print('Error loading e-waste locations: $e');
+            print('Error fetching e-waste locations: $e');
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to load e-waste locations'),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
         },
       ),
