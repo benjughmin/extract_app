@@ -288,7 +288,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
       case 'Laptop':
         return 'assets/models/laptop/best_laptop_float16.tflite';
       case 'Desktop':
-        return 'assets/models/computer/best_computer_float16.tflite';
+        return 'assets/models/computer/computer-final.tflite';
       case 'Router':
       case 'Landline':
         return 'assets/models/telecom/best_router-1_float16.tflite';

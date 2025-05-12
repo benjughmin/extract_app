@@ -58,7 +58,7 @@ flutter:
 
     # TFLite models 
     - assets/models/laptop/best_laptop_float16.tflite
-    - assets/models/computer/best_computer_float16.tflite
+    - assets/models/computer/computer-final.tflite
     - assets/models/smartphone/best_phone_float16.tflite
     - assets/models/telecom/best_router-1_float16.tflite
 
