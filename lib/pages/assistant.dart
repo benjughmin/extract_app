@@ -384,7 +384,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                     Text(
                       'Before We Get Started',
                       style: GoogleFonts.montserrat(
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: FontWeight.w600,
                         color: Colors.grey[800],
                       ),
@@ -395,7 +395,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                 
                 // Safety Guidelines Section
                 Text(
-                  'Safety Guidelines:',
+                  'Guidelines:',
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -1261,6 +1261,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                           deviceCategory: widget.initialCategory,
                           extractedComponents: widget.initialDetections,
                           componentImages: widget.initialComponentImages,
+                          originalImagePath: widget.initialImagePath ?? ''
                         ),
                       ),
                     );

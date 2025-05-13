@@ -472,7 +472,7 @@
   "component_values": {
     "ram": {
       "default_base_price": 1200.00,
-      "notes": "Memory modules often retain value",
+      "notes": "RAM modules are often compatible with other devices. These can be reused to upgrade older, working laptops. If you're interested, you can also donate them to repair shops!",
       "parameters": {
         "brand": {
           "options": ["Kingston", "Crucial", "Samsung", "Corsair", "G.Skill", "TeamGroup", "ADATA", "Other"],
@@ -530,7 +530,7 @@
     },
     "ssd-nvme": {
       "default_base_price": 800.00,
-      "notes": "High demand for SSDs",
+      "notes": "SSDs can be reused as external drives, making them great for portable storage.",
       "parameters": {
         "brand": {
           "options": ["Samsung", "Western Digital", "Crucial", "Intel", "Other"],
@@ -575,7 +575,7 @@
     },
     "ssd-sata": {
       "default_base_price": 900.00,
-      "notes": "Common in older laptops",
+      "notes": "SSDs can be reused as external drives, making them great for portable storage.",
       "parameters": {
         "brand": {
           "options": ["Samsung", "Western Digital", "Crucial", "Kingston", "Sandisk", "ADATA", "TeamGroup", "PNY", "Other"],
@@ -624,7 +624,7 @@
     },
     "hard-drive": {
       "default_base_price": 1500.00,
-      "notes": "Check for bad sectors",
+      "notes": "Older hard drives may still be used as backup storage drives. Some may be even used within storage servers.",
       "parameters": {
         "brand": {
           "options": ["Seagate", "Western Digital", "Toshiba", "Hitachi", "Samsung", "Fujitsu", "Other"],
@@ -671,7 +671,7 @@
     },
     "battery": {
       "default_base_price": 1500.00,
-      "notes": "Capacity test recommended",
+      "notes": "If your batteries can still hold a charge, they can be used to power DIY electronics projects or even as backup power sources.",
       "parameters": {
         "brand": {
           "options": ["Dell", "HP", "Lenovo", "Asus", "Acer", "MSI", "Apple", "Other"],
@@ -717,8 +717,8 @@
       }
     },
     "fan": {
-      "base_price": 150.00,
-      "notes": "Common replacement part",
+      "default_base_price": 150.00,
+      "notes": "Working laptop fans can be reused in other devices within custom cooling setups.",
       "parameters": {
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
@@ -742,8 +742,8 @@
       }
     },
     "wifi-card": {
-      "base_price": 300.00,
-      "notes": "Wi-Fi cards hold modest resale value, but high-end or newer-generation models (e.g., Wi-Fi 6) from reliable brands may have more value.",
+      "default_base_price": 300.00,
+      "notes": "Similar to SSDs, Wi-Fi cards can be reused in other devices or even as part of custom builds due to their great compatibility.",
       "parameters": {
         "brand": {
           "options": ["Intel", "Realtek", "Qualcomm Atheros", "Broadcom", "MediaTek", "Other"],
@@ -778,8 +778,8 @@
       }
     },
     "keyboard": {
-      "base_price": 200.00,
-      "notes": "Check for compatibility",
+      "default_base_price": 200.00,
+      "notes": "Keyboards can also be reused in DIY projects, especially those involving input systems.",
       "parameters": {
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],

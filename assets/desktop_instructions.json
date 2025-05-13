@@ -49,15 +49,14 @@
       "notes": "High value component, check for damage on connectors",
       "parameters": {
         "brand": {
-          "options": ["Nvidia", "AMD", "Intel"],
+          "options": ["Nvidia", "AMD"],
           "multipliers": {
             "Nvidia": 1.15,
-            "AMD": 1.0,
-            "Intel": 0.8
+            "AMD": 1.0          
           }
         },
         "series": {
-          "options": ["Nvidia RTX 40 Series", "Nvidia RTX 30 Series", "Nvidia RTX 20 Series", "Nvidia GTX 16 Series", "Nvidia GTX 10 Series", "AMD RX 7000 Series", "AMD RX 6000 Series", "AMD RX 5000 Series", "AMD RX 500 Series", "Intel Arc A-Series"],
+          "options": ["Nvidia RTX 40 Series", "Nvidia RTX 30 Series", "Nvidia RTX 20 Series", "Nvidia GTX 16 Series", "Nvidia GTX 10 Series", "AMD RX 7000 Series", "AMD RX 6000 Series", "AMD RX 5000 Series", "AMD RX 500 Series"],
           "multipliers": {
             "Nvidia RTX 40 Series": 1.8,
             "Nvidia RTX 30 Series": 1.4,
@@ -67,20 +66,7 @@
             "AMD RX 7000 Series": 1.6,
             "AMD RX 6000 Series": 1.3,
             "AMD RX 5000 Series": 0.9,
-            "AMD RX 500 Series": 0.5,
-            "Intel Arc A-Series": 0.7
-          }
-        },
-        "memory": {
-          "options": ["4GB", "6GB", "8GB", "10GB", "12GB", "16GB", "24GB"],
-          "multipliers": {
-            "4GB": 0.6,
-            "6GB": 0.8,
-            "8GB": 1.0,
-            "10GB": 1.2,
-            "12GB": 1.3,
-            "16GB": 1.5,
-            "24GB": 2.0
+            "AMD RX 500 Series": 0.5
           }
         },
         "age": {
@@ -91,15 +77,6 @@
             "2-3 years": 0.6,
             "3-5 years": 0.4,
             "Over 5 years": 0.2
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.4
           }
         }
       }
@@ -148,15 +125,6 @@
             "3-5 years": 0.4,
             "Over 5 years": 0.2
           }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.5,
-            "Poor": 0.3
-          }
         }
       }
     },
@@ -165,19 +133,6 @@
       "default_base_price": 300.00,
       "notes": "Value depends on capacity and generation (DDR3/DDR4/DDR5)",
       "parameters": {
-        "brand": {
-          "options": ["Corsair", "G.Skill", "Kingston", "Crucial", "Samsung", "TeamGroup", "ADATA", "Other"],
-          "multipliers": {
-            "Corsair": 1.1,
-            "G.Skill": 1.1,
-            "Kingston": 1.0,
-            "Crucial": 1.0,
-            "Samsung": 1.05,
-            "TeamGroup": 0.95,
-            "ADATA": 0.95,
-            "Other": 0.9
-          }
-        },
         "capacity": {
           "options": ["4GB", "8GB", "16GB", "32GB", "64GB", "128GB"],
           "base_prices": {
@@ -197,15 +152,6 @@
             "DDR5": 1.6
           }
         },
-        "speed": {
-          "options": ["Low", "Medium", "High", "Extreme"],
-          "multipliers": {
-            "Low": 0.8,
-            "Medium": 1.0,
-            "High": 1.2,
-            "Extreme": 1.4
-          }
-        },
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
           "multipliers": {
@@ -215,15 +161,6 @@
             "3-5 years": 0.4,
             "Over 5 years": 0.2
           }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.4
-          }
         }
       }
     },
@@ -232,17 +169,6 @@
       "default_base_price": 300.00,
       "notes": "Check SMART data for health status",
       "parameters": {
-        "brand": {
-          "options": ["Western Digital", "Seagate", "Toshiba", "Hitachi", "Samsung", "Other"],
-          "multipliers": {
-            "Western Digital": 1.1,
-            "Seagate": 1.0,
-            "Toshiba": 0.9,
-            "Hitachi": 0.9,
-            "Samsung": 1.0,
-            "Other": 0.8
-          }
-        },
         "capacity": {
           "options": ["500GB", "1TB", "2TB", "4TB", "6TB", "8TB", "10TB+"],
           "base_prices": {
@@ -255,14 +181,6 @@
             "10TB+": 1600.00
           }
         },
-        "rpm": {
-          "options": ["5400 RPM", "7200 RPM", "10000 RPM"],
-          "multipliers": {
-            "5400 RPM": 0.8,
-            "7200 RPM": 1.0,
-            "10000 RPM": 1.3
-          }
-        },
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
           "multipliers": {
@@ -272,16 +190,7 @@
             "3-5 years": 0.4,
             "Over 5 years": 0.2
           }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.5,
-            "Poor": 0.2
-          }
-        }
+        }     
       }
     },
     
@@ -289,23 +198,9 @@
       "default_base_price": 1000.00,
       "notes": "Higher value for NVMe versus SATA models",
       "parameters": {
-        "brand": {
-          "options": ["Samsung", "Western Digital", "Crucial", "Kingston", "SanDisk", "Intel", "Sabrent", "Other"],
-          "multipliers": {
-            "Samsung": 1.2,
-            "Western Digital": 1.1,
-            "Crucial": 1.0,
-            "Kingston": 0.9,
-            "SanDisk": 1.0,
-            "Intel": 1.1,
-            "Sabrent": 0.9,
-            "Other": 0.8
-          }
-        },
         "capacity": {
-          "options": ["128GB", "256GB", "512GB", "1TB", "2TB", "4TB"],
+          "options": ["256GB", "512GB", "1TB", "2TB", "4TB"],
           "base_prices": {
-            "128GB": 150.00,
             "256GB": 300.00,
             "512GB": 600.00,
             "1TB": 1000.00,
@@ -314,7 +209,7 @@
           }
         },
         "type": {
-          "options": ["SATA", "NVMe PCIe Gen3", "NVMe PCIe Gen4", "NVMe PCIe Gen5"],
+          "options": ["NVMe PCIe Gen3", "NVMe PCIe Gen4", "NVMe PCIe Gen5"],
           "multipliers": {
             "SATA": 0.7,
             "NVMe PCIe Gen3": 1.0,
@@ -331,16 +226,7 @@
             "3-5 years": 0.4,
             "Over 5 years": 0.2
           }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.3
-          }
-        }
+        }       
       }
     },
     
@@ -348,18 +234,6 @@
       "default_base_price": 650.00,
       "notes": "Value varies by wattage and certification",
       "parameters": {
-        "brand": {
-          "options": ["Corsair", "EVGA", "Seasonic", "be quiet!", "Thermaltake", "Cooler Master", "Other"],
-          "multipliers": {
-            "Corsair": 1.1,
-            "EVGA": 1.0,
-            "Seasonic": 1.2,
-            "be quiet!": 1.1,
-            "Thermaltake": 0.9,
-            "Cooler Master": 0.95,
-            "Other": 0.8
-          }
-        },
         "wattage": {
           "options": ["400-550W", "600-750W", "800-1000W", "1000W+"],
           "multipliers": {
@@ -389,15 +263,6 @@
             "3-5 years": 0.4,
             "Over 5 years": 0.2
           }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.5,
-            "Poor": 0.2
-          }
         }
       }
     },
@@ -406,17 +271,6 @@
       "default_base_price": 850.00,
       "notes": "Higher value for newer sockets and features",
       "parameters": {
-        "brand": {
-          "options": ["Asus", "MSI", "Gigabyte", "ASRock", "EVGA", "Other"],
-          "multipliers": {
-            "Asus": 1.2,
-            "MSI": 1.1,
-            "Gigabyte": 1.0,
-            "ASRock": 0.9,
-            "EVGA": 1.1,
-            "Other": 0.8
-          }
-        },
         "chipset": {
           "options": [
             "Intel Z690/Z790", "Intel B660/B760", "Intel H610/H670", "Intel Z590/Z490", "Intel B560/B460", 
@@ -435,15 +289,6 @@
             "Other": 0.6
           }
         },
-        "form_factor": {
-          "options": ["ATX", "Micro-ATX", "Mini-ITX", "E-ATX"],
-          "multipliers": {
-            "ATX": 1.0,
-            "Micro-ATX": 0.8,
-            "Mini-ITX": 1.1,
-            "E-ATX": 1.2
-          }
-        },
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
           "multipliers": {
@@ -452,15 +297,6 @@
             "2-3 years": 0.5,
             "3-5 years": 0.3,
             "Over 5 years": 0.2
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.5,
-            "Poor": 0.3
           }
         }
       }
@@ -471,7 +307,7 @@
       "notes": "Verify fan operation and heatsink condition",
       "parameters": {
         "type": {
-          "options": ["Air Cooler (Basic)", "Air Cooler (Premium)", "120mm AIO", "240mm AIO", "280mm AIO", "360mm+ AIO"],
+          "options": ["Air Cooler (Stock)", "Air Cooler (Premium)", "120mm AIO", "240mm AIO", "280mm AIO", "360mm+ AIO"],
           "multipliers": {
             "Air Cooler (Basic)": 0.6,
             "Air Cooler (Premium)": 1.0,
@@ -481,18 +317,7 @@
             "360mm+ AIO": 1.6
           }
         },
-        "brand": {
-          "options": ["Noctua", "Corsair", "NZXT", "be quiet!", "Cooler Master", "Arctic", "Other"],
-          "multipliers": {
-            "Noctua": 1.3,
-            "Corsair": 1.1,
-            "NZXT": 1.1,
-            "be quiet!": 1.2,
-            "Cooler Master": 1.0,
-            "Arctic": 1.0,
-            "Other": 0.8
-          }
-        },
+        
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
           "multipliers": {
@@ -501,15 +326,6 @@
             "2-3 years": 0.6,
             "3-5 years": 0.4,
             "Over 5 years": 0.2
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.7,
-            "Fair": 0.5,
-            "Poor": 0.2
           }
         }
       }
