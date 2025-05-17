@@ -9,19 +9,9 @@
   },
   "component_values": {
     "board": {
-      "default_base_price": 5.00,
+      "default_base_price": 1.00,
       "notes": "Value varies by wattage and certification",
       "parameters": {
-        "wattage": {
-          "options": ["<2W", "2W-4W", "5W-7W", ">7W", "Unknown"],
-          "multipliers": {
-            "<2W": 0.6,
-            "2W-4W": 1.0,
-            "5W-7W": 1.2,
-            ">7W": 1.5,
-            "Unknown": 1
-          }
-        },
         "brand": {
           "options": ["Panasonic", "AT&T", "Cisco", "VTech", "General"],
           "multipliers": {
@@ -35,7 +25,7 @@
         "age": {
           "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
           "multipliers": {
-            "Less than 1 year": 1.0,
+            "Less than 1 year": 0.9,
             "1-2 years": 0.8,
             "3-4 years": 0.6,
             "Over 4 years": 0.4
@@ -44,10 +34,10 @@
         "condition": {
           "options": ["Like New", "Good", "Fair", "Poor"],
           "multipliers": {
-            "Like New": 1.0,
+            "Like New": 0.9,
             "Good": 0.8,
             "Fair": 0.6,
-            "Poor": 0.4
+            "Poor": 0.2
           }
         },
         "location": {
@@ -55,6 +45,16 @@
           "multipliers": {
             "Handset": 1.0,
             "Base": 1.5
+          }
+        },
+        "type": {
+          "options": ["Analog Phone", "Corded Phone", "Cordless Phone", "VoIP Phone", "Multiline System Phone"],
+          "multipliers": {
+            "Analog Phone": 299,
+            "Corded Phone": 744,
+            "Cordless Phone": 1680,
+            "VoIP Phone": 1700,
+            "Multiline System Phone": 6899
           }
         }
       }
@@ -107,26 +107,30 @@
             "Handset": 1.0,
             "Base": 1.5
           }
+        },
+        "type": {
+          "options": ["Analog Phone", "Cordless Phone", "VoIP Phone", "Multiline System Phone"],
+          "multipliers": {
+            "Analog Phone": 299,
+            "Cordless Phone": 1680,
+            "VoIP Phone": 1700,
+            "Multiline System Phone": 6899
+          }
         }
       }
     }
   },
   "guidelines": {
     "safety": [
-      "Ensure the device is powered off and unplugged before starting.",
-      "Work in a bright, well-lit area with good ventilation.",
-      "Keep track of all screws and small parts to avoid losing them.",
-      "Wear safety gloves and glasses for protection against sharp edges or debris.",
-      "Do not attempt complex repairs (like soldering) without proper training or professional supervision.",
-      "Keep a first-aid kit and phone nearby for emergencies."
+      "Power off and unplug the device before starting.",
+      "Avoid complex techniques (like soldering) without proper training or supervision.",
+      "PCBs and Speaker Modules are usually non-modular, working only with the same model. If faulty, they could be replaced with components from a broken unit that still has a functional motherboard or speaker."
     ],
     "tools": [
-      "Precision Screwdriver Set (Phillips #1, #00, #000, Flathead 1.5mm)",  
+      "Precision Screwdriver Set (Phillips, Flatheads, Torx)",  
       "Plastic Prying Tools (Spudgers/Guitar Picks)",  
-      "Fine Tweezers",  
-      "(If cordless) Torx T5/T6 Screwdriver",  
-      "(Optional) Soldering Iron (for soldered wires)",  
-      "(Optional) Hairdryer or Heat Gun (for adhesive softening)"
+      "Tweezers",  
+      "(Optional) Soldering Iron, Hairdryer or Heat Gun"
     ]
   },
   

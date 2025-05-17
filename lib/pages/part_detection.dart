@@ -33,22 +33,25 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   List<List<Detection>> _allDetections = [];
   List<Map<String, String>> _allCroppedComponents = [];
   
+  int _displayedImageIndex = 0; 
   int _currentImageIndex = 0;
   late PageController _pageController;
   List<GlobalKey> _imageWithBoxesKeys = [];
-  late AnimationController _animationController;
   List<bool> _processingStatus = [];
+  
+  bool _isProcessingBatch = false;
+  int _totalImagesProcessed = 0;
 
   @override
   void initState() {
     super.initState();
     
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
+    _displayedImageIndex = 0;
     
-    _pageController = PageController(initialPage: 0);
+    _pageController = PageController(
+      initialPage: 0,
+      viewportFraction: 1.0,
+    );
     
     _imageWithBoxesKeys = List.generate(
       widget.selectedImages.length,
@@ -77,7 +80,6 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
 
   @override
   void dispose() {
-    _animationController.dispose();
     _pageController.dispose();
     if (_isModelLoaded) {
       _interpreter.close();
@@ -123,7 +125,17 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
 
   Future<void> _processNextImage() async {
     if (_currentImageIndex >= widget.selectedImages.length) {
+      setState(() {
+        _isProcessingBatch = false; // All done
+      });
       return;
+    }
+
+    if (_currentImageIndex == 0) {
+      setState(() {
+        _isProcessingBatch = true;
+        _totalImagesProcessed = 0;
+      });
     }
 
     setState(() {
@@ -135,6 +147,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
     } finally {
       setState(() {
         _processingStatus[_currentImageIndex] = false;
+        _totalImagesProcessed++;
       });
 
       _currentImageIndex++;
@@ -142,7 +155,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
         _processNextImage();
       } else {
         setState(() {
-          _currentImageIndex = 0;
+          _isProcessingBatch = false; // All done
         });
       }
     }
@@ -285,7 +298,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
       case 'Laptop':
         return 'assets/models/laptop/best_laptop_float16.tflite';
       case 'Desktop':
-        return 'assets/models/computer/best_computer_float16.tflite';
+        return 'assets/models/computer/computer-final.tflite';
       case 'Router':
       case 'Landline':
         return 'assets/models/telecom/best_router-1_float16.tflite';
@@ -408,200 +421,205 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
     
     return Base(
       title: 'Detection Results',
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.04,
-            vertical: screenHeight * 0.02,
-          ),
-          child: Column(
-            children: [
-              RepaintBoundary(
-                key: _currentImageIndex < widget.selectedImages.length 
-                    ? _imageWithBoxesKeys[_currentImageIndex]
-                    : GlobalKey(),
-                child: Container(
-                  width: double.infinity,
-                  height: screenHeight * 0.3,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.greenAccent.withOpacity(0.3)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: widget.selectedImages.length,
-                    onPageChanged: (index) {
-                      print("PAGE CHANGED TO: $index");
-                      setState(() {
-                        _currentImageIndex = index;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.file(
-                            widget.selectedImages[index],
-                            fit: BoxFit.contain,
-                          ),
-                          
-                          _processingStatus[index]
-                              ? const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.greenAccent,
+      child: Stack(
+        children: [
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.04,
+                vertical: screenHeight * 0.02,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: screenHeight * 0.3,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.greenAccent.withOpacity(0.3)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: widget.selectedImages.length,
+                      onPageChanged: (index) {
+                        print("PAGE CHANGED TO: $index");
+                        setState(() {
+                          _displayedImageIndex = index; // Update the displayed index
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.file(
+                              widget.selectedImages[index],
+                              fit: BoxFit.contain,
+                            ),
+                            
+                            index < _allDetections.length && !_processingStatus[index]
+                                ? _buildBoundingBoxes(index) 
+                                : Container(),
+                                
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  '${index + 1}/${widget.selectedImages.length}',
+                                  style: GoogleFonts.robotoCondensed(
+                                    color: Colors.white,
+                                    fontSize: 12,
                                   ),
-                                )
-                              : _buildBoundingBoxes(index),
-                              
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${index + 1}/${widget.selectedImages.length}',
-                                style: GoogleFonts.robotoCondensed(
-                                  color: Colors.white,
-                                  fontSize: 12,
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.024),
-              
-              Text(
-                'Detected Parts',
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontSize: screenHeight * 0.03,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              
-              Expanded(
-                child: _buildDetectedPartsList(),
-              ),
-              
-              GestureDetector(
-                onTap: () async {
-                  // Disable tap if processing is ongoing or no detections exist for the current image
-                  if (_processingStatus.contains(true) ||
-                      (_currentImageIndex < _allDetections.length &&
-                       _allDetections[_currentImageIndex].isEmpty)) {
-                    return;
-                  }
-
-                  List<String> allDetectedComponents = [];
-                  Map<String, Map<String, String>> allComponentImages = {};
-
-                  for (int i = 0; i < widget.selectedImages.length; i++) {
-                    if (_allDetections[i].isNotEmpty) {
-                      // Collect detected components
-                      allDetectedComponents.addAll(
-                        _allDetections[i]
-                            .where((detection) => _shouldIncludeComponent(detection.className))
-                            .map((det) => det.className),
-                      );
-
-                      final String imagePath = widget.selectedImages[i].path;
-
-                      // Crop components if not already cropped
-                      if (_allCroppedComponents[i].isEmpty) {
-                        _allCroppedComponents[i] = await _cropAllDetectedComponents(
-                          imagePath,
-                          _allDetections[i],
+                          ],
                         );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.024),
+                  
+                  Text(
+                    'Detected Parts',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: screenHeight * 0.03,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  Expanded(
+                    child: _buildDetectedPartsList(),
+                  ),
+                  
+                  GestureDetector(
+                    onTap: () async {
+                      // Disable tap if processing is ongoing or no detections exist for the current image
+                      if (_processingStatus.contains(true) ||
+                          (_displayedImageIndex < _allDetections.length &&
+                           _allDetections[_displayedImageIndex].isEmpty)) {
+                        return;
                       }
 
-                      allComponentImages[imagePath] = _allCroppedComponents[i];
-                    }
-                  }
+                      List<String> allDetectedComponents = [];
+                      Map<String, Map<String, String>> allComponentImages = {};
 
-                  // Navigate to the next page with the collected data
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ChatbotRedo(
-                        initialCategory: widget.category,
-                        initialImagePath: widget.selectedImages.isNotEmpty
-                            ? widget.selectedImages[0].path
-                            : null,
-                        initialDetections: allDetectedComponents,
-                        initialComponentImages: allComponentImages,
-                        initialBatch: [widget.sessionId],
+                      for (int i = 0; i < widget.selectedImages.length; i++) {
+                        if (_allDetections[i].isNotEmpty) {
+                          // Collect detected components
+                          allDetectedComponents.addAll(
+                            _allDetections[i]
+                                .where((detection) => _shouldIncludeComponent(detection.className))
+                                .map((det) => det.className),
+                          );
+
+                          final String imagePath = widget.selectedImages[i].path;
+
+                          // Crop components if not already cropped
+                          if (_allCroppedComponents[i].isEmpty) {
+                            _allCroppedComponents[i] = await _cropAllDetectedComponents(
+                              imagePath,
+                              _allDetections[i],
+                            );
+                          }
+
+                          allComponentImages[imagePath] = _allCroppedComponents[i];
+                        }
+                      }
+
+                      // Navigate to the next page with the collected data
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatbotRedo(
+                            initialCategory: widget.category,
+                            initialImagePath: widget.selectedImages.isNotEmpty
+                                ? widget.selectedImages[0].path
+                                : null,
+                            initialDetections: allDetectedComponents,
+                            initialComponentImages: allComponentImages,
+                            initialBatch: [widget.sessionId],
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.018),
+                      margin: const EdgeInsets.only(top: 16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: (_processingStatus.contains(true) ||
+                                  (_displayedImageIndex < _allDetections.length &&
+                                   _allDetections[_displayedImageIndex].isEmpty))
+                              ? [Colors.grey.shade700, Colors.grey.shade600]
+                              : [Color(0xFF34A853), Color(0xFF0F9D58)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            offset: const Offset(0, 4),
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Continue',
+                          style: GoogleFonts.montserrat(
+                            fontSize: screenHeight * 0.02,
+                            fontWeight: FontWeight.bold,
+                            color: (_processingStatus.contains(true) ||
+                                    (_displayedImageIndex < _allDetections.length &&
+                                     _allDetections[_displayedImageIndex].isEmpty))
+                                ? Colors.grey.shade300
+                                : Colors.white,
+                          ),
+                        ),
                       ),
                     ),
-                  );
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.018),
-                  margin: const EdgeInsets.only(top: 16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: (_processingStatus.contains(true) ||
-                              (_currentImageIndex < _allDetections.length &&
-                               _allDetections[_currentImageIndex].isEmpty))
-                          ? [Colors.grey.shade700, Colors.grey.shade600]
-                          : [Color(0xFF34A853), Color(0xFF0F9D58)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        offset: const Offset(0, 4),
-                        blurRadius: 10,
-                      ),
-                    ],
                   ),
-                  child: Center(
-                    child: Text(
-                      'Continue',
-                      style: GoogleFonts.montserrat(
-                        fontSize: screenHeight * 0.02,
-                        fontWeight: FontWeight.bold,
-                        color: (_processingStatus.contains(true) ||
-                                (_currentImageIndex < _allDetections.length &&
-                                 _allDetections[_currentImageIndex].isEmpty))
-                            ? Colors.grey.shade300
-                            : Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          // Add the processing popup overlay
+          _buildProcessingPopup(),
+        ],
       ),
     );
   }
   
   Widget _buildBoundingBoxes(int imageIndex) {
     if (imageIndex >= _allDetections.length || _allDetections[imageIndex].isEmpty) {
-      return Container();
+      return Center(
+        child: Text(
+          'Processing image...',
+          style: GoogleFonts.montserrat(
+            fontSize: 16,
+            color: Colors.white70,
+          ),
+        ),
+      );
     }
 
     return LayoutBuilder(
@@ -662,16 +680,28 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   }
   
   Widget _buildDetectedPartsList() {
-    if (_processingStatus[_currentImageIndex]) {
+    if (_displayedImageIndex >= _allDetections.length) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RotationTransition(
-              turns: _animationController,
-              child: const CircularProgressIndicator(color: Colors.greenAccent),
+            Text(
+              'Waiting for image analysis...',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
             ),
-            const SizedBox(height: 16),
+          ],
+        ),
+      );
+    }
+
+    if (_processingStatus[_displayedImageIndex]) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             Text(
               'Analyzing image...',
               style: GoogleFonts.montserrat(
@@ -683,9 +713,12 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
         ),
       );
     }
-    
-    if (_currentImageIndex >= _allDetections.length || 
-        _allDetections[_currentImageIndex].isEmpty) {
+
+    final filteredDetections = _allDetections[_displayedImageIndex]
+        .where((detection) => _shouldIncludeComponent(detection.className))
+        .toList();
+
+    if (filteredDetections.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -746,18 +779,11 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      itemCount: _allDetections[_currentImageIndex]
-          .where((detection) => _shouldIncludeComponent(detection.className))
-          .toList()
-          .length,
+      itemCount: filteredDetections.length,
       itemBuilder: (context, index) {
-        final filteredDetections = _allDetections[_currentImageIndex]
-            .where((detection) => _shouldIncludeComponent(detection.className))
-            .toList();
-
         final detection = filteredDetections[index];
 
         return Card(
@@ -792,6 +818,80 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
           ),
         );
       },
+    );
+  }
+
+  Widget _buildProcessingPopup() {
+    return AnimatedOpacity(
+      opacity: _isProcessingBatch ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 300),
+      child: Visibility(
+        visible: _isProcessingBatch,
+        child: Container(
+          color: Colors.black.withOpacity(0.7),
+          child: Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A2A),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Text displaying which image is currently being processed
+                  Text(
+                    'Processing image ${_currentImageIndex + 1} of ${widget.selectedImages.length}',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Status bar to show progress
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: widget.selectedImages.length > 0 
+                          ? _totalImagesProcessed / widget.selectedImages.length 
+                          : 0,
+                      backgroundColor: Colors.grey.shade800,
+                      color: Colors.greenAccent,
+                      minHeight: 10,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Please wait while all images are analyzed',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoCondensed(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Completed: $_totalImagesProcessed of ${widget.selectedImages.length}',
+                    style: GoogleFonts.robotoCondensed(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

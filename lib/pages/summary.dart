@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import '/pages/base.dart';
 import '/pages/ewaste_map_screen.dart';
+import '/pages/feedback_service.dart';
 
 // Parameter Dialog remains unchanged
 class ParameterDialog extends StatefulWidget {
@@ -45,16 +46,26 @@ class _ParameterDialogState extends State<ParameterDialog> {
       }
     } else {
       final defaultPriceRaw = widget.componentData['default_base_price'] ?? 0.0;
-      basePrice = defaultPriceRaw is int ? defaultPriceRaw.toDouble() : (defaultPriceRaw as double);
+      basePrice =
+          defaultPriceRaw is int
+              ? defaultPriceRaw.toDouble()
+              : (defaultPriceRaw as double);
       print('💰 Default base price: $basePrice');
     }
 
     widget.parameters.forEach((paramName, paramData) {
-      if (paramData['multipliers'] != null && _selectedValues[paramName] != null) {
-        final multiplierRaw = paramData['multipliers'][_selectedValues[paramName]] ?? 1.0;
-        final multiplier = multiplierRaw is int ? multiplierRaw.toDouble() : (multiplierRaw as double);
-        basePrice *= multiplier;
-        print('🔢 Applied $paramName multiplier: $multiplier');
+      if (_selectedValues[paramName] != null) {
+        // Handle both 'multipliers' and 'multiplier' keys
+        final multipliers = paramData['multipliers'] ?? paramData['multiplier'];
+        if (multipliers != null) {
+          final multiplierRaw = multipliers[_selectedValues[paramName]] ?? 1.0;
+          final multiplier =
+              multiplierRaw is int
+                  ? multiplierRaw.toDouble()
+                  : (multiplierRaw as double);
+          basePrice *= multiplier;
+          print('🔢 Applied $paramName multiplier: $multiplier');
+        }
       }
     });
 
@@ -63,16 +74,17 @@ class _ParameterDialogState extends State<ParameterDialog> {
     setState(() {
       _currentValue = basePrice;
     });
-    widget.onValueCalculated(_currentValue, Map<String, String>.from(_selectedValues));
+    widget.onValueCalculated(
+      _currentValue,
+      Map<String, String>.from(_selectedValues),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     // Dialog UI remains unchanged
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -103,7 +115,8 @@ class _ParameterDialogState extends State<ParameterDialog> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-                    labelText: paramName[0].toUpperCase() + paramName.substring(1),
+                    labelText:
+                        paramName[0].toUpperCase() + paramName.substring(1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -111,9 +124,7 @@ class _ParameterDialogState extends State<ParameterDialog> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Color(0xFF34A853)),
                     ),
-                    labelStyle: GoogleFonts.montserrat(
-                      color: Colors.grey[600],
-                    ),
+                    labelStyle: GoogleFonts.montserrat(color: Colors.grey[600]),
                   ),
                   value: _selectedValues[paramName],
                   style: GoogleFonts.montserrat(
@@ -170,12 +181,14 @@ class SummaryScreen extends StatefulWidget {
   final String deviceCategory;
   final List<String> extractedComponents;
   final Map<String, Map<String, String>> componentImages;
+  final String originalImagePath; // Add this line
 
   const SummaryScreen({
     super.key,
     required this.deviceCategory,
     required this.extractedComponents,
     required this.componentImages,
+    required this.originalImagePath, // Add this line
   });
 
   @override
@@ -407,16 +420,17 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       child: InteractiveViewer(
                         minScale: 0.5,
                         maxScale: 4.0,
-                        child: Image.file(
-                          File(imagePath),
-                          fit: BoxFit.contain,
-                        ),
+                        child: Image.file(File(imagePath), fit: BoxFit.contain),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -448,7 +462,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   Widget _buildEWasteDisposalSection() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
+      margin: const EdgeInsets.only(bottom: 1),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -467,15 +481,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
         ),
         title: Text(
           'E-Waste Disposal Locations',
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
-          ),
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          'Find certified e-waste recycling centers near you',
-          style: GoogleFonts.montserrat(
-            color: Colors.grey[600],
-          ),
+          'Not looking to sell? Find certified e-waste recycling centers near you for safe disposal.',
+          style: GoogleFonts.montserrat(color: Colors.grey[600]),
         ),
         trailing: const Icon(Icons.chevron_right),
         onTap: () async {
@@ -523,6 +533,155 @@ class _SummaryScreenState extends State<SummaryScreen> {
     );
   }
 
+  Widget _buildFeedbackButton() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF34A853),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: _showFeedbackDialog,
+        icon: const Icon(Icons.upload_rounded, color: Colors.white),
+        label: Text(
+          'Share Detection Results',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // User feedback dialog
+  void _showFeedbackDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Help Improve Detection',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Share your device images to help improve our detection model:',
+                  style: GoogleFonts.montserrat(),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Preview of original image
+              Container(
+                height: 150,
+                width: 150,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    File(widget.originalImagePath),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ButtonBar(
+                alignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.montserrat(color: Colors.grey),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF34A853),
+                    ),
+                    onPressed: () {
+                      _uploadDetectionFeedback();
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Share Images',
+                      style: GoogleFonts.montserrat(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _uploadDetectionFeedback() async {
+    try {
+      final feedbackService = FeedbackService();
+      await feedbackService.uploadDetectionImage(
+        imagePath: widget.originalImagePath,
+        detectionData: {
+          'deviceCategory': widget.deviceCategory,
+          'detectedComponents': widget.extractedComponents,
+          'componentImages': widget.componentImages,
+        },
+        deviceCategory: widget.deviceCategory,
+      );
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Thank you for helping improve our detection!',
+              style: GoogleFonts.montserrat(),
+            ),
+            backgroundColor: const Color(0xFF34A853),
+          ),
+        );
+      }
+    } catch (e) {
+      print('❌ Error uploading feedback: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to upload images. Please try again.',
+              style: GoogleFonts.montserrat(),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   // UI for loading state
   Widget _buildLoadingState() {
     return Center(
@@ -562,8 +721,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
     for (String component in uniqueComponents) {
       final values = _componentValues?[component.toLowerCase()];
       if (values != null) {
-        totalValue += ((values['price'] ?? 0.0) as double) * 
-                     (componentCounts[component] ?? 1);
+        final price = values['price'];
+        double safePrice = 0.0;
+        if (price != null) {
+          if (price is int) {
+            safePrice = price.toDouble();
+          } else if (price is double) {
+            safePrice = price;
+          }
+        }
+        totalValue += safePrice * (componentCounts[component] ?? 1);
       }
     }
 
@@ -643,10 +810,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
             // Add the e-waste disposal section here
             _buildEWasteDisposalSection(),
 
+            // Add the feedback button here
+            _buildFeedbackButton(),
+
             // Components List
             ...uniqueComponents.map((component) {
-              final values = _componentValues?[component.toLowerCase()] ?? 
-                          {'price': 0.0, 'notes': 'No data available'};
+              final values =
+                  _componentValues?[component.toLowerCase()] ??
+                  {'price': 0.0, 'notes': 'No data available'};
               final count = componentCounts[component] ?? 1;
 
               return Container(
@@ -672,9 +843,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   ),
                   title: Text(
                     _formatComponentName(component),
-                    style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -691,7 +860,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         ),
                       ),
                       Text(
-                        values['selected_parameters'] != null 
+                        values['selected_parameters'] != null
                             ? 'per piece (×$count)'
                             : 'Not configured',
                         style: GoogleFonts.montserrat(
@@ -714,21 +883,33 @@ class _SummaryScreenState extends State<SummaryScreen> {
                               height: 120,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _getComponentImages(component).length,
+                                itemCount:
+                                    _getComponentImages(component).length,
                                 itemBuilder: (context, index) {
-                                  String imagePath = _getComponentImages(component)[index];
+                                  String imagePath =
+                                      _getComponentImages(component)[index];
                                   return Padding(
                                     padding: EdgeInsets.only(right: 8),
                                     child: GestureDetector(
-                                      onTap: () => _showImageOverlay(context, imagePath),
+                                      onTap:
+                                          () => _showImageOverlay(
+                                            context,
+                                            imagePath,
+                                          ),
                                       child: Container(
                                         width: 120,
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey.shade300),
-                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                           child: Image.file(
                                             File(imagePath),
                                             fit: BoxFit.cover,
@@ -766,12 +947,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
                             if (values['selected_parameters'] != null) ...[
                               ...values['parameters'].entries.map((entry) {
                                 final paramName = entry.key;
-                                final selectedValue = (values['selected_parameters'] as Map<String, String>)[paramName] ?? 'Not configured';
-                                
+                                final selectedValue =
+                                    (values['selected_parameters']
+                                        as Map<String, String>)[paramName] ??
+                                    'Not configured';
+
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 4),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         _formatParameterName(paramName),
@@ -808,22 +993,32 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                   showDialog(
                                     context: context,
                                     barrierDismissible: false,
-                                    builder: (context) => ParameterDialog(
-                                      componentName: _formatComponentName(component),
-                                      componentData: values,
-                                      parameters: values['parameters'],
-                                      onValueCalculated: (newValue, selectedParams) {
-                                        setState(() {
-                                          if (_componentValues != null) {
-                                            var componentMap = _componentValues![component.toLowerCase()];
-                                            if (componentMap != null) {
-                                              componentMap['price'] = newValue;
-                                              componentMap['selected_parameters'] = selectedParams;
-                                            }
-                                          }
-                                        });
-                                      },
-                                    ),
+                                    builder:
+                                        (context) => ParameterDialog(
+                                          componentName: _formatComponentName(
+                                            component,
+                                          ),
+                                          componentData: values,
+                                          parameters: values['parameters'],
+                                          onValueCalculated: (
+                                            newValue,
+                                            selectedParams,
+                                          ) {
+                                            setState(() {
+                                              if (_componentValues != null) {
+                                                var componentMap =
+                                                    _componentValues![component
+                                                        .toLowerCase()];
+                                                if (componentMap != null) {
+                                                  componentMap['price'] =
+                                                      newValue;
+                                                  componentMap['selected_parameters'] =
+                                                      selectedParams;
+                                                }
+                                              }
+                                            });
+                                          },
+                                        ),
                                   );
                                 },
                                 icon: const Icon(
@@ -832,7 +1027,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                   size: 20,
                                 ),
                                 label: Text(
-                                  values['selected_parameters'] != null ? 'Edit Parameters' : 'Configure Parameters',
+                                  values['selected_parameters'] != null
+                                      ? 'Edit Parameters'
+                                      : 'Configure Parameters',
                                   style: GoogleFonts.montserrat(
                                     color: const Color(0xFF34A853),
                                     fontWeight: FontWeight.w500,
