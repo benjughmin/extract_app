@@ -125,6 +125,8 @@ class Node {
   final List<Option> options; // List of possible answers/options for this node
   final List<Step> steps; // List of step-by-step instructions for this node
   final String? next; // ID of the next node to navigate to (if this is a step node)
+  final String? image; // Single image for this node
+  final List<String> images; // Multiple images for this node
   
   // Constructor with one required parameter and several optional parameters
   // The const [] creates empty immutable lists as defaults
@@ -134,6 +136,8 @@ class Node {
     this.options = const [],
     this.steps = const [],
     this.next,
+    this.image,
+    this.images = const [],
   });
   
   /// Create a Node from JSON data
@@ -157,12 +161,21 @@ class Node {
       steps.sort((a, b) => a.order.compareTo(b.order));
     }
     
+    // Parse images if present
+    List<String> images = [];
+    if (json.containsKey('images')) {
+      final List<dynamic> imagesList = json['images'];
+      images = imagesList.map((img) => img.toString()).toList();
+    }
+    
     return Node(
       id: json['id'],
       text: json['text'],
       options: options,
       steps: steps,
       next: json['next'],
+      image: json['image'], // Add single image
+      images: images, // Add multiple images
     );
   }
   
@@ -172,6 +185,9 @@ class Node {
   
   /// Determines if this node is a step-by-step instruction node
   bool get isStepNode => steps.isNotEmpty;
+  
+  /// Check if this node has any images (either single or multiple)
+  bool get hasImages => image != null || images.isNotEmpty;
 }
 
 /// Represents a choice option in a question node
