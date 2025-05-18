@@ -651,11 +651,104 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Future<void> _uploadDetectionFeedback() async {
+    int total = widget.userImagePaths.length;
+    int uploaded = 0;
+
+    // Controller for updating the overlay
+    late void Function(int) updateProgress;
+    late void Function() closeOverlay;
+
+    // Show custom overlay
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            updateProgress = (int newUploaded) {
+              setState(() {
+                uploaded = newUploaded;
+              });
+            };
+            closeOverlay = () {
+              if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+            };
+            return AnimatedOpacity(
+              opacity: 1.0,
+              duration: const Duration(milliseconds: 300),
+              child: Container(
+                color: Colors.black.withOpacity(0.7),
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2A2A2A),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Uploading image ${uploaded + 1} of $total',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: total > 0 ? uploaded / total : 0,
+                            backgroundColor: Colors.grey.shade800,
+                            color: Colors.greenAccent,
+                            minHeight: 10,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Please wait while your images are uploaded',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.robotoCondensed(
+                            fontSize: 18,
+                            color: Colors.white,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Completed: $uploaded of $total',
+                          style: GoogleFonts.robotoCondensed(
+                            fontSize: 18,
+                            color: Colors.white,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
     try {
       final feedbackService = FeedbackService();
       await ensureSignedIn();
 
-      // Upload each user-uploaded image
       for (final imagePath in widget.userImagePaths) {
         await feedbackService.uploadDetectionImage(
           imagePath: imagePath,
@@ -666,7 +759,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
           },
           deviceCategory: widget.deviceCategory,
         );
+        uploaded++;
+        updateProgress(uploaded);
       }
+
+      closeOverlay();
 
       // Show success message
       if (mounted) {
@@ -681,6 +778,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         );
       }
     } catch (e) {
+      closeOverlay();
       print('❌ Error uploading feedback: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
