@@ -7,9 +7,17 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import '/pages/base.dart';
 import '/pages/ewaste_map_screen.dart';
 import '/pages/feedback_service.dart';
+
+Future<void> ensureSignedIn() async {
+  final auth = FirebaseAuth.instance;
+  if (auth.currentUser == null) {
+    await auth.signInAnonymously();
+  }
+}
 
 // Parameter Dialog remains unchanged
 class ParameterDialog extends StatefulWidget {
@@ -181,14 +189,14 @@ class SummaryScreen extends StatefulWidget {
   final String deviceCategory;
   final List<String> extractedComponents;
   final Map<String, Map<String, String>> componentImages;
-  final String originalImagePath; // Add this line
+  final List<String> userImagePaths; // <-- Change here
 
   const SummaryScreen({
     super.key,
     required this.deviceCategory,
     required this.extractedComponents,
     required this.componentImages,
-    required this.originalImagePath, // Add this line
+    required this.userImagePaths, // <-- Change here
   });
 
   @override
@@ -602,7 +610,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.file(
-                    File(widget.originalImagePath),
+                    File(widget.userImagePaths.first),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -622,8 +630,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF34A853),
                     ),
-                    onPressed: () {
-                      _uploadDetectionFeedback();
+                    onPressed: () async {
+                      await ensureSignedIn();
+                      await _uploadDetectionFeedback();
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -644,15 +653,20 @@ class _SummaryScreenState extends State<SummaryScreen> {
   Future<void> _uploadDetectionFeedback() async {
     try {
       final feedbackService = FeedbackService();
-      await feedbackService.uploadDetectionImage(
-        imagePath: widget.originalImagePath,
-        detectionData: {
-          'deviceCategory': widget.deviceCategory,
-          'detectedComponents': widget.extractedComponents,
-          'componentImages': widget.componentImages,
-        },
-        deviceCategory: widget.deviceCategory,
-      );
+      await ensureSignedIn();
+
+      // Upload each user-uploaded image
+      for (final imagePath in widget.userImagePaths) {
+        await feedbackService.uploadDetectionImage(
+          imagePath: imagePath,
+          detectionData: {
+            'deviceCategory': widget.deviceCategory,
+            'detectedComponents': widget.extractedComponents,
+            'componentImages': widget.componentImages,
+          },
+          deviceCategory: widget.deviceCategory,
+        );
+      }
 
       // Show success message
       if (mounted) {

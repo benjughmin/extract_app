@@ -1352,7 +1352,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                           deviceCategory: widget.initialCategory,
                           extractedComponents: widget.initialDetections,
                           componentImages: widget.initialComponentImages,
-                          originalImagePath: widget.initialImagePath ?? ''
+                          userImagePaths: widget.initialComponentImages.keys.toList(), // Pass all user-uploaded image paths
                         ),
                       ),
                     );
