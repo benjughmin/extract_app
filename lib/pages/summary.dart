@@ -220,10 +220,149 @@ class _SummaryScreenState extends State<SummaryScreen> {
   bool _hasInternet = false;
   StreamSubscription<DocumentSnapshot>? _firestoreSubscription;
 
+  static bool _disclaimerDisabled = false;
+
+  bool _disclaimerShown = false; // Track if disclaimer dialog has been shown
+
   @override
   void initState() {
     super.initState();
-    _checkConnectivity();
+    _showDisclaimerIfNeeded();
+    // Do not call _checkConnectivity() here, wait for disclaimer
+  }
+
+  void _showDisclaimerIfNeeded() {
+    if (!_disclaimerDisabled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showDisclaimerDialog();
+      });
+    } else {
+      _checkConnectivity();
+    }
+  }
+
+  void _showDisclaimerDialog() {
+    bool doNotShowAgain = false;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.info_outline, color: Color(0xFF34A853), size: 24),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Disclaimer',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'This is a placeholder disclaimer. Actual values and offers may vary depending on the facility and market conditions. Please consult with your chosen facility for final pricing and terms.',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        unselectedWidgetColor: const Color(0xFF34A853),
+                        checkboxTheme: CheckboxThemeData(
+                          fillColor: MaterialStateProperty.resolveWith<Color>(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return const Color(0xFF34A853);
+                              }
+                              return Colors.white;
+                            },
+                          ),
+                          checkColor: MaterialStateProperty.all<Color>(Colors.white),
+                        ),
+                      ),
+                      child: CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Don\'t show again this session',
+                          style: GoogleFonts.montserrat(fontSize: 14),
+                        ),
+                        value: doNotShowAgain,
+                        onChanged: (val) {
+                          setState(() {
+                            doNotShowAgain = val ?? false;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (doNotShowAgain) {
+                        _disclaimerDisabled = true;
+                      }
+                      Navigator.of(context).pop();
+                      // Only proceed to load after disclaimer is closed
+                      if (!_disclaimerShown) {
+                        _disclaimerShown = true;
+                        _checkConnectivity();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Text(
+                        'OK',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // Check internet connectivity
@@ -732,26 +871,36 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   const SizedBox(height: 16),
                   const Divider(color: Colors.white24),
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Total Estimated Value',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
+                  if (widget.deviceCategory.trim().toLowerCase() == 'router')
+                    Text(
+                      'Facility-dependent pricing',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                      Text(
-                        '\₱${totalValue.toStringAsFixed(2)}',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    )
+                  else
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total Estimated Value: ',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 16,
+                            color: Colors.white70,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                        Text(
+                          '\₱${totalValue.toStringAsFixed(2)}',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -802,8 +951,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     children: [
                       Text(
                         values['selected_parameters'] != null
-                            ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}' // Show price if configured
-                            : '⋯', // Show ellipsis if not configured
+                            ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}'
+                            : '⋯',
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -813,7 +962,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       Text(
                         values['selected_parameters'] != null
                             ? 'per piece (×$count)'
-                            : 'Not configured',
+                            : widget.deviceCategory.trim().toLowerCase() == 'router'
+                                ? ''
+                                : 'Not configured',
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -927,14 +1078,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
                               }).toList(),
                               const SizedBox(height: 16),
                             ] else ...[
-                              Text(
-                                'No parameters configured',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.grey[600],
-                                  fontStyle: FontStyle.italic,
+                              if (widget.deviceCategory.trim().toLowerCase() != 'router') ...[
+                                Text(
+                                  'No parameters configured',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
+                                const SizedBox(height: 16),
+                              ]
                             ],
                             // Edit Parameters button will always show if parameters exist
                             Center(
