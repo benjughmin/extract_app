@@ -625,7 +625,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          'Not looking to sell? Find certified e-waste recycling centers near you for safe disposal.',
+          'Find certified e-waste recycling centers near you for safe disposal.',
           style: GoogleFonts.montserrat(color: Colors.grey[600]),
         ),
         trailing: const Icon(Icons.chevron_right),
