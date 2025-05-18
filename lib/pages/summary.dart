@@ -122,6 +122,7 @@ class _ParameterDialogState extends State<ParameterDialog> {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: DropdownButtonFormField<String>(
+                  isExpanded: true,  // Add this line to make dropdown expand to full width
                   decoration: InputDecoration(
                     labelText:
                         paramName[0].toUpperCase() + paramName.substring(1),
@@ -148,6 +149,8 @@ class _ParameterDialogState extends State<ParameterDialog> {
                         style: GoogleFonts.montserrat(
                           color: Colors.black87,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     );
                   }).toList(),

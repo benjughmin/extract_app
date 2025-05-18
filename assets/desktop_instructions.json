@@ -19,8 +19,8 @@
     "Cooling": "cooler",
     "Fan": "fan",
     "HDD": "hdd",
-    "SSD nvme": "ssd",
-    "SSD-sata": "ssd-sata",
+    "NVMe SSD": "nvme-ssd",
+    "SATA SSD": "sata-ssd",
     "Power supply": "psu",
     "PSU": "psu",
     "Motherboard": "mboard",
@@ -33,7 +33,7 @@
   },
 
   "issue_component_mapping": {
-    "Storage problems (HDD/SSD)": ["hdd", "ssd", "ssd-sata"],
+    "Storage problems (HDD/SSD)": ["hdd", "nvme-ssd", "sata-ssd"],
     "Case or physical damage": ["case"],
     "BIOS errors or clock issues": ["cmos"],
     "Cooling or fan issues": ["cooler", "fan"],
@@ -76,8 +76,8 @@
       "text": "What would you like to extract?",
       "options": [
         { "label": "HDD", "next": "extract_hdd_1" },
-        { "label": "SSD-sata", "next": "extract_ssd_sata_1" },
-        { "label": "SSD nvme", "next": "extract_ssd_1" },
+        { "label": "SATA SSD", "next": "extract_sata_1" },
+        { "label": "NVMe SSD", "next": "extract_nvme_1" },
         { "label": "Case", "next": "extract_case_1" },
         { "label": "Cooler", "next": "extract_cooler_1" },
         { "label": "Fan", "next": "extract_fan_1" },
@@ -97,8 +97,8 @@
       "text": "Which storage device would you like to address?",
       "options": [
         { "label": "Hard Drive (HDD)", "next": "hdd_issue" },
-        { "label": "SATA SSD", "next": "ssd_sata_issue" },
-        { "label": "NVMe SSD", "next": "ssd_issue" },
+        { "label": "SATA SSD", "next": "sata_issue" },
+        { "label": "NVMe SSD", "next": "nvme_issue" },
         { "label": "Back", "next": "issue" }
       ]
     },
@@ -111,18 +111,18 @@
       ]
     },
     {
-      "id": "ssd_sata_issue",
+      "id": "sata_issue",
       "text": "SATA SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to extract the SATA SSD?",
       "options": [
-        { "label": "Extract SATA SSD", "next": "extract_ssd_sata_1" },
+        { "label": "Extract SATA SSD", "next": "extract_sata_1" },
         { "label": "Back", "next": "storage_issue" }
       ]
     },
     {
-      "id": "ssd_issue",
+      "id": "nvme_issue",
       "text": "SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to extract the SSD?",
       "options": [
-        { "label": "Extract SSD", "next": "extract_ssd_1" },
+        { "label": "Extract SSD", "next": "extract_nvme_1" },
         { "label": "Back", "next": "storage_issue" }
       ]
     },
@@ -212,7 +212,7 @@
       "text": "What would you like to extract?",
       "options": [
         { "label": "HDD", "next": "extract_hdd_1" },
-        { "label": "SSD", "next": "extract_ssd_1" },
+        { "label": "SSD", "next": "extract_nvme_1" },
         { "label": "Case", "next": "extract_case_1" },
         { "label": "Cooler", "next": "extract_cooler_1" },
         { "label": "Fan", "next": "extract_fan_1" },
@@ -257,57 +257,57 @@
       ]
     },
     {
-      "id": "extract_ssd_sata_1",
-      "text": "Disconnect both the SATA data cable (thin) and power cable (wide) from the SSD.",
-      "image": "assets/img_assistance/ssd_cables.png",
+      "id": "extract_sata_1",
+      "text": "Unplug the two cables which are connected to the back of the SSD",
+      "image": "assets/img_assistance/sata_cables.png",
       "options": [
-        { "label": "Next", "next": "extract_ssd_sata_2" },
+        { "label": "Next", "next": "extract_sata_2" },
         { "label": "Back", "next": "component_extraction" }
       ]
     },
     {
-      "id": "extract_ssd_sata_2",
-      "text": "Remove the screws holding the SSD to its mounting bracket or drive bay.",
+      "id": "extract_sata_2",
+      "text": "If the SSD if being held by screws in the bay, remove the screws holding the SSD.",
       "options": [
-        { "label": "Next", "next": "extract_ssd_sata_3" },
-        { "label": "Back", "next": "extract_ssd_sata_1" }
+        { "label": "Next", "next": "extract_sata_3" },
+        { "label": "Back", "next": "extract_sata_1" }
       ]
     },
     {
-      "id": "extract_ssd_sata_3",
-      "text": "Carefully slide the SATA SSD out from its mounting position.",
+      "id": "extract_sata_3",
+      "text": "Carefully slide the SATA SSD out from its mounting position. Then you are done!",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
-        { "label": "Back", "next": "extract_ssd_sata_2" }
+        { "label": "Back", "next": "extract_sata_2" }
       ]
     },
 
     {
-      "id": "extract_ssd_1",
+      "id": "extract_nvme_1",
       "text": "Locate the small screw securing the NVMe SSD to the M.2 slot. For some, it is just a pin that you can pull out.",
       "image": "assets/img_assistance/ssd_screw.jpg",
       "options": [
-        { "label": "Next", "next": "extract_ssd_2" },
+        { "label": "Next", "next": "extract_nvme_2" },
         { "label": "Back", "next": "component_extraction" }
       ]
     },
     {
-      "id": "extract_ssd_2",
+      "id": "extract_nvme_2",
       "text": "Remove the screw securing the disk in place. Once the screw has been removed, the drive will lift itself.",
       "image": "assets/img_assistance/ssd_lift.png",
       "options": [
-        { "label": "Next", "next": "extract_ssd_3" },
-        { "label": "Back", "next": "extract_ssd_1" }
+        { "label": "Next", "next": "extract_nvme_3" },
+        { "label": "Back", "next": "extract_nvme_1" }
       ]
     },
     {
-      "id": "extract_ssd_3",
+      "id": "extract_nvme_3",
       "text": "You can now gently pull it the SSD away.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
-        { "label": "Back", "next": "extract_ssd_2" }
+        { "label": "Back", "next": "extract_nvme_2" }
       ]
     },
 

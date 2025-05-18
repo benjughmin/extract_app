@@ -1,6 +1,6 @@
 HDD
-SSD
-SSD-sata
+nvme-ssd
+sata-ssd
 case
 cmos
 cooler
