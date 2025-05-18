@@ -128,7 +128,7 @@ class _UploadPageState extends State<UploadPage> {
         padding: const EdgeInsets.all(16.0), // Sets 16 pixels of padding on all sides
         child: Column( // Arranges widgets vertically
           crossAxisAlignment: CrossAxisAlignment.stretch, // Stretches children horizontally
-          children: [ // List of widgets inside the column
+          children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 10), // Padding below the text
             child: Row(
@@ -153,9 +153,185 @@ class _UploadPageState extends State<UploadPage> {
             ),
           ),
 
-              DeviceGuideSlider(deviceCategory: widget.category),
-              
-              const SizedBox(height: 30),
+            DeviceGuideSlider(deviceCategory: widget.category),
+
+            // --- Detectable Components Popup Button ---
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10, top: 5), // Padding above and below the button
+              child: Align(
+                alignment: Alignment.center,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF34A853),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  ),
+                  icon: const Icon(Icons.info_outline, color: Colors.white),
+                  label: Text(
+                    "Show Detectable Components",
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        List<Map<String, dynamic>> detectableComponents;
+                        switch (widget.category.trim().toLowerCase()) {
+                          case 'smartphone':
+                            detectableComponents = [
+                              {"label": "Battery", "icon": Icons.battery_full},
+                              {"label": "Camera", "icon": Icons.camera_alt},
+                              {"label": "Vibrator Motor", "icon": Icons.vibration},
+                              {"label": "Motherboard", "icon": Icons.developer_board},
+                              {"label": "Speaker", "icon": Icons.volume_up},
+                              {"label": "Charging Port", "icon": Icons.usb},
+                            ];
+                            break;
+                          case 'laptop':
+                            detectableComponents = [
+                              {"label": "Battery", "icon": Icons.battery_full},
+                              {"label": "Fan", "icon": Icons.air},
+                              {"label": "Hard Drive", "icon": Icons.storage},
+                              {"label": "Keyboard", "icon": Icons.keyboard},
+                              {"label": "RAM", "icon": Icons.memory},
+                              {"label": "SSD (NVMe M.2)", "icon": Icons.sd_storage},
+                              {"label": "SSD (2.5 SATA)", "icon": Icons.sd_storage},
+                              {"label": "Wi-Fi Card", "icon": Icons.wifi},
+                            ];
+                            break;
+                          case 'desktop':
+                          case 'computer':
+                            detectableComponents = [
+                              {"label": "HDD", "icon": Icons.storage},
+                              {"label": "SSD (NVMe M.2)", "icon": Icons.sd_storage},
+                              {"label": "SSD (2.5 SATA)", "icon": Icons.sd_storage},
+                              {"label": "Case", "icon": Icons.computer},
+                              {"label": "CMOS", "icon": Icons.battery_alert},
+                              {"label": "Cooler", "icon": Icons.ac_unit},
+                              {"label": "CPU", "icon": Icons.developer_board},
+                              {"label": "Fan", "icon": Icons.air},
+                              {"label": "GPU", "icon": Icons.videogame_asset},
+                              {"label": "Motherboard", "icon": Icons.developer_board},
+                              {"label": "PSU", "icon": Icons.power},
+                              {"label": "RAM", "icon": Icons.memory},
+                            ];
+                            break;
+                          case 'landline':
+                            detectableComponents = [
+                              {"label": "Speaker", "icon": Icons.volume_up},
+                              {"label": "Motherboard", "icon": Icons.developer_board}
+                            ];
+                            break;
+                          case 'router':
+                            detectableComponents = [
+                              {"label": "Antenna", "icon": Icons.settings_input_antenna},
+                              {"label": "Motherboard", "icon": Icons.developer_board}
+                            ];
+                            break;
+                          default:
+                            detectableComponents = [
+                              {"label": "No data available for this category.", "icon": Icons.info_outline}
+                            ];
+                        }
+                        return Dialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.info_outline, color: Color(0xFF34A853), size: 24),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Detectable Components',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[800],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                ...detectableComponents.map((comp) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    children: [
+                                      Icon(comp["icon"] as IconData, color: const Color(0xFF34A853), size: 20),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        comp["label"] as String,
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey[800],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      child: Text(
+                                        'OK',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            // --- End Detectable Components Popup Button ---
+
+            const SizedBox(height: 30),
             // Instructional text with improved styling
             Text(
               'Upload pictures of your e-waste or use your camera. We recommend having at least two images for better results.', // The text content
