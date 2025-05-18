@@ -62,6 +62,9 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
   bool _showedInitialGuide = false;
   Map<String, dynamic>? _guidelines;
 
+  // Add static variable for session-wide guidelines control
+  static bool _guidelinesDisabled = false;
+
   // Lifecycle method called when widget is first created
   @override
   void initState() {
@@ -355,15 +358,19 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
   // Show the guidelines dialog
   void _showGuidelinesDialog() {
     if (!mounted) return;
-    
+    if (_guidelinesDisabled) return;
+
+    bool doNotShowAgain = false;
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
+            constraints: const BoxConstraints(maxHeight: 420),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -371,133 +378,172 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.info_outline,
-                      color: Color(0xFF34A853),
-                      size: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Before We Get Started',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[800],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                
-                // Safety Guidelines Section
-                Text(
-                  'Guidelines:',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ..._guidelines?['safety']?.map<Widget>((guideline) =>
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Row(
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('• ', style: TextStyle(fontSize: 16)),
-                        Expanded(
-                          child: Text(
-                            guideline,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              color: Colors.grey[600],
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline,
+                              color: Color(0xFF34A853),
+                              size: 24,
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )?.toList() ?? [],
-                
-                const SizedBox(height: 16),
-                
-                // Recommended Tools Section
-                Text(
-                  'Recommended Tools:',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ..._guidelines?['tools']?.map<Widget>((tool) =>
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('• ', style: TextStyle(fontSize: 16)),
-                        Expanded(
-                          child: Text(
-                            tool,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              color: Colors.grey[600],
+                            const SizedBox(width: 12),
+                            Text(
+                              'Before We Get Started',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[800],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                )?.toList() ?? [],
-                
-                const SizedBox(height: 24),
-                
-                // OK Button
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _showedInitialGuide = true;
-                        });
-                        Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 0, // Remove button shadow
-                      ),
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Text(
-                          'Got It',
+                        const SizedBox(height: 16),
+                        // Safety Guidelines Section
+                        Text(
+                          'Guidelines:',
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
                           ),
-                          textAlign: TextAlign.center,
                         ),
+                        const SizedBox(height: 8),
+                        ..._guidelines?['safety']?.map<Widget>((guideline) =>
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('• ', style: TextStyle(fontSize: 16)),
+                                Expanded(
+                                  child: Text(
+                                    guideline,
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )?.toList() ?? [],
+                        const SizedBox(height: 16),
+                        // Recommended Tools Section
+                        Text(
+                          'Recommended Tools:',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ..._guidelines?['tools']?.map<Widget>((tool) =>
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('• ', style: TextStyle(fontSize: 16)),
+                                Expanded(
+                                  child: Text(
+                                    tool,
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )?.toList() ?? [],
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
+                ),
+                // Checkbox always above the button at the bottom
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        unselectedWidgetColor: const Color(0xFF34A853),
+                        checkboxTheme: CheckboxThemeData(
+                          fillColor: MaterialStateProperty.resolveWith<Color>(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return const Color(0xFF34A853);
+                              }
+                              return Colors.white;
+                            },
+                          ),
+                          checkColor: MaterialStateProperty.all<Color>(Colors.white),
+                        ),
+                      ),
+                      child: CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Don\'t show again this session',
+                          style: GoogleFonts.montserrat(fontSize: 14),
+                        ),
+                        value: doNotShowAgain,
+                        onChanged: (val) {
+                          setState(() {
+                            doNotShowAgain = val ?? false;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                    );
+                  },
+                ),
+                // Got It button at the bottom (revert to previous style)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _showedInitialGuide = true;
+                      });
+                      if (doNotShowAgain) {
+                        _guidelinesDisabled = true;
+                      }
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0, // Remove button shadow
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Text(
+                        'Got It',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
