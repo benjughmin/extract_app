@@ -19,7 +19,8 @@
     "Cooling": "cooler",
     "Fan": "fan",
     "HDD": "hdd",
-    "SSD": "ssd",
+    "SSD nvme": "ssd",
+    "SSD-sata": "ssd-sata",
     "Power supply": "psu",
     "PSU": "psu",
     "Motherboard": "mboard",
@@ -32,7 +33,7 @@
   },
 
   "issue_component_mapping": {
-    "Storage problems (HDD/SSD)": ["hdd", "ssd"],
+    "Storage problems (HDD/SSD)": ["hdd", "ssd", "ssd-sata"],
     "Case or physical damage": ["case"],
     "BIOS errors or clock issues": ["cmos"],
     "Cooling or fan issues": ["cooler", "fan"],
@@ -47,7 +48,7 @@
   "nodes": [
     {
       "id": "start",
-      "text": "Would you like to indicate the reason/s you're disposing of the laptop, or would you like to head straight to extraction?",
+      "text": "Would you like to indicate the reason/s you're disposing of the components of your system unit, or would you like to head straight to extraction?",
       "options": [
         { "label": "Disposal Cause", "next": "issue" },
         { "label": "Detected Components List", "next": "component_extraction"}
@@ -75,7 +76,8 @@
       "text": "What would you like to extract?",
       "options": [
         { "label": "HDD", "next": "extract_hdd_1" },
-        { "label": "SSD", "next": "extract_ssd_1" },
+        { "label": "SSD-sata", "next": "extract_ssd_sata_1" },
+        { "label": "SSD nvme", "next": "extract_ssd_1" },
         { "label": "Case", "next": "extract_case_1" },
         { "label": "Cooler", "next": "extract_cooler_1" },
         { "label": "Fan", "next": "extract_fan_1" },
@@ -92,13 +94,140 @@
     },
     {
       "id": "storage_issue",
-      "text": "Which storage device would you like to extract?",
+      "text": "Which storage device would you like to address?",
       "options": [
-        { "label": "Hard Drive (HDD)", "next": "extract_hdd_1" },
-        { "label": "Solid State Drive (SSD)", "next": "extract_ssd_1" },
+        { "label": "Hard Drive (HDD)", "next": "hdd_issue" },
+        { "label": "SATA SSD", "next": "ssd_sata_issue" },
+        { "label": "NVMe SSD", "next": "ssd_issue" },
         { "label": "Back", "next": "issue" }
       ]
     },
+    {
+      "id": "hdd_issue",
+      "text": "Hard drive issues typically include clicking sounds, slow operation, or failure to be recognized. Would you like to extract the HDD?",
+      "options": [
+        { "label": "Extract HDD", "next": "extract_hdd_1" },
+        { "label": "Back", "next": "storage_issue" }
+      ]
+    },
+    {
+      "id": "ssd_sata_issue",
+      "text": "SATA SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to extract the SATA SSD?",
+      "options": [
+        { "label": "Extract SATA SSD", "next": "extract_ssd_sata_1" },
+        { "label": "Back", "next": "storage_issue" }
+      ]
+    },
+    {
+      "id": "ssd_issue",
+      "text": "SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to extract the SSD?",
+      "options": [
+        { "label": "Extract SSD", "next": "extract_ssd_1" },
+        { "label": "Back", "next": "storage_issue" }
+      ]
+    },
+    {
+      "id": "case_issue",
+      "text": "Case damage is common in older devices. Extracting valuable components is recommended before disposal. Would you like to proceed with case disassembly?",
+      "options": [
+        { "label": "Extract case components", "next": "extract_case_1" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "bios_issue",
+      "text": "BIOS errors or clock issues typically indicate a problem with the CMOS battery. Would you like to extract the CMOS battery?",
+      "options": [
+        { "label": "Extract CMOS battery", "next": "extract_cmos_1" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "cooling_issue",
+      "text": "Cooling problems can be related to the CPU cooler or case fans. Which component would you like to address?",
+      "options": [
+        { "label": "CPU Cooler", "next": "cooler_issue" },
+        { "label": "Case Fan", "next": "fan_issue" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "cooler_issue",
+      "text": "CPU cooler problems often lead to overheating, shutdowns, or thermal throttling. Would you like to extract the CPU cooler?",
+      "options": [
+        { "label": "Extract CPU cooler", "next": "extract_cooler_1" },
+        { "label": "Back", "next": "cooling_issue" }
+      ]
+    },
+    {
+      "id": "fan_issue",
+      "text": "Case fan issues can cause inadequate airflow, increased system temperature, and noise problems. Would you like to extract the case fan?",
+      "options": [
+        { "label": "Extract case fan", "next": "extract_fan_1" },
+        { "label": "Back", "next": "cooling_issue" }
+      ]
+    },
+    {
+      "id": "cpu_issue",
+      "text": "CPU malfunctions can be caused by overheating, physical damage, or age-related degradation. Would you like to extract the CPU?",
+      "options": [
+        { "label": "Extract CPU", "next": "extract_cpu_1" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "gpu_issue",
+      "text": "Graphics card problems often manifest as display artifacts, crashes, or complete failure to output video. Would you like to extract the GPU?",
+      "options": [
+        { "label": "Extract GPU", "next": "extract_gpu_1" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "motherboard_issue",
+      "text": "Motherboard problems can affect multiple components and may present as boot failures, random shutdowns, or component recognition issues. Would you like to extract the motherboard?",
+      "options": [
+        { "label": "Extract motherboard", "next": "extract_mboard_1" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "power_issue",
+      "text": "Power supply failures can cause sudden shutdowns, failure to power on, or strange noises from the PSU. Would you like to extract the power supply?",
+      "options": [
+        { "label": "Extract PSU", "next": "extract_psu_1" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "memory_issue",
+      "text": "RAM issues typically cause system instability, blue screens, or failure to boot. Would you like to extract the RAM modules?",
+      "options": [
+        { "label": "Extract RAM", "next": "extract_ram_1" },
+        { "label": "Back", "next": "issue" }
+      ]
+    },
+    {
+      "id": "component_extraction",
+      "text": "What would you like to extract?",
+      "options": [
+        { "label": "HDD", "next": "extract_hdd_1" },
+        { "label": "SSD", "next": "extract_ssd_1" },
+        { "label": "Case", "next": "extract_case_1" },
+        { "label": "Cooler", "next": "extract_cooler_1" },
+        { "label": "Fan", "next": "extract_fan_1" },
+        { "label": "CPU", "next": "extract_cpu_1" },
+        { "label": "Graphics card (GPU)", "next": "extract_gpu_1" },
+        { "label": "Motherboard", "next": "extract_mboard_1" },
+        { "label": "Powersupply", "next": "extract_psu_1" },
+        { "label": "Power supply (PSU)", "next": "extract_psu_1" },
+        { "label": "RAM", "next": "extract_ram_1" },
+        { "label": "CMOS", "next": "extract_cmos_1" },  
+        { "label": "Back", "next": "start" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    
 
     {
       "id": "extract_hdd_1",
@@ -125,6 +254,32 @@
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
         { "label": "Back", "next": "extract_hdd_2" }
+      ]
+    },
+    {
+      "id": "extract_ssd_sata_1",
+      "text": "Disconnect both the SATA data cable (thin) and power cable (wide) from the SSD.",
+      "image": "assets/img_assistance/ssd_cables.png",
+      "options": [
+        { "label": "Next", "next": "extract_ssd_sata_2" },
+        { "label": "Back", "next": "component_extraction" }
+      ]
+    },
+    {
+      "id": "extract_ssd_sata_2",
+      "text": "Remove the screws holding the SSD to its mounting bracket or drive bay.",
+      "options": [
+        { "label": "Next", "next": "extract_ssd_sata_3" },
+        { "label": "Back", "next": "extract_ssd_sata_1" }
+      ]
+    },
+    {
+      "id": "extract_ssd_sata_3",
+      "text": "Carefully slide the SATA SSD out from its mounting position.",
+      "options": [
+        { "label": "Component Extraction", "next": "component_extraction" },
+        { "label": "End", "next": "end" },
+        { "label": "Back", "next": "extract_ssd_sata_2" }
       ]
     },
 
