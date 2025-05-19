@@ -30,14 +30,46 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
   }
 
   Future<void> _getUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled, show dialog to open settings
+      _showLocationServiceDialog();
+      return;
+    }
+
+    // Check for location permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, show a message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permissions are denied')),
+        );
+        return;
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are permanently denied, show dialog to open app settings
+      _showPermissionDeniedDialog();
+      return;
+    }
+
+    // Permissions are granted, get position
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-
       setState(() {
         _userLocation = LatLng(position.latitude, position.longitude);
         _sortedLocations = _sortLocationsByDistance(position.latitude, position.longitude);
-        _nearestLocation = _sortedLocations.first;
+        if (_sortedLocations.isNotEmpty) {
+          _nearestLocation = _sortedLocations.first;
+        }
       });
     } catch (e) {
       print('Error getting user location: $e');
@@ -134,6 +166,64 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
 
   void _animateToLocation(LatLng location) {
     _mapController.move(location, 15.0);
+  }
+
+  void _showLocationServiceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Location Services Disabled'),
+          content: const Text(
+            'Please enable location services to find e-waste disposal locations near you.'
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Open Settings'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Geolocator.openLocationSettings();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Location Permission Denied'),
+          content: const Text(
+            'Location permission was permanently denied. Please enable it in app settings.'
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Open App Settings'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Geolocator.openAppSettings();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
