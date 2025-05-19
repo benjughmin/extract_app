@@ -61,10 +61,17 @@
   },
   "guidelines": {
     "safety": [
-      "Safety Test"
+      "Unplug the router and disconnect all cables before opening",
+      "Wait several minutes after unplugging to allow capacitors to discharge",
+      "Work on a clean, static-free surface",
+      "Keep track of screws and small parts in a container"
     ],
     "tools": [
-      "Tools Test"
+      "Phillips #0, #1 screwdrivers",
+      "Plastic spudger or opening tool",
+      "Tweezers",
+      "(Optional) Anti-static wrist strap (ESD strap)",
+      "Small container for screws"
     ]
   },
   
