@@ -30,16 +30,15 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
   }
 
   Future<void> _getUserLocation() async {
-    bool serviceEnabled;
     LocationPermission permission;
 
-    // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled, show dialog to open settings
-      _showLocationServiceDialog();
-      return;
-    }
+    // Remove the location services check that triggers the dialog
+    // bool serviceEnabled;
+    // serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!serviceEnabled) {
+    //   _showLocationServiceDialog();
+    //   return;
+    // }
 
     // Check for location permission
     permission = await Geolocator.checkPermission();
@@ -166,35 +165,6 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
 
   void _animateToLocation(LatLng location) {
     _mapController.move(location, 15.0);
-  }
-
-  void _showLocationServiceDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Location Services Disabled'),
-          content: const Text(
-            'Please enable location services to find e-waste disposal locations near you.'
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Open Settings'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Geolocator.openLocationSettings();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _showPermissionDeniedDialog() {
