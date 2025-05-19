@@ -231,7 +231,7 @@
 
     {
       "id": "extract_hdd_1",
-      "text": "Gently disconnect the two cables from the hard drive: the wide flat data cable and the small power cable with colored wires.",
+      "text": "1. Gently disconnect the two cables from the hard drive: the wide flat data cable and the small power cable with colored wires.",
       "image": "assets/img_assistance/hdd_plug.png",
       "options": [
         { "label": "Next", "next": "extract_hdd_2" },
@@ -240,7 +240,7 @@
     },
     {
       "id": "extract_hdd_2",
-      "text": "Remove the screws or press the plastic clips that are holding the hard drive in place.",
+      "text": "2. Remove the screws or press the plastic clips that are holding the hard drive in place.",
       "image": "assets/img_assistance/hdd_screw.png",
       "options": [
         { "label": "Next", "next": "extract_hdd_3" },
@@ -249,7 +249,7 @@
     },
     {
       "id": "extract_hdd_3",
-      "text": "Carefully slide the hard drive out of its bay, supporting it from underneath.",
+      "text": "3. Carefully slide the hard drive out of its bay, supporting it from underneath.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -258,7 +258,7 @@
     },
     {
       "id": "extract_sata_1",
-      "text": "Unplug the two cables which are connected to the back of the SSD",
+      "text": "1. Unplug the two cables which are connected to the back of the SSD",
       "image": "assets/img_assistance/sata_cables.png",
       "options": [
         { "label": "Next", "next": "extract_sata_2" },
@@ -267,7 +267,7 @@
     },
     {
       "id": "extract_sata_2",
-      "text": "If the SSD if being held by screws in the bay, remove the screws holding the SSD.",
+      "text": "2. If the SSD if being held by screws in the bay, remove the screws holding the SSD.",
       "options": [
         { "label": "Next", "next": "extract_sata_3" },
         { "label": "Back", "next": "extract_sata_1" }
@@ -275,7 +275,7 @@
     },
     {
       "id": "extract_sata_3",
-      "text": "Carefully slide the SATA SSD out from its mounting position. Then you are done!",
+      "text": "3. Carefully slide the SATA SSD out from its mounting position. Then you are done!",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -285,7 +285,7 @@
 
     {
       "id": "extract_nvme_1",
-      "text": "Locate the small screw securing the NVMe SSD to the M.2 slot. For some, it is just a pin that you can pull out.",
+      "text": "1. Locate the small screw securing the NVMe SSD to the M.2 slot. For some, it is just a pin that you can pull out.",
       "image": "assets/img_assistance/ssd_screw.jpg",
       "options": [
         { "label": "Next", "next": "extract_nvme_2" },
@@ -294,7 +294,7 @@
     },
     {
       "id": "extract_nvme_2",
-      "text": "Remove the screw securing the disk in place. Once the screw has been removed, the drive will lift itself.",
+      "text": "2. Remove the screw securing the disk in place. Once the screw has been removed, the drive will lift itself.",
       "image": "assets/img_assistance/ssd_lift.png",
       "options": [
         { "label": "Next", "next": "extract_nvme_3" },
@@ -303,7 +303,7 @@
     },
     {
       "id": "extract_nvme_3",
-      "text": "You can now gently pull it the SSD away.",
+      "text": "3. You can now gently pull it the SSD away.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -313,7 +313,7 @@
 
     {
       "id": "extract_case_1",
-      "text": "Remove side panels by unscrewing or unlatching them.",
+      "text": "1. Remove side panels by unscrewing or unlatching them.",
       "options": [
         { "label": "Next", "next": "extract_case_2" },
         { "label": "Back", "next": "component_extraction" }
@@ -321,7 +321,7 @@
     },
     {
       "id": "extract_case_2",
-      "text": "Detach front or top panels if necessary.",
+      "text": "2. Detach front or top panels if necessary.",
       "options": [
         { "label": "Next", "next": "extract_case_3" },
         { "label": "Back", "next": "extract_case_1" }
@@ -329,7 +329,7 @@
     },
     {
       "id": "extract_case_3",
-      "text": "Remove any accessory brackets if needed.",
+      "text": "3. Remove any accessory brackets if needed.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -339,7 +339,7 @@
 
     {
       "id": "extract_cmos_1",
-      "text": "Make sure you're not using anything metal. Use a plastic tool or your fingernail to gently push the lever pressed to pop the battery out.",
+      "text": "1. Make sure you're not using anything metal. Use a plastic tool or your fingernail to gently push the lever pressed to pop the battery out.",
       "image": "assets/img_assistance/cmos_lever.png",
       "options": [
         { "label": "Next", "next": "extract_cmos_2" },
@@ -348,7 +348,7 @@
     },
     {
       "id": "extract_cmos_2",
-      "text": "The battery should pop out with a small click. Be careful not to force it.",
+      "text": "2. The battery should pop out with a small click. Be careful not to force it.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -358,7 +358,7 @@
 
     {
       "id": "extract_cooler_1",
-      "text": "There is a cable connected to the cooler, unplug it from the motherboard. Look for the label CPU_PORT/CPU_FAN",
+      "text": "1. There is a cable connected to the cooler, unplug it from the motherboard. Look for the label CPU_PORT/CPU_FAN",
       "image": "assets/img_assistance/cpu_cooler_socket.png",
       "options": [
         { "label": "Next", "next": "extract_cooler_2" },
@@ -367,7 +367,7 @@
     },
     {
       "id": "extract_cooler_2",
-      "text": "For Intel: Locate the Push Pins (4 corners). Turn each pin about 90° counterclockwise using your fingers or a flathead screwdriver.",
+      "text": "2. For Intel: Locate the Push Pins (4 corners). Turn each pin about 90° counterclockwise using your fingers or a flathead screwdriver.",
       "image": "assets/img_assistance/intel_pins.jpg",
       "options": [
         { "label": "Next", "next": "extract_cooler_3" },
@@ -376,7 +376,7 @@
     },
     {
       "id": "extract_cooler_3",
-      "text": "For AMD: Locate the 4 screws (4 corners). Start loosening them a little at a time VERTICALLY. If you started at top left screw the next screw to loosen is bottom left. Don’t fully remove one before loosening the others.",
+      "text": "3. For AMD: Locate the 4 screws (4 corners). Start loosening them a little at a time VERTICALLY. If you started at top left screw the next screw to loosen is bottom left. Don't fully remove one before loosening the others.",
       "image": "assets/img_assistance/amd_screw.png",
       "options": [
         { "label": "Next", "next": "extract_cooler_4" },
@@ -385,7 +385,7 @@
     },
     {
       "id": "extract_cooler_4",
-      "text": "For Others, it has Lever + Clip Mechanism. Locate the metal retention clip hooked onto the plastic bracket. Use your fingers to unclip it from one side. Flip the lever up to release tension",
+      "text": "4. For Others, it has Lever + Clip Mechanism. Locate the metal retention clip hooked onto the plastic bracket. Use your fingers to unclip it from one side. Flip the lever up to release tension",
       "image": "assets/img_assistance/other_lever.png",
       "options": [
         { "label": "Next", "next": "extract_cooler_5" },
@@ -394,7 +394,7 @@
     },
     {
       "id": "extract_cooler_5",
-      "text": "Once all push-pins (Intel), screws (AMD) or others (Lever + Clip) have been properly loosened, gently wiggle the cooler side to side to break the thermal paste seal. Then lift the cooler straight up without applying force. Do not yank—if it feels stuck, twist slightly to loosen.",
+      "text": "5. Once all push-pins (Intel), screws (AMD) or others (Lever + Clip) have been properly loosened, gently wiggle the cooler side to side to break the thermal paste seal. Then lift the cooler straight up without applying force. Do not yank—if it feels stuck, twist slightly to loosen.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -404,7 +404,7 @@
 
     {
       "id": "extract_fan_1",
-      "text": "Unplug the fan from its motherboard. Look for the CHA_FAN",
+      "text": "1. Unplug the fan from its motherboard. Look for the CHA_FAN",
       "image": "assets/img_assistance/fan_socket.png",
       "options": [
         { "label": "Next", "next": "extract_fan_2" },
@@ -413,7 +413,7 @@
     },
     {
       "id": "extract_fan_2",
-      "text": "Remove any screws or clips holding the fan in place. If clips are used instead of screws, gently unclip them to release the fan from the case.",
+      "text": "2. Remove any screws or clips holding the fan in place. If clips are used instead of screws, gently unclip them to release the fan from the case.",
       "options": [
         { "label": "Next", "next": "extract_fan_3" },
         { "label": "Back", "next": "extract_fan_1" }
@@ -421,7 +421,7 @@
     },
     {
       "id": "extract_fan_3",
-      "text": "Carefully lift the fan out of its mounting area. If it feels stuck, check for any remaining screws or clips.",
+      "text": "3. Carefully lift the fan out of its mounting area. If it feels stuck, check for any remaining screws or clips.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -431,7 +431,7 @@
 
     {
       "id": "extract_cpu_1",
-      "text": "Find the metal lever on the side of the socket (usually on the right).",
+      "text": "1. Find the metal lever on the side of the socket (usually on the right).",
       "image": "assets/img_assistance/cpu_lever.png",
       "options": [
         { "label": "Next", "next": "extract_cpu_2" },
@@ -440,7 +440,7 @@
     },
     {
       "id": "extract_cpu_2",
-      "text": "Press the lever down slightly, then move it out away from the socket to release it.",
+      "text": "2. Press the lever down slightly, then move it out away from the socket to release it.",
       "options": [
         { "label": "Next", "next": "extract_cpu_3" },
         { "label": "Back", "next": "extract_cpu_1" }
@@ -448,7 +448,7 @@
     },
     {
       "id": "extract_cpu_3",
-      "text": "Lift the lever up completely — this loosens the metal frame (load plate). Flip up the metal load plate that covers the CPU",
+      "text": "3. Lift the lever up completely — this loosens the metal frame (load plate). Flip up the metal load plate that covers the CPU",
       "options": [
         { "label": "Next", "next": "extract_cpu_4" },
         { "label": "Back", "next": "extract_cpu_2" }
@@ -456,7 +456,7 @@
     },
     {
       "id": "extract_cpu_4",
-      "text": "Gently lift the CPU straight up by the edges. Do not touch the gold contacts (bottom) of the CPU or bend the pins on the socket (they’re extremely fragile).",
+      "text": "4. Gently lift the CPU straight up by the edges. Do not touch the gold contacts (bottom) of the CPU or bend the pins on the socket (they're extremely fragile).",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -466,7 +466,7 @@
 
     {
       "id": "extract_gpu_1",
-      "text": "Push down on the lock clip located on the PCIe cable. Unplug the PCIe cable by gently pulling it out.",
+      "text": "1. Push down on the lock clip located on the PCIe cable. Unplug the PCIe cable by gently pulling it out.",
       "image": "assets/img_assistance/gpu_cable.png",
       "options": [
         { "label": "Next", "next": "extract_gpu_2" },
@@ -475,7 +475,7 @@
     },
     {
       "id": "extract_gpu_2",
-      "text": "Remove the small mounting screw(s) that connect the GPU onto the back of the PC case.",
+      "text": "2. Remove the small mounting screw(s) that connect the GPU onto the back of the PC case.",
       "image": "assets/img_assistance/gpu_screw.png",
       "options": [
         { "label": "Next", "next": "extract_gpu_3" },
@@ -484,7 +484,7 @@
     },
     {
       "id": "extract_gpu_3",
-      "text": "Push down on the lock tab located beside the GPU slot on the motherboard. Screwdriver was only used to point at the lock tab. Use your fingers to push down on the lock tab.",
+      "text": "3. Push down on the lock tab located beside the GPU slot on the motherboard. Screwdriver was only used to point at the lock tab. Use your fingers to push down on the lock tab.",
       "image": "assets/img_assistance/gpu_lock.png",
       "options": [
         { "label": "Next", "next": "extract_gpu_4" },
@@ -493,7 +493,7 @@
     },
     {
       "id": "extract_gpu_4",
-      "text": "Remove the graphics card by gently pulling it out from the GPU slot. Use both hands for extra caution.",
+      "text": "4. Remove the graphics card by gently pulling it out from the GPU slot. Use both hands for extra caution.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -503,7 +503,7 @@
 
     {
       "id": "extract_mboard_1",
-      "text": "Before proceeding, make sure all components are extracted before extracting the motherboard.",
+      "text": "1. Before proceeding, make sure all components are extracted before extracting the motherboard.",
       "options": [
         { "label": "Next", "next": "extract_mboard_2" },
         { "label": "Back", "next": "component_extraction" }
@@ -511,7 +511,7 @@
     },
     {
       "id": "extract_mboard_2",
-      "text": "Begin to disconnect all cables from the motherboard. Some of the cables will have clips that needs to be pushed before you can remove them from the motherboard.",
+      "text": "2. Begin to disconnect all cables from the motherboard. Some of the cables will have clips that needs to be pushed before you can remove them from the motherboard.",
       "image": "assets/img_assistance/mobo_cable_clip.png",
       "options": [
         { "label": "Next", "next": "extract_mboard_3" },
@@ -520,7 +520,7 @@
     },
     {
       "id": "extract_mboard_3",
-      "text": "Remove all the screws from the motherboard. Be sure to have your computer on its side, so that once the screws are out the motherboard won't fall out and be damaged.",
+      "text": "3. Remove all the screws from the motherboard. Be sure to have your computer on its side, so that once the screws are out the motherboard won't fall out and be damaged.",
       "image": "assets/img_assistance/mboard_screws.png",
       "options": [
         { "label": "Next", "next": "extract_mboard_4" },
@@ -529,7 +529,7 @@
     },
     {
       "id": "extract_mboard_4",
-      "text": "Once all screws are out, gently lift the motherboard out of the case. Be careful not to bend or flex it too much.",
+      "text": "4. Once all screws are out, gently lift the motherboard out of the case. Be careful not to bend or flex it too much.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -539,7 +539,7 @@
 
     {
       "id": "extract_psu_1",
-      "text": "Unscrew Phillips screws from back of the desktop PC.",
+      "text": "1. Unscrew Phillips screws from back of the desktop PC.",
       "image": "assets/img_assistance/psu_screw.png",
       "options": [
         { "label": "Next", "next": "extract_psu_2" },
@@ -548,7 +548,7 @@
     },
     {
       "id": "extract_psu_2",
-      "text": "Unplug all attached cables from the Power Supply, then unplug the cable attached to the Motherboard inside the PC.",
+      "text": "2. Unplug all attached cables from the Power Supply, then unplug the cable attached to the Motherboard inside the PC.",
       "images": [
         "assets/img_assistance/psu_cable.png",
         "assets/img_assistance/psu_mobo_cable.jpg"
@@ -560,7 +560,7 @@
     },
     {
       "id": "extract_psu_3",
-      "text": "Slide the PSU out from the mounting bay.",
+      "text": "3. Slide the PSU out from the mounting bay.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
@@ -570,7 +570,7 @@
 
     {
       "id": "extract_ram_1",
-      "text": "Each motherboard is different. Some has two pull tabs on each side while some has one pull tab instead.",
+      "text": "1. Each motherboard is different. Some has two pull tabs on each side while some has one pull tab instead.",
       "image": "assets/img_assistance/ram_pull.png",
       "options": [
         { "label": "Next", "next": "extract_ram_2" },
@@ -579,7 +579,7 @@
     },
     {
       "id": "extract_ram_2",
-      "text": "After identifying how many pull tabs are there, push down on them to release the RAM stick(s).",
+      "text": "2. After identifying how many pull tabs are there, push down on them to release the RAM stick(s).",
       "image": "assets/img_assistance/ram_pull_down.png",
       "options": [
         { "label": "Next", "next": "extract_ram_3" },
@@ -588,7 +588,7 @@
     },
     {
       "id": "extract_ram_3",
-      "text": "Once the pull tabs are released, remove the RAM from the RAM slots and set to the side. Repeat the steps if you have multiple RAM sticks.",
+      "text": "3. Once the pull tabs are released, remove the RAM from the RAM slots and set to the side. Repeat the steps if you have multiple RAM sticks.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
