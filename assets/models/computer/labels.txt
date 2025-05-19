@@ -7,6 +7,6 @@ cooler
 cpu
 fan
 gpu
-mboard
+motherboard
 psu
 ram
