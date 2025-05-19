@@ -367,8 +367,23 @@
     },
     {
       "id": "extract_cooler_2",
-      "text": "2. For Intel: Locate the Push Pins (4 corners). Turn each pin about 90° counterclockwise using your fingers or a flathead screwdriver.",
-      "image": "assets/img_assistance/intel_pins.jpg",
+      "steps": [
+        {
+          "order": 1,
+          "action": "For Intel: Locate the Push Pins (4 corners). Turn each pin about 90° counterclockwise using your fingers or a flathead screwdriver.",
+          "image": "assets/img_assistance/intel_pins.jpg"
+        },
+        {
+          "order": 2,
+          "action": "For AMD: Locate the 4 screws (4 corners). Start loosening them a little at a time VERTICALLY. If you started at top left screw the next screw to loosen is bottom left. Don't fully remove one before loosening the others.",
+          "image": "assets/img_assistance/amd_screw.png"
+        },
+        {
+          "order": 3,
+          "action": "For Others, it has Lever + Clip Mechanism. Locate the metal retention clip hooked onto the plastic bracket. Use your fingers to unclip it from one side. Flip the lever up to release tension",
+          "image": "assets/img_assistance/other_lever.png"
+        }
+      ],
       "options": [
         { "label": "Next", "next": "extract_cooler_3" },
         { "label": "Back", "next": "extract_cooler_1" }
@@ -376,29 +391,11 @@
     },
     {
       "id": "extract_cooler_3",
-      "text": "3. For AMD: Locate the 4 screws (4 corners). Start loosening them a little at a time VERTICALLY. If you started at top left screw the next screw to loosen is bottom left. Don't fully remove one before loosening the others.",
-      "image": "assets/img_assistance/amd_screw.png",
-      "options": [
-        { "label": "Next", "next": "extract_cooler_4" },
-        { "label": "Back", "next": "extract_cooler_2" }
-      ]
-    },
-    {
-      "id": "extract_cooler_4",
-      "text": "4. For Others, it has Lever + Clip Mechanism. Locate the metal retention clip hooked onto the plastic bracket. Use your fingers to unclip it from one side. Flip the lever up to release tension",
-      "image": "assets/img_assistance/other_lever.png",
-      "options": [
-        { "label": "Next", "next": "extract_cooler_5" },
-        { "label": "Back", "next": "extract_cooler_3" }
-      ]
-    },
-    {
-      "id": "extract_cooler_5",
-      "text": "5. Once all push-pins (Intel), screws (AMD) or others (Lever + Clip) have been properly loosened, gently wiggle the cooler side to side to break the thermal paste seal. Then lift the cooler straight up without applying force. Do not yank—if it feels stuck, twist slightly to loosen.",
+      "text": "3. Once all push-pins (Intel), screws (AMD) or others (Lever + Clip) have been properly loosened, gently wiggle the cooler side to side to break the thermal paste seal. Then lift the cooler straight up without applying force. Do not yank—if it feels stuck, twist slightly to loosen.",
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
         { "label": "End", "next": "end" },
-        { "label": "Back", "next": "extract_cooler_4" }
+        { "label": "Back", "next": "extract_cooler_2" }
       ]
     },
 
