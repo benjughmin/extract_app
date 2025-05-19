@@ -1,5 +1,7 @@
 Speaker
-batteryboard
-cameracharging-port
-rvib
-svib
+Battery
+Logic-Board
+Camera
+Charging-Port
+Vibration-Motor-Round
+Vibration Motor-Square

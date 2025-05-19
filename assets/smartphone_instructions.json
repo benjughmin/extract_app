@@ -25,12 +25,12 @@
         "brand": {
           "options": ["Samsung", "Apple", "LG", "Sony", "OEM", "Other"],
           "multipliers": {
+            "Apple": 1.0,
             "Samsung": 1.2,
-            "Apple": 1.3,
-            "LG": 1.0,
-            "Sony": 1.1,
-            "OEM": 0.9,
-            "Other": 0.8
+            "Xiaomi": 1.1,
+            "Vivo": 1.1,
+            "Oppo": 1.1,
+            "OEM": 0.9
           }
         },
         "capacity": {
