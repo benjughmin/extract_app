@@ -1068,19 +1068,24 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Total Estimated Value: ',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 16,
-                              color: Colors.white70,
+                          Expanded(
+                            child: Text(
+                              'Total Estimated Value: ',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16,
+                                color: Colors.white70,
+                              ),
                             ),
                           ),
-                          Text(
-                            '\₱${totalValue.toStringAsFixed(2)}',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          Flexible(
+                            child: Text(
+                              '\₱${totalValue.toStringAsFixed(2)}',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
