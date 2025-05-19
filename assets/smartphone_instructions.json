@@ -16,14 +16,180 @@
     "Vibration failure": ["vibrator"],
     "Device not powering on": ["logic_board", "battery"]
   },
+  "guidelines": {
+    "safety": [
+      "⚠️ Power off device before disassembly",
+      "⚡ Use anti-static wrist strap when handling components",
+      "🔥 Handle lithium batteries with extreme care - no metal tools near battery",
+      "🌬️ Work in well-ventilated area when using isopropyl alcohol",
+      "🧤 Wear safety glasses when prying components"
+    ],
+    "tools": [
+      "🛠️ Precision screwdriver set (Phillips, Pentalobe, Torx)",
+      "🔧 Plastic spudgers (multiple sizes)",
+      "🧲 Anti-static tweezers (non-magnetic)",
+      "🧪 Isopropyl alcohol (90%+) for adhesive removal",
+      "🌡️ Heat gun/hairdryer for softening adhesives",
+      "📷 Smartphone or camera to document disassembly steps",
+      "🧩 Organizer tray for screws and small components"
+    ]
+  },
 
   "nodes": [
     {
       "id": "start",
       "text": "📱 What type of smartphone do you have?",
       "options": [
-        { "label": "🍎 Apple", "next": "apple_intro" },
-        { "label": "🤖 Android", "next": "android_intro" }
+        { "label": "🍎 Apple", "next": "apple_choice" },
+        { "label": "🤖 Android", "next": "android_choice" }
+      ]
+    },
+    {
+      "id": "apple_choice",
+      "text": "Would you like to indicate the reason you're disposing of your Apple device, or would you like to head straight to component extraction?",
+      "options": [
+        { "label": "Disposal Cause", "next": "apple_issue" },
+        { "label": "Component Extraction", "next": "apple_intro" }
+      ]
+    },
+    {
+      "id": "android_choice",
+      "text": "Would you like to indicate the reason you're disposing of your Android device, or would you like to head straight to component extraction?",
+      "options": [
+        { "label": "Disposal Cause", "next": "android_issue" },
+        { "label": "Component Extraction", "next": "android_intro" }
+      ]
+    },
+    {
+      "id": "apple_issue",
+      "text": "What issue are you experiencing with your Apple device?",
+      "options": [
+        { "label": "🔋 Battery issues", "next": "apple_battery_issue" },
+        { "label": "📷 Camera issues", "next": "apple_camera_issue" },
+        { "label": "🔌 Charging problems", "next": "apple_charging_issue" },
+        { "label": "🔊 Audio issues", "next": "apple_audio_issue" },
+        { "label": "📳 Vibration failure", "next": "apple_vibration_issue" },
+        { "label": "⚡ Device not powering on", "next": "apple_power_issue" },
+        { "label": "Back", "next": "apple_choice" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "android_issue",
+      "text": "What issue are you experiencing with your Android device?",
+      "options": [
+        { "label": "🔋 Battery issues", "next": "android_battery_issue" },
+        { "label": "📷 Camera issues", "next": "android_camera_issue" },
+        { "label": "🔌 Charging problems", "next": "android_charging_issue" },
+        { "label": "🔊 Audio issues", "next": "android_audio_issue" },
+        { "label": "📳 Vibration failure", "next": "android_vibration_issue" },
+        { "label": "⚡ Device not powering on", "next": "android_power_issue" },
+        { "label": "Back", "next": "android_choice" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "apple_battery_issue",
+      "text": "Battery issues on Apple devices often include rapid discharge, overheating, swelling, or failure to hold charge. This typically requires battery replacement. Would you like to extract the battery?",
+      "options": [
+        { "label": "Extract Battery", "next": "apple_battery" },
+        { "label": "Back", "next": "apple_issue" }
+      ]
+    },
+    {
+      "id": "apple_camera_issue",
+      "text": "Camera problems may include blurry photos, focus issues, black screen, or rattling sounds. Which camera is affected?",
+      "options": [
+        { "label": "Rear Camera", "next": "apple_camera_rear" },
+        { "label": "Front Camera", "next": "apple_camera_front" },
+        { "label": "Both", "next": "apple_camera" },
+        { "label": "Back", "next": "apple_issue" }
+      ]
+    },
+    {
+      "id": "apple_charging_issue",
+      "text": "Charging problems can be caused by a faulty charging port or battery degradation. Which component would you like to address first?",
+      "options": [
+        { "label": "🔌 Charging Port", "next": "apple_charging_port" },
+        { "label": "🔋 Battery", "next": "apple_battery" },
+        { "label": "Back", "next": "apple_issue" }
+      ]
+    },
+    {
+      "id": "apple_audio_issue",
+      "text": "Audio issues typically manifest as no sound, distorted sound, or crackling during playback. Would you like to extract the speaker?",
+      "options": [
+        { "label": "Extract Speaker", "next": "apple_speaker" },
+        { "label": "Back", "next": "apple_issue" }
+      ]
+    },
+    {
+      "id": "apple_vibration_issue",
+      "text": "Vibration failure means your device won't vibrate for notifications, calls, or haptic feedback. Would you like to extract the vibrator/Taptic Engine?",
+      "options": [
+        { "label": "Extract Vibrator", "next": "apple_vibrator" },
+        { "label": "Back", "next": "apple_issue" }
+      ]
+    },
+    {
+      "id": "apple_power_issue",
+      "text": "Power issues can be caused by a faulty logic board or completely dead battery. Which component would you like to check first?",
+      "options": [
+        { "label": "💻 Logic Board", "next": "apple_logic_board" },
+        { "label": "🔋 Battery", "next": "apple_battery" },
+        { "label": "Back", "next": "apple_issue" }
+      ]
+    },
+    {
+      "id": "android_battery_issue",
+      "text": "Battery issues on Android devices often include rapid discharge, overheating, swelling, or failure to hold charge. This typically requires battery replacement. Would you like to extract the battery?",
+      "options": [
+        { "label": "Extract Battery", "next": "android_battery" },
+        { "label": "Back", "next": "android_issue" }
+      ]
+    },
+    {
+      "id": "android_camera_issue",
+      "text": "Camera problems may include blurry photos, focus issues, black screen, or rattling sounds. Which camera is affected?",
+      "options": [
+        { "label": "Rear Camera", "next": "android_camera_rear" },
+        { "label": "Front Camera", "next": "android_camera_front" },
+        { "label": "Both", "next": "android_camera" },
+        { "label": "Back", "next": "android_issue" }
+      ]
+    },
+    {
+      "id": "android_charging_issue",
+      "text": "Charging problems can be caused by a faulty charging port or battery degradation. Which component would you like to address first?",
+      "options": [
+        { "label": "🔌 Charging Port", "next": "android_charging_port" },
+        { "label": "🔋 Battery", "next": "android_battery" },
+        { "label": "Back", "next": "android_issue" }
+      ]
+    },
+    {
+      "id": "android_audio_issue",
+      "text": "Audio issues typically manifest as no sound, distorted sound, or crackling during playback. Would you like to extract the speaker?",
+      "options": [
+        { "label": "Extract Speaker", "next": "android_speaker" },
+        { "label": "Back", "next": "android_issue" }
+      ]
+    },
+    {
+      "id": "android_vibration_issue",
+      "text": "Vibration failure means your device won't vibrate for notifications, calls, or haptic feedback. Would you like to extract the vibrator motor?",
+      "options": [
+        { "label": "Extract Vibrator", "next": "android_vibrator" },
+        { "label": "Back", "next": "android_issue" }
+      ]
+    },
+    {
+      "id": "android_power_issue",
+      "text": "Power issues can be caused by a faulty logic board or completely dead battery. Which component would you like to check first?",
+      "options": [
+        { "label": "💻 Logic Board", "next": "android_logic_board" },
+        { "label": "🔋 Battery", "next": "android_battery" },
+        { "label": "Back", "next": "android_issue" }
       ]
     },
     {
@@ -36,7 +202,7 @@
         { "label": "💻 Logic Board", "next": "apple_logic_board" },
         { "label": "🔊 Speaker", "next": "apple_speaker" },
         { "label": "📳 Vibrator", "next": "apple_vibrator" },
-        { "label": "Back", "next": "start" }
+        { "label": "Back", "next": "apple_choice" }
       ]
     },
     {
@@ -570,24 +736,5 @@
       "id": "end",
       "text": "✅ Processing complete. Remember to:\n1. 📦 Store components properly in anti-static bags\n2. ♻️ Recycle through certified e-waste channels\n3. 🗑️ Wipe any personal data using factory reset or specialized tools\n4. 🧰 Organize your screws and components for future use\n\nThank you for recycling responsibly! 🌍"
     }
-  ],
-
-  "guidelines": {
-    "safety": [
-      "⚠️ Power off device before disassembly",
-      "⚡ Use anti-static wrist strap when handling components",
-      "🔥 Handle lithium batteries with extreme care - no metal tools near battery",
-      "🌬️ Work in well-ventilated area when using isopropyl alcohol",
-      "🧤 Wear safety glasses when prying components"
-    ],
-    "tools": [
-      "🛠️ Precision screwdriver set (Phillips, Pentalobe, Torx)",
-      "🔧 Plastic spudgers (multiple sizes)",
-      "🧲 Anti-static tweezers (non-magnetic)",
-      "🧪 Isopropyl alcohol (90%+) for adhesive removal",
-      "🌡️ Heat gun/hairdryer for softening adhesives",
-      "📷 Smartphone or camera to document disassembly steps",
-      "🧩 Organizer tray for screws and small components"
-    ]
-  }
+  ]
 }
