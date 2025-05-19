@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EWasteMapScreen extends StatefulWidget {
   final List<dynamic> locations;
@@ -108,8 +109,6 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
             Text('Phone: ${location['phone']}'),
             const SizedBox(height: 8),
             Text('Hours: ${location['hours']}'),
-            const SizedBox(height: 8),
-            Text('Accepted Materials: ${location['accepted_materials'].join(', ')}'),
             const SizedBox(height: 8),
             Text('Notes: ${location['notes']}'),
           ],
@@ -283,10 +282,29 @@ class HomeScreen extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () async {
             try {
-              final jsonString = await rootBundle.loadString('assets/e_waste_locations.json');
-              final jsonData = json.decode(jsonString);
-              final locations = jsonData['e_waste_locations'] as List<dynamic>;
+              // Fetch data from Firestore
+              final querySnapshot = await FirebaseFirestore.instance
+                  .collection('ewaste_locations')
+                  .get();
 
+              // Convert Firestore documents to a list of maps
+              final locations = querySnapshot.docs.map((doc) {
+                final data = doc.data();
+                final latLong = data['lat_long'] as GeoPoint;
+
+                return {
+                  'id': doc.id,
+                  'name': data['name'],
+                  'address': data['address'],
+                  'latitude': latLong.latitude,
+                  'longitude': latLong.longitude,
+                  'phone': data['phone'],
+                  'hours': data['hours'],
+                  'website': data['website'],
+                };
+              }).toList();
+
+              // Navigate to the map screen with the fetched locations
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -294,7 +312,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               );
             } catch (e) {
-              print('Error loading e-waste locations: $e');
+              print('Error fetching e-waste locations: $e');
             }
           },
           child: const Text('View E-Waste Locations'),

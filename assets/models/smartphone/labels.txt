@@ -1,4 +1,7 @@
-battery
-cable
-camera
-screw
+Speaker
+Battery
+Logic-Board
+Camera
+Charging-Port
+Vibration-Motor-Round
+Vibration Motor-Square

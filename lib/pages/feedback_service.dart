@@ -15,11 +15,13 @@ class FeedbackService {
     required String deviceCategory,
   }) async {
     try {
-      if (FirebaseAuth.instance.currentUser == null) {
-        await _authService.signInAnonymously();
+      // Ensure user is signed in anonymously
+      final auth = FirebaseAuth.instance;
+      if (auth.currentUser == null) {
+        await auth.signInAnonymously();
       }
 
-      final user = FirebaseAuth.instance.currentUser;
+      final user = auth.currentUser;
       print('👤 Current user: ${user?.uid}');
 
       final String imageId = DateTime.now().millisecondsSinceEpoch.toString();

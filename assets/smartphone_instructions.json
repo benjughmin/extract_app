@@ -1,111 +1,500 @@
 {
-    "component_labels": {
-        "Battery": "battery",
-        "Camera": "camera"
-    },
+  "component_labels": {
+    "Battery": "battery",
+    "Camera": "camera",
+    "Charging Port": "charging_port",
+    "Speaker": "speaker",
+    "Vibrator/Haptic Engine": "vibrator",
+    "Logic Board": "logic_board"
+  },
 
-    "issue_component_mapping": {
-        "Battery issue": ["battery"],
-        "Camera issue/damage": ["camera"]
-    },
+  "issue_component_mapping": {
+    "Battery issues": ["battery"],
+    "Camera issues": ["camera"],
+    "Charging problems": ["charging_port", "battery"],
+    "Audio issues": ["speaker"],
+    "Vibration failure": ["vibrator"],
+    "Device not powering on": ["logic_board", "battery"]
+  },
 
-    "component_values": {
-        "battery": {
-            "price": 10.00,
-            "notes": "Ensure the battery is not swollen or damaged before extraction"
+  "component_values": {
+    "battery": {
+      "default_base_price": 800.00,
+      "notes": "Smartphone batteries can be reused in DIY projects if they still hold a charge. Ensure proper storage to prevent swelling.",
+      "parameters": {
+        "brand": {
+          "options": ["Samsung", "Apple", "LG", "Sony", "OEM", "Other"],
+          "multipliers": {
+            "Apple": 1.0,
+            "Samsung": 1.2,
+            "Xiaomi": 1.1,
+            "Vivo": 1.1,
+            "Oppo": 1.1,
+            "OEM": 0.9
+          }
         },
-        "camera": {
-            "price": 8.00,
-            "notes": "Higher value for newer models or undamaged lenses"
+        "capacity": {
+          "options": ["<2000mAh", "2000-3000mAh", "3001-4000mAh", ">4000mAh"],
+          "base_prices": {
+            "<2000mAh": 200.00,
+            "2000-3000mAh": 400.00,
+            "3001-4000mAh": 600.00,
+            ">4000mAh": 800.00
+          }
+        },
+        "condition": {
+          "options": ["Like New", "Good", "Fair", "Poor"],
+          "multipliers": {
+            "Like New": 1.0,
+            "Good": 0.8,
+            "Fair": 0.5,
+            "Poor": 0.2
+          }
         }
+      }
     },
-
-    "nodes": [
-        {
-            "id": "start",
-            "text": "What is the cause of disposal?",
-            "options": [
-                { "label": "Battery issue", "next": "battery_issue" },
-                { "label": "Camera issue/damage", "next": "camera_issue" }
-            ]
+    "camera": {
+      "default_base_price": 500.00,
+      "notes": "Higher value for newer models or undamaged lenses. Camera modules can be repurposed for DIY projects.",
+      "parameters": {
+        "type": {
+          "options": ["Single", "Dual", "Triple", "Quad"],
+          "multipliers": {
+            "Single": 1.0,
+            "Dual": 1.3,
+            "Triple": 1.6,
+            "Quad": 2.0
+          }
         },
-        {
-            "id": "battery_issue",
-            "text": "This may be caused by an issue with the battery. Would you like to extract this part?",
-            "options": [
-                { "label": "Yes", "next": "extract_battery" },
-                { "label": "No", "next": "component_extraction" }
-            ]
-        },
-        {
-            "id": "extract_battery",
-            "steps": [
-                {
-                    "order": 1,
-                    "action": "Power off the smartphone and remove the back cover.",
-                    "image": "assets/img_assistance/battery_cover.png"
-                },
-                {
-                    "order": 2,
-                    "action": "Locate the battery and disconnect the battery connector.",
-                    "image": "assets/img_assistance/battery_connector.png"
-                },
-                {
-                    "order": 3,
-                    "action": "Carefully pry the battery out using a plastic tool.",
-                    "image": "assets/img_assistance/battery_pry.png"
-                }
-            ],
-            "options": [
-                { "label": "Component Extraction", "next": "component_extraction" },
-                { "label": "End", "next": "end" }
-            ]
-        },
-        {
-            "id": "camera_issue",
-            "text": "This may be caused by a damaged camera. Would you like to extract this part?",
-            "options": [
-                { "label": "Yes", "next": "extract_camera" },
-                { "label": "No", "next": "component_extraction" }
-            ]
-        },
-        {
-            "id": "extract_camera",
-            "steps": [
-                {
-                    "order": 1,
-                    "action": "Power off the smartphone and remove the back cover.",
-                    "image": "assets/img_assistance/camera_cover.png"
-                },
-                {
-                    "order": 2,
-                    "action": "Locate the camera module on the motherboard.",
-                    "image": "assets/img_assistance/camera_module.png"
-                },
-                {
-                    "order": 3,
-                    "action": "Disconnect the camera connector and carefully remove the module.",
-                    "image": "assets/img_assistance/camera_connector.png"
-                }
-            ],
-            "options": [
-                { "label": "Component Extraction", "next": "component_extraction" },
-                { "label": "End", "next": "end" }
-            ]
-        },
-        {
-            "id": "component_extraction",
-            "text": "What would you like to extract?",
-            "options": [
-                { "label": "Battery", "next": "extract_battery" },
-                { "label": "Camera", "next": "extract_camera" },
-                { "label": "Back", "next": "start" },
-                { "label": "End", "next": "end" }
-            ]
-        },
-        {
-            "id": "end",
-            "text": "All selected components have been processed."
+        "resolution": {
+          "options": ["<8MP", "8-12MP", "12-20MP", ">20MP"],
+          "base_prices": {
+            "<8MP": 200.00,
+            "8-12MP": 400.00,
+            "12-20MP": 600.00,
+            ">20MP": 800.00
+          }
         }
+      }
+    },
+    "charging_port": {
+      "default_base_price": 300.00,
+      "notes": "USB-C ports have higher reuse value than older micro-USB ports.",
+      "parameters": {
+        "type": {
+          "options": ["USB-C", "Lightning", "Micro-USB", "Other"],
+          "multipliers": {
+            "USB-C": 1.2,
+            "Lightning": 1.3,
+            "Micro-USB": 0.8,
+            "Other": 0.5
+          }
+        }
+      }
+    },
+    "speaker": {
+      "default_base_price": 200.00,
+      "notes": "Stereo speakers or those from premium devices have higher value.",
+      "parameters": {
+        "type": {
+          "options": ["Bottom-firing", "Stereo", "Front-firing", "Other"],
+          "multipliers": {
+            "Bottom-firing": 1.0,
+            "Stereo": 1.3,
+            "Front-firing": 1.2,
+            "Other": 0.8
+          }
+        }
+      }
+    },
+    "vibrator": {
+      "default_base_price": 150.00,
+      "notes": "Linear vibration motors have higher precision and value.",
+      "parameters": {
+        "type": {
+          "options": ["Eccentric Rotating Mass", "Linear Resonant Actuator"],
+          "multipliers": {
+            "Eccentric Rotating Mass": 1.0,
+            "Linear Resonant Actuator": 1.4
+          }
+        }
+      }
+    },
+    "logic_board": {
+      "default_base_price": 2000.00,
+      "notes": "Value depends heavily on processor generation and physical condition.",
+      "parameters": {
+        "condition": {
+          "options": ["No visible damage", "Minor corrosion", "Bent components", "Liquid damage"],
+          "multipliers": {
+            "No visible damage": 1.0,
+            "Minor corrosion": 0.5,
+            "Bent components": 0.3,
+            "Liquid damage": 0.1
+          }
+        }
+      }
+    }
+  },
+
+  "nodes": [
+    {
+      "id": "start",
+      "text": "What type of smartphone do you have?",
+      "options": [
+        { "label": "Apple (iPhone)", "next": "apple_intro" },
+        { "label": "Android", "next": "android_intro" }
+      ]
+    },
+    {
+      "id": "apple_intro",
+      "text": "Apple iPhone Disassembly\n\n# Initial Preparation\n- Please first power off the device before proceeding with the disassembly.\n- Remove the sim card tray and external accessories connected to the device.",
+      "options": [
+        { "label": "Battery", "next": "apple_battery" },
+        { "label": "Camera", "next": "apple_camera" },
+        { "label": "Charging Port", "next": "apple_charging_port" },
+        { "label": "Logic Board", "next": "apple_logic_board" },
+        { "label": "Speaker", "next": "apple_speaker" },
+        { "label": "Vibrator", "next": "apple_vibrator" },
+        { "label": "Back", "next": "start" }
+      ]
+    },
+    {
+      "id": "apple_battery",
+      "text": "## Battery\n**WARNING**: Batteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. Do you still want to proceed?",
+      "options": [
+        { "label": "Proceed", "next": "apple_battery_steps" },
+        { "label": "Back", "next": "apple_intro" }
+      ]
+    },
+    {
+      "id": "apple_battery_steps",
+      "steps": [
+        { "order": 1, "action": "Locate the battery connector (usually found near the logic board). If there is a metal shield over the battery connector, remove it using a precision screw." },
+        { "order": 2, "action": "Disconnect the battery connector using a non-metallic pry tool." }
+      ],
+      "options": [
+        { "label": "Are there pull-tabs or adhesive strips?", "next": "apple_battery_pulltabs" }
+      ]
+    },
+    {
+      "id": "apple_battery_pulltabs",
+      "text": "Are there any pull-tabs or adhesive strips on the battery?",
+      "options": [
+        { "label": "Yes", "next": "apple_battery_pulltabs_yes" },
+        { "label": "No", "next": "apple_battery_pulltabs_no" }
+      ]
+    },
+    {
+      "id": "apple_battery_pulltabs_yes",
+      "steps": [
+        { "order": 1, "action": "Slowly and firmly pull the adhesive strips at a shallow angle, keeping them parallel to the phone’s base." },
+        { "order": 2, "action": "Once loosened, gently lift the battery." },
+        { "order": 3, "action": "If it's hard to pull, apply 90% (or higher) concentration isopropyl alcohol near the battery edges. Let it sit for 1-2 minutes to soften the adhesive. Use a plastic tool to gently pry off the battery." }
+      ],
+      "options": [
+        { "label": "Done", "next": "apple_battery_post" }
+      ]
+    },
+    {
+      "id": "apple_battery_pulltabs_no",
+      "steps": [
+        { "order": 1, "action": "Apply 90% (or higher) concentration isopropyl alcohol near the battery edges." },
+        { "order": 2, "action": "Let it sit for a few minutes to soften the adhesive." },
+        { "order": 3, "action": "Use a plastic pry tool then gently lift the battery from the housing." }
+      ],
+      "options": [
+        { "label": "Done", "next": "apple_battery_post" }
+      ]
+    },
+    {
+      "id": "apple_battery_post",
+      "text": "Once the battery is dismantled, store the batteries safely in a fireproof container. Do not bend, puncture, or expose the battery to high temperatures.",
+      "options": [
+        { "label": "Back to Apple Menu", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "apple_camera",
+      "text": "Which camera do you want to extract?",
+      "options": [
+        { "label": "Rear Camera", "next": "apple_camera_rear" },
+        { "label": "Front Camera", "next": "apple_camera_front" },
+        { "label": "Back", "next": "apple_intro" }
+      ]
+    },
+    {
+      "id": "apple_camera_rear",
+      "steps": [
+        { "order": 1, "action": "Locate the rear-facing camera (usually at the top right)." },
+        { "order": 2, "action": "If there are any mounting brackets securing the module, unscrew it." },
+        { "order": 3, "action": "Disconnect the flex cables near the rear-camera module carefully." },
+        { "order": 4, "action": "Gently lift the rear-camera module." }
+      ],
+      "options": [
+        { "label": "Done", "next": "apple_camera_post" }
+      ]
+    },
+    {
+      "id": "apple_camera_front",
+      "steps": [
+        { "order": 1, "action": "Remove or lift the display (if not already done). Carefully open the screen using a plastic spudger and suction cup. Be mindful of flex cables attached near the top of the display." },
+        { "order": 2, "action": "Locate the front camera module at the top edge of the screen assembly, embedded in a black flex cable cluster." },
+        { "order": 3, "action": "Remove any brackets or shields using a precision screwdriver." },
+        { "order": 4, "action": "Disconnect the front camera flex cable using a plastic pry tool." },
+        { "order": 5, "action": "Gently lift the camera module using plastic tweezers or a spudger. If glued, apply a drop of isopropyl alcohol (90%+) and wait 30–60 seconds before lifting." }
+      ],
+      "options": [
+        { "label": "Done", "next": "apple_camera_post" }
+      ]
+    },
+    {
+      "id": "apple_camera_post",
+      "text": "Avoid touching the camera lens to avoid smudges or scratches. Store the cameras in a dust-free container.",
+      "options": [
+        { "label": "Back to Apple Menu", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "apple_charging_port",
+      "steps": [
+        { "order": 1, "action": "Use a plastic spudger to disconnect all visible flex cables linked to the charging port assembly." },
+        { "order": 2, "action": "Use a precision screwdriver to remove all fasteners securing the charging port or its flex cable." },
+        { "order": 3, "action": "If the flex cable is glued to the frame, apply 90% or higher isopropyl alcohol along the edges. Wait 1–2 minutes to allow the adhesive to soften." },
+        { "order": 4, "action": "Use a plastic card or tweezers to gently lift and peel away the entire charging port flex cable. Be extra cautious — the film sections are delicate and may tear if lifted abruptly." }
+      ],
+      "options": [
+        { "label": "Back to Apple Menu", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "apple_logic_board",
+      "steps": [
+        { "order": 1, "action": "Disconnect all visible flex cables connected to the logic board using a plastic spudger." },
+        { "order": 2, "action": "Remove metal shields or brackets covering connectors or chips with a precision screwdriver." },
+        { "order": 3, "action": "Unscrew the logic board from the device frame (usually 2–5 screws)." },
+        { "order": 4, "action": "Check for hidden connections. Ensure all flex cables and antennas are fully detached before lifting." },
+        { "order": 5, "action": "Gently lift the logic board using plastic tweezers or a spudger. Start from the bottom edge and lift slowly." }
+      ],
+      "options": [
+        { "label": "Back to Apple Menu", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "apple_speaker",
+      "steps": [
+        { "order": 1, "action": "Locate the speaker module at the bottom of the device, near the charging port." },
+        { "order": 2, "action": "Check for overlapping components (metal brackets, antenna connectors, plastic spacer). Remove these gently using tweezers or a spudger." },
+        { "order": 3, "action": "Remove any screws securing the speaker. Use a precision screwdriver (Philipps #000 or Tri-point)." },
+        { "order": 4, "action": "Disconnect the flex cables connected to the speaker using a plastic pry tool or spudger." },
+        { "order": 5, "action": "Gently pry from one edge and lift the speaker module straight up." }
+      ],
+      "options": [
+        { "label": "Back to Apple Menu", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "apple_vibrator",
+      "steps": [
+        { "order": 1, "action": "Locate the vibrator motor (Taptic Engine) near the lower portion of the iPhone." },
+        { "order": 2, "action": "Unscrew any mounting brackets securing the motor in place." },
+        { "order": 3, "action": "Once unscrewed, gently lift the motor straight up. Avoid pulling or bending the flex cable connected to the motor." },
+        { "order": 4, "action": "Disconnect the flex cable attached to the motor using a plastic pry tool." }
+      ],
+      "options": [
+        { "label": "Back to Apple Menu", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "android_intro",
+      "text": "Android Disassembly\n\n# Initial Preparation\n- Please first power off the device before proceeding with the disassembly.\n- Remove the sim card tray and external accessories connected to the device.",
+      "options": [
+        { "label": "Battery", "next": "android_battery" },
+        { "label": "Camera", "next": "android_camera" },
+        { "label": "Charging Port", "next": "android_charging_port" },
+        { "label": "Logic Board", "next": "android_logic_board" },
+        { "label": "Speaker", "next": "android_speaker" },
+        { "label": "Vibrator", "next": "android_vibrator" },
+        { "label": "Back", "next": "start" }
+      ]
+    },
+    {
+      "id": "android_battery",
+      "text": "## Battery\n**WARNING**: Batteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. Do you still want to proceed?",
+      "options": [
+        { "label": "Proceed", "next": "android_battery_steps" },
+        { "label": "Back", "next": "android_intro" }
+      ]
+    },
+    {
+      "id": "android_battery_steps",
+      "steps": [
+        { "order": 1, "action": "Locate the battery connector (usually found near the logic board). If there is a metal shield over the battery connector, remove it using a precision screwdriver." },
+        { "order": 2, "action": "Disconnect the battery connector using a non-metallic pry tool." }
+      ],
+      "options": [
+        { "label": "Are there pull-tabs or adhesive strips?", "next": "android_battery_pulltabs" }
+      ]
+    },
+    {
+      "id": "android_battery_pulltabs",
+      "text": "Are there any pull-tabs or adhesive strips on the battery?",
+      "options": [
+        { "label": "Yes", "next": "android_battery_pulltabs_yes" },
+        { "label": "No", "next": "android_battery_pulltabs_no" }
+      ]
+    },
+    {
+      "id": "android_battery_pulltabs_yes",
+      "steps": [
+        { "order": 1, "action": "Slowly and firmly pull the adhesive strips at a shallow angle, keeping them parallel to the phone’s base." },
+        { "order": 2, "action": "Once loosened, gently lift the battery." },
+        { "order": 3, "action": "If it's hard to pull, apply 90% (or higher) concentration isopropyl alcohol near the battery edges. Let it sit for 1-2 minutes to soften the adhesive. Use a plastic tool to gently pry off the battery." }
+      ],
+      "options": [
+        { "label": "Done", "next": "android_battery_post" }
+      ]
+    },
+    {
+      "id": "android_battery_pulltabs_no",
+      "steps": [
+        { "order": 1, "action": "Apply 90% (or higher) concentration isopropyl alcohol near the battery edges." },
+        { "order": 2, "action": "Let it sit for a few minutes to soften the adhesive." },
+        { "order": 3, "action": "Use a plastic pry tool then gently lift the battery from the housing." }
+      ],
+      "options": [
+        { "label": "Done", "next": "android_battery_post" }
+      ]
+    },
+    {
+      "id": "android_battery_post",
+      "text": "Once the battery is dismantled, store the batteries safely in a fireproof container. Do not bend, puncture, or expose the battery to high temperatures.",
+      "options": [
+        { "label": "Back to Android Menu", "next": "android_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "android_camera",
+      "text": "Which camera do you want to extract?",
+      "options": [
+        { "label": "Rear Camera", "next": "android_camera_rear" },
+        { "label": "Front Camera", "next": "android_camera_front" },
+        { "label": "Back", "next": "android_intro" }
+      ]
+    },
+    {
+      "id": "android_camera_rear",
+      "steps": [
+        { "order": 1, "action": "Locate the rear-facing camera (usually at the top of the device)." },
+        { "order": 2, "action": "If there are any mounting brackets securing the module, unscrew them." },
+        { "order": 3, "action": "Disconnect the flex cables near the rear-camera module carefully." },
+        { "order": 4, "action": "Gently lift the rear-camera module." }
+      ],
+      "options": [
+        { "label": "Done", "next": "android_camera_post" }
+      ]
+    },
+    {
+      "id": "android_camera_front",
+      "steps": [
+        { "order": 1, "action": "Remove or lift the display (if not already done). Carefully open the screen using a plastic spudger and suction cup. Be mindful of flex cables attached near the top of the display." },
+        { "order": 2, "action": "Locate the front camera module at the top edge of the screen assembly." },
+        { "order": 3, "action": "Remove any brackets or shields using a precision screwdriver." },
+        { "order": 4, "action": "Disconnect the front camera flex cable using a plastic pry tool." },
+        { "order": 5, "action": "Gently lift the camera module using plastic tweezers or a spudger. If glued, apply a drop of isopropyl alcohol (90%+) and wait 30–60 seconds before lifting." }
+      ],
+      "options": [
+        { "label": "Done", "next": "android_camera_post" }
+      ]
+    },
+    {
+      "id": "android_camera_post",
+      "text": "Avoid touching the camera lens to avoid smudges or scratches. Store the cameras in a dust-free container.",
+      "options": [
+        { "label": "Back to Android Menu", "next": "android_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "android_charging_port",
+      "steps": [
+        { "order": 1, "action": "Use a plastic spudger to disconnect all visible flex cables linked to the charging port assembly." },
+        { "order": 2, "action": "Use a precision screwdriver to remove all fasteners securing the charging port or its flex cable." },
+        { "order": 3, "action": "If the flex cable is glued to the frame, apply 90% or higher isopropyl alcohol along the edges. Wait 1–2 minutes to allow the adhesive to soften." },
+        { "order": 4, "action": "Use a plastic card or tweezers to gently lift and peel away the entire charging port flex cable. Be extra cautious — the film sections are delicate and may tear if lifted abruptly." }
+      ],
+      "options": [
+        { "label": "Back to Android Menu", "next": "android_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "android_logic_board",
+      "steps": [
+        { "order": 1, "action": "Disconnect all visible flex cables connected to the logic board using a plastic spudger." },
+        { "order": 2, "action": "Remove metal shields or brackets covering connectors or chips with a precision screwdriver." },
+        { "order": 3, "action": "Unscrew the logic board from the device frame (usually 2–5 screws)." },
+        { "order": 4, "action": "Check for hidden connections. Ensure all flex cables and antennas are fully detached before lifting." },
+        { "order": 5, "action": "Gently lift the logic board using plastic tweezers or a spudger. Start from the bottom edge and lift slowly." }
+      ],
+      "options": [
+        { "label": "Back to Android Menu", "next": "android_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "android_speaker",
+      "steps": [
+        { "order": 1, "action": "Locate the speaker module at the bottom of the device, near the charging port." },
+        { "order": 2, "action": "Check for overlapping components (metal brackets, antenna connectors, plastic spacer). Remove these gently using tweezers or a spudger." },
+        { "order": 3, "action": "Remove any screws securing the speaker. Use a precision screwdriver." },
+        { "order": 4, "action": "Disconnect the flex cables connected to the speaker using a plastic pry tool or spudger." },
+        { "order": 5, "action": "Gently pry from one edge and lift the speaker module straight up." }
+      ],
+      "options": [
+        { "label": "Back to Android Menu", "next": "android_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "android_vibrator",
+      "steps": [
+        { "order": 1, "action": "Locate the vibration motor near the lower portion of the phone." },
+        { "order": 2, "action": "Unscrew any mounting brackets securing the motor in place." },
+        { "order": 3, "action": "Once unscrewed, gently lift the motor straight up. Avoid pulling or bending the flex cable connected to the motor." },
+        { "order": 4, "action": "Disconnect the flex cable attached to the motor using a plastic pry tool." }
+      ],
+      "options": [
+        { "label": "Back to Android Menu", "next": "android_intro" },
+        { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "end",
+      "text": "Processing complete. Remember to:\n1. Store components properly\n2. Recycle through certified channels\n3. Wipe any personal data"
+    }
+  ],
+
+  "guidelines": {
+    "safety": [
+      "Power off device before disassembly",
+      "Use anti-static wrist strap",
+      "Handle batteries with extreme care",
+      "Work in well-ventilated area"
+    ],
+    "tools": [
+      "Precision screwdriver set",
+      "Plastic spudgers",
+      "Anti-static tweezers",
+      "Isopropyl alcohol (90%+)",
+      "Heat gun/hairdryer"
     ]
+  }
 }

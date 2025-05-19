@@ -69,7 +69,4 @@ flutter:
     - assets/models/telecom/labels.txt
     - assets/smartphone_instructions.json
 
-    # E-waste disposal locations
-    - assets/e_waste_locations.json
-
 

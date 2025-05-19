@@ -977,6 +977,97 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
             const SizedBox(height: 16),
           ],
           
+          // Display node image if available (from assets)
+          if (_currentNode!.image != null && _currentNode!.image!.isNotEmpty) ...[
+            GestureDetector(
+              onTap: () {
+                // Show enlarged image overlay
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Dialog(
+                      backgroundColor: Colors.transparent,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          _currentNode!.image!,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Container(
+                height: 180,
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    _currentNode!.image!,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ],
+          
+          // Display multiple node images if available (from assets)
+          if (_currentNode!.images.isNotEmpty) ...[
+            SizedBox(
+              height: 180,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _currentNode!.images.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () {
+                        // Show enlarged image overlay
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              backgroundColor: Colors.transparent,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.asset(
+                                  _currentNode!.images[index],
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        width: 180,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            _currentNode!.images[index],
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          
           // Node text - could be a question or instruction headline
           if (_currentNode!.text != null)
             Text(
@@ -1307,7 +1398,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                           deviceCategory: widget.initialCategory,
                           extractedComponents: widget.initialDetections,
                           componentImages: widget.initialComponentImages,
-                          originalImagePath: widget.initialImagePath ?? ''
+                          userImagePaths: widget.initialComponentImages.keys.toList(), // Pass all user-uploaded image paths
                         ),
                       ),
                     );

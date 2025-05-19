@@ -7,18 +7,24 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import '/pages/base.dart';
 import '/pages/ewaste_map_screen.dart';
 import '/pages/feedback_service.dart';
 
+Future<void> ensureSignedIn() async {
+  final auth = FirebaseAuth.instance;
+  if (auth.currentUser == null) {
+    await auth.signInAnonymously();
+  }
+}
+
+// Parameter Dialog remains unchanged
 class ParameterDialog extends StatefulWidget {
   final String componentName;
-  final Map<String, dynamic>
-  componentData; // Component data containing base price and parameters
-  final Map<String, dynamic>
-  parameters; // Parameters for the component, used for dropdown options and value multipliers
-  final Function(double, Map<String, String>)
-  onValueCalculated; // Callback function that returns the calculated value and selected parameters
+  final Map<String, dynamic> componentData;
+  final Map<String, dynamic> parameters;
+  final Function(double, Map<String, String>) onValueCalculated;
 
   const ParameterDialog({
     required this.componentName,
@@ -33,31 +39,20 @@ class ParameterDialog extends StatefulWidget {
 }
 
 class _ParameterDialogState extends State<ParameterDialog> {
-  final Map<String, String> _selectedValues =
-      {}; // Store selected values for each parameter
-  double _currentValue =
-      0.0; // Stores latest calculated value based on parameters
+  final Map<String, String> _selectedValues = {};
+  double _currentValue = 0.0;
 
   void _calculateValue() {
     double basePrice = 0.0;
-
-    // For components with capacity parameter
+    
     if (widget.parameters.containsKey('capacity')) {
       if (_selectedValues['capacity'] != null) {
-        // Support both 'base_prices' and 'base_price' keys
-        final capacityParam = widget.parameters['capacity'];
-        final basePrices = capacityParam['base_prices'] ?? capacityParam['base_price'];
-        final capacityPriceRaw =
-            basePrices?[_selectedValues['capacity']] ?? 0.0;
-        final capacityPrice =
-            capacityPriceRaw is int
-                ? capacityPriceRaw.toDouble()
-                : (capacityPriceRaw as double);
+        final capacityPriceRaw = widget.parameters['capacity']['base_prices']?[_selectedValues['capacity']] ?? 0.0;
+        final capacityPrice = capacityPriceRaw is int ? capacityPriceRaw.toDouble() : (capacityPriceRaw as double);
         print('💰 Capacity base price: $capacityPrice');
         basePrice = capacityPrice;
       }
     } else {
-      // For components without capacity, use default_base_price
       final defaultPriceRaw = widget.componentData['default_base_price'] ?? 0.0;
       basePrice =
           defaultPriceRaw is int
@@ -66,7 +61,6 @@ class _ParameterDialogState extends State<ParameterDialog> {
       print('💰 Default base price: $basePrice');
     }
 
-    // Apply all parameter multipliers
     widget.parameters.forEach((paramName, paramData) {
       if (_selectedValues[paramName] != null) {
         // Handle both 'multipliers' and 'multiplier' keys
@@ -94,9 +88,9 @@ class _ParameterDialogState extends State<ParameterDialog> {
     );
   }
 
-  // UI elements for popup dialog
   @override
   Widget build(BuildContext context) {
+    // Dialog UI remains unchanged
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: SingleChildScrollView(
@@ -128,6 +122,7 @@ class _ParameterDialogState extends State<ParameterDialog> {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: DropdownButtonFormField<String>(
+                  isExpanded: true,  // Add this line to make dropdown expand to full width
                   decoration: InputDecoration(
                     labelText:
                         paramName[0].toUpperCase() + paramName.substring(1),
@@ -142,27 +137,23 @@ class _ParameterDialogState extends State<ParameterDialog> {
                   ),
                   value: _selectedValues[paramName],
                   style: GoogleFonts.montserrat(
-                    color: Colors.black87, // Add text color for selected value
+                    color: Colors.black87,
                   ),
                   dropdownColor: Colors.white,
-                  icon: const Icon(
-                    Icons.arrow_drop_down,
-                    color: Color(0xFF34A853),
-                  ),
-                  items:
-                      options.map((option) {
-                        return DropdownMenuItem(
-                          value: option.toString(),
-                          child: Text(
-                            option.toString(),
-                            style: GoogleFonts.montserrat(
-                              color:
-                                  Colors
-                                      .black87, // Add text color for dropdown items
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                  icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF34A853)),
+                  items: options.map((option) {
+                    return DropdownMenuItem(
+                      value: option.toString(),
+                      child: Text(
+                        option.toString(),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    );
+                  }).toList(),
                   onChanged: (value) {
                     if (value != null) {
                       setState(() {
@@ -201,14 +192,16 @@ class SummaryScreen extends StatefulWidget {
   final String deviceCategory;
   final List<String> extractedComponents;
   final Map<String, Map<String, String>> componentImages;
-  final String originalImagePath; // Add this line
+  final List<String> userImagePaths;
+  final Map<String, Map<String, dynamic>>? initialComponentValues; // <-- Add this
 
   const SummaryScreen({
     super.key,
     required this.deviceCategory,
     required this.extractedComponents,
     required this.componentImages,
-    required this.originalImagePath, // Add this line
+    required this.userImagePaths,
+    this.initialComponentValues, // <-- Add this
   });
 
   @override
@@ -217,7 +210,7 @@ class SummaryScreen extends StatefulWidget {
 
 class _SummaryScreenState extends State<SummaryScreen> {
   Map<String, Map<String, dynamic>>? _componentValues;
-  bool _hasInternet = false;
+  bool _isLoading = true;
   StreamSubscription<DocumentSnapshot>? _firestoreSubscription;
 
   static bool _disclaimerDisabled = false;
@@ -227,8 +220,16 @@ class _SummaryScreenState extends State<SummaryScreen> {
   @override
   void initState() {
     super.initState();
-    _showDisclaimerIfNeeded();
-    // Do not call _checkConnectivity() here, wait for disclaimer
+    if (widget.initialComponentValues != null) {
+      _componentValues = Map<String, Map<String, dynamic>>.from(widget.initialComponentValues!);
+      _isLoading = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showParameterDialogs();
+      });
+    } else {
+      _showDisclaimerIfNeeded();
+      // Do not call _checkConnectivity() here, wait for disclaimer
+    }
   }
 
   void _showDisclaimerIfNeeded() {
@@ -237,7 +238,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
         _showDisclaimerDialog();
       });
     } else {
-      _checkConnectivity();
+      // Enable Firestore offline persistence if not already enabled
+    _enableOfflinePersistence();
+    _loadComponentValues();
     }
   }
 
@@ -324,7 +327,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       // Only proceed to load after disclaimer is closed
                       if (!_disclaimerShown) {
                         _disclaimerShown = true;
-                        _checkConnectivity();
+                        _enableOfflinePersistence();
+                        _loadComponentValues();
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -365,98 +369,129 @@ class _SummaryScreenState extends State<SummaryScreen> {
     );
   }
 
-  // Check internet connectivity
-  Future<void> _checkConnectivity() async {
+  // Setup offline persistence
+  Future<void> _enableOfflinePersistence() async {
     try {
-      final result = await InternetAddress.lookup('google.com');
-      setState(() {
-        _hasInternet = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-      });
-    } on SocketException catch (_) {
-      setState(() {
-        _hasInternet = false;
-      });
+      // This only needs to be set once in the app, typically in main.dart
+      // but we add it here for completeness since we're focusing on summary.dart
+      FirebaseFirestore.instance.settings = Settings(
+        persistenceEnabled: true,
+        cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+      );
+      print('✅ Firestore offline persistence enabled');
+    } catch (e) {
+      print('⚠️ Firestore settings may have already been set: $e');
+      // This is fine, as settings can only be set once
     }
-    _loadComponentValues();
   }
 
-  // Modified _loadComponentValues to handle both online and offline data
   Future<void> _loadComponentValues() async {
+    final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
+    
     try {
-      final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(
-        ' ',
-        '_',
-      );
-
-      // Try Firestore first if internet is available
-      if (_hasInternet) {
-        try {
-          print('📡 Attempting to load from Firestore first...');
-          final doc =
-              await FirebaseFirestore.instance
-                  .collection('pricing')
-                  .doc(normalizedCategory)
-                  .get();
-
-          if (doc.exists) {
-            final firestoreData =
-                doc.data()?['component_values'] as Map<String, dynamic>?;
-            if (firestoreData != null) {
-              print('🔥 Firestore data loaded successfully');
-              setState(() {
-                _componentValues = Map<String, Map<String, dynamic>>.from(
-                  firestoreData,
-                );
-              });
-
-              // Set up real-time listener for future updates
-              _firestoreSubscription = FirebaseFirestore.instance
-                  .collection('pricing')
-                  .doc(normalizedCategory)
-                  .snapshots()
-                  .listen((snapshot) {
-                    if (snapshot.exists) {
-                      final updatedData =
-                          snapshot.data()?['component_values']
-                              as Map<String, dynamic>?;
-                      if (updatedData != null) {
-                        setState(() {
-                          _componentValues =
-                              Map<String, Map<String, dynamic>>.from(
-                                updatedData,
-                              );
-                        });
-                      }
-                    }
-                  });
-
-              // Show parameter dialogs with Firestore data
-              _showParameterDialogs();
-              return; // Exit if Firestore load was successful
-            }
-          }
-        } catch (e) {
-          print('❌ Firestore load failed: $e');
+      // Try to get data from Firestore (works offline if cached)
+      final docRef = FirebaseFirestore.instance
+          .collection('pricing')
+          .doc(normalizedCategory);
+          
+      final docSnapshot = await docRef.get();
+      
+      if (docSnapshot.exists) {
+        // If document exists in Firestore (or offline cache), use it
+        final firestoreData = docSnapshot.data();
+        
+        if (firestoreData != null && firestoreData['component_values'] != null) {
+          setState(() {
+            _componentValues = Map<String, Map<String, dynamic>>.from(
+              firestoreData['component_values'] as Map<String, dynamic>
+            );
+            _isLoading = false;
+          });
+          
+          print('🔥 Loaded component values from Firestore: ${_componentValues?.length} components');
+        } else {
+          _fallbackToLocalJson();
         }
+      } else {
+        // If document doesn't exist in Firestore, fallback to local JSON
+        _fallbackToLocalJson();
       }
-
-      // Fallback to local JSON if Firestore failed or no internet
-      print('📱 Falling back to local JSON...');
+      
+      // Set up real-time listener for updates
+      _firestoreSubscription = docRef.snapshots().listen((doc) {
+        if (doc.exists) {
+          final firestoreData = doc.data();
+          if (firestoreData != null && firestoreData['component_values'] != null) {
+            setState(() {
+              _componentValues = Map<String, Map<String, dynamic>>.from(
+                firestoreData['component_values'] as Map<String, dynamic>
+              );
+            });
+            print('🔄 Updated component values from Firestore');
+          }
+        }
+      }, onError: (e) {
+        print('❌ Error listening to Firestore updates: $e');
+        // No need to fallback here as we already have data
+      });
+      
+      // Once data is loaded, show parameter dialogs
+      _showParameterDialogs();
+      
+    } catch (e) {
+      print('❌ Error loading from Firestore: $e');
+      _fallbackToLocalJson();
+    }
+  }
+  
+  // Fallback to load data from local JSON
+  Future<void> _fallbackToLocalJson() async {
+    try {
+      print('📄 Falling back to local JSON');
+      final normalizedCategory = widget.deviceCategory.toLowerCase().replaceAll(' ', '_');
       final jsonPath = 'assets/${normalizedCategory}_instructions.json';
+      
       final String jsonString = await rootBundle.loadString(jsonPath);
       final Map<String, dynamic> jsonData = json.decode(jsonString);
-
+      
       setState(() {
         _componentValues = Map<String, Map<String, dynamic>>.from(
-          jsonData['component_values'] as Map<String, dynamic>,
+          jsonData['component_values'] as Map<String, dynamic>
         );
+        _isLoading = false;
       });
-
-      print('📄 Local JSON loaded successfully');
-      // Show parameter dialogs with JSON data
+      
+      print('📝 Loaded component values from local JSON');
+      
+      // Also store this data to Firestore for future offline access
+      _saveToFirestore(normalizedCategory, jsonData['component_values']);
+      
+      // Show parameter dialogs
       _showParameterDialogs();
+      
     } catch (e) {
-      print('❌ Error loading component values: $e');
+      print('❌ Error loading local JSON: $e');
+      setState(() {
+        _isLoading = false;
+        _componentValues = {};
+      });
+    }
+  }
+  
+  // Save JSON data to Firestore for future offline access
+  Future<void> _saveToFirestore(String category, Map<String, dynamic> data) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('pricing')
+          .doc(category)
+          .set({
+            'component_values': data,
+            'last_updated': FieldValue.serverTimestamp(),
+          });
+      print('💾 Saved local data to Firestore for future offline access');
+    } catch (e) {
+      print('❌ Error saving to Firestore: $e');
+      // This is fine, we already have the data locally
     }
   }
 
@@ -468,38 +503,37 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   // Opens a ParameterDialog for each component with configurable parameters
   void _showParameterDialogs() async {
+    if (_componentValues == null || _isLoading) {
+      print('⏳ Waiting for component values to load before showing dialogs');
+      return;
+    }
+    
     for (String component in _getUniqueComponents()) {
-      // Loops through each unique component
       final componentKey = component.toLowerCase();
-      final componentData =
-          _componentValues?[componentKey]; // Retrieves the component data from the loaded JSON
+      final componentData = _componentValues?[componentKey];
       if (componentData != null && componentData['parameters'] != null) {
-        // Proceed if parameters exist
         // ignore: use_build_context_synchronously
         await showDialog(
           context: context,
-          barrierDismissible:
-              false, // Prevents closing the dialog by tapping outside
-          builder:
-              (context) => ParameterDialog(
-                componentName: _formatComponentName(component),
-                componentData: componentData,
-                parameters:
-                    componentData['parameters'], // Used to build the dropdowns
-                onValueCalculated: (newValue, selectedParams) {
-                  // Add selectedParams parameter
-                  setState(() {
-                    if (_componentValues != null) {
-                      var componentMap = _componentValues![componentKey];
-                      if (componentMap != null) {
-                        componentMap['price'] = newValue;
-                        componentMap['selected_parameters'] =
-                            selectedParams; // Save selected parameters
-                      }
-                    }
-                  });
-                },
-              ),
+          barrierDismissible: false,
+          builder: (context) => ParameterDialog(
+            componentName: _formatComponentName(component),
+            componentData: componentData,
+            parameters: componentData['parameters'],
+            onValueCalculated: (newValue, selectedParams) {
+              setState(() {
+                if (_componentValues != null) {
+                  // Make a copy to trigger Flutter's state update
+                  _componentValues = Map<String, Map<String, dynamic>>.from(_componentValues!);
+                  var componentMap = _componentValues![component.toLowerCase()];
+                  if (componentMap != null) {
+                    componentMap['price'] = newValue;
+                    componentMap['selected_parameters'] = selectedParams;
+                  }
+                }
+              });
+            },
+          ),
         );
       }
     }
@@ -507,14 +541,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   // Get images for a specific component
   List<String> _getComponentImages(String component) {
-    List<String> images = []; // Create an empty list to store image paths
+    List<String> images = [];
     for (var entry in widget.componentImages.entries) {
-      // entry.key = source image path, entry.value = map of detected components
       for (var componentEntry in entry.value.entries) {
-        if (componentEntry.key.toLowerCase().startsWith(
-          component.toLowerCase(),
-        )) {
-          // Checks if component entry matches target component
+        if (componentEntry.key.toLowerCase().startsWith(component.toLowerCase())) {
           images.add(componentEntry.value);
         }
       }
@@ -523,6 +553,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   void _showImageOverlay(BuildContext context, String imagePath) {
+    // Image overlay implementation remains unchanged
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -576,18 +607,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   // Counts how many times a component appears
   Map<String, int> _getComponentCounts() {
-    Map<String, int> counts =
-        {}; // Creates a list that stores the number of times a component appears
+    Map<String, int> counts = {};
     for (String component in widget.extractedComponents) {
-      // Loops through each component in the list
-      // Get base component name by:
-      // 1. Splitting on underscore (e.g., "ram_1" becomes ["ram", "1"])
-      // 2. Taking first part [0]
-      // 3. Converting to lowercase for consistent comparison
       String baseComponent = component.split('_')[0].toLowerCase();
-      // Increment count for this component
-      // ?? 0 provides default value of 0 if component doesn't exist in map yet
-      // Then add 1 to current/default count
       counts[baseComponent] = (counts[baseComponent] ?? 0) + 1;
     }
     return counts;
@@ -631,11 +653,28 @@ class _SummaryScreenState extends State<SummaryScreen> {
         trailing: const Icon(Icons.chevron_right),
         onTap: () async {
           try {
-            final jsonString = await rootBundle.loadString(
-              'assets/e_waste_locations.json',
-            );
-            final jsonData = json.decode(jsonString);
-            final locations = jsonData['e_waste_locations'] as List<dynamic>;
+            // Fetch data from Firestore
+            final querySnapshot = await FirebaseFirestore.instance
+                .collection('ewaste_locations')
+                .get();
+
+            // Convert Firestore documents to a list of maps
+            final locations = querySnapshot.docs.map((doc) {
+              final data = doc.data();
+              final latLong = data['lat_long'] as GeoPoint; // Treat as GeoPoint
+
+              return {
+                'id': doc.id,
+                'name': data['name'],
+                'address': data['address'],
+                'latitude': latLong.latitude, // Extract latitude
+                'longitude': latLong.longitude, // Extract longitude
+                'phone': data['phone'],
+                'hours': data['hours'],
+                'website': data['website'],
+                'notes': data['notes'],
+              };
+            }).toList();
 
             Navigator.push(
               context,
@@ -644,7 +683,13 @@ class _SummaryScreenState extends State<SummaryScreen> {
               ),
             );
           } catch (e) {
-            print('Error loading e-waste locations: $e');
+            print('Error fetching e-waste locations: $e');
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to load e-waste locations'),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
         },
       ),
@@ -720,7 +765,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.file(
-                    File(widget.originalImagePath),
+                    File(widget.userImagePaths.first),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -740,8 +785,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF34A853),
                     ),
-                    onPressed: () {
-                      _uploadDetectionFeedback();
+                    onPressed: () async {
+                      await ensureSignedIn();
+                      await _uploadDetectionFeedback();
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -760,17 +806,119 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Future<void> _uploadDetectionFeedback() async {
+    int total = widget.userImagePaths.length;
+    int uploaded = 0;
+
+    // Controller for updating the overlay
+    late void Function(int) updateProgress;
+    late void Function() closeOverlay;
+
+    // Show custom overlay
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            updateProgress = (int newUploaded) {
+              setState(() {
+                uploaded = newUploaded;
+              });
+            };
+            closeOverlay = () {
+              if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+            };
+            return AnimatedOpacity(
+              opacity: 1.0,
+              duration: const Duration(milliseconds: 300),
+              child: Container(
+                color: Colors.black.withOpacity(0.7),
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2A2A2A),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Uploading image ${uploaded + 1} of $total',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: total > 0 ? uploaded / total : 0,
+                            backgroundColor: Colors.grey.shade800,
+                            color: Colors.greenAccent,
+                            minHeight: 10,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Please wait while your images are uploaded',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.robotoCondensed(
+                            fontSize: 18,
+                            color: Colors.white,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Completed: $uploaded of $total',
+                          style: GoogleFonts.robotoCondensed(
+                            fontSize: 18,
+                            color: Colors.white,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
     try {
       final feedbackService = FeedbackService();
-      await feedbackService.uploadDetectionImage(
-        imagePath: widget.originalImagePath,
-        detectionData: {
-          'deviceCategory': widget.deviceCategory,
-          'detectedComponents': widget.extractedComponents,
-          'componentImages': widget.componentImages,
-        },
-        deviceCategory: widget.deviceCategory,
-      );
+      await ensureSignedIn();
+
+      for (final imagePath in widget.userImagePaths) {
+        await feedbackService.uploadDetectionImage(
+          imagePath: imagePath,
+          detectionData: {
+            'deviceCategory': widget.deviceCategory,
+            'detectedComponents': widget.extractedComponents,
+            'componentImages': widget.componentImages,
+          },
+          deviceCategory: widget.deviceCategory,
+        );
+        uploaded++;
+        updateProgress(uploaded);
+      }
+
+      closeOverlay();
 
       // Show success message
       if (mounted) {
@@ -785,6 +933,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         );
       }
     } catch (e) {
+      closeOverlay();
       print('❌ Error uploading feedback: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -800,9 +949,37 @@ class _SummaryScreenState extends State<SummaryScreen> {
     }
   }
 
+  // UI for loading state
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF34A853)),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Loading component data...',
+            style: GoogleFonts.montserrat(
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // UI stuff
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Base(
+        title: 'Extraction Summary',
+        child: _buildLoadingState(),
+      );
+    }
+
     final componentCounts = _getComponentCounts();
     final uniqueComponents = _getUniqueComponents();
 
@@ -824,373 +1001,383 @@ class _SummaryScreenState extends State<SummaryScreen> {
       }
     }
 
-    return Base(
-      title: 'Extraction Summary',
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Existing UI components...
-            Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, _componentValues != null
+          ? jsonDecode(jsonEncode(_componentValues))
+          : null);
+        return false;
+      },
+      child: Base(
+        title: 'Extraction Summary',
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Existing UI components...
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.deviceCategory,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${widget.extractedComponents.length} valuable components in your device',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(color: Colors.white24),
-                  const SizedBox(height: 16),
-                  if (widget.deviceCategory.trim().toLowerCase() == 'router')
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      'Facility-dependent pricing',
+                      widget.deviceCategory,
                       style: GoogleFonts.montserrat(
-                        fontSize: 18,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                    )
-                  else
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${widget.extractedComponents.length} valuable components in your device',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(color: Colors.white24),
+                    const SizedBox(height: 16),
+                    if (widget.deviceCategory.trim().toLowerCase() == 'router')
+                      Text(
+                        'Facility-dependent pricing',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      )
+                    else
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total Estimated Value: ',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 16,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          Text(
+                            '\₱${totalValue.toStringAsFixed(2)}',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Add the e-waste disposal section here
+              _buildEWasteDisposalSection(),
+
+              // Add the feedback button here
+              _buildFeedbackButton(),
+
+              // Components List
+              ...uniqueComponents.map((component) {
+                final values =
+                    _componentValues?[component.toLowerCase()] ??
+                    {'price': 0.0, 'notes': 'No data available'};
+                final count = componentCounts[component] ?? 1;
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ExpansionTile(
+                    leading: CircleAvatar(
+                      backgroundColor: const Color(0xFF34A853),
+                      child: Icon(
+                        _getIconForComponent(component),
+                        color: Colors.white,
+                      ),
+                    ),
+                    title: Text(
+                      _formatComponentName(component),
+                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+                    ),
+                    trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          'Total Estimated Value: ',
+                          values['selected_parameters'] != null
+                              ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}' // Show price if configured
+                              : '⋯', // Show ellipsis if not configured
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
-                            color: Colors.white70,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF34A853),
                           ),
                         ),
                         Text(
-                          '\₱${totalValue.toStringAsFixed(2)}',
+                          values['selected_parameters'] != null
+                              ? 'per piece (×$count)'
+                              : widget.deviceCategory.trim().toLowerCase() == 'router'
+                                  ? ''
+                                  : 'Not configured',
                           style: GoogleFonts.montserrat(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            fontSize: 12,
+                            color: Colors.grey[600],
                           ),
                         ),
                       ],
                     ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Add the e-waste disposal section here
-            _buildEWasteDisposalSection(),
-
-            // Add the feedback button here
-            _buildFeedbackButton(),
-
-            // Components List
-            ...uniqueComponents.map((component) {
-              final values =
-                  _componentValues?[component.toLowerCase()] ??
-                  {'price': 0.0, 'notes': 'No data available'};
-              final count = componentCounts[component] ?? 1;
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ExpansionTile(
-                  leading: CircleAvatar(
-                    backgroundColor: const Color(0xFF34A853),
-                    child: Icon(
-                      _getIconForComponent(component),
-                      color: Colors.white,
-                    ),
-                  ),
-                  title: Text(
-                    _formatComponentName(component),
-                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-                  ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        values['selected_parameters'] != null
-                            ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}'
-                            : '⋯',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF34A853),
-                        ),
-                      ),
-                      Text(
-                        values['selected_parameters'] != null
-                            ? 'per piece (×$count)'
-                            : widget.deviceCategory.trim().toLowerCase() == 'router'
-                                ? ''
-                                : 'Not configured',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          color: Colors.grey[600],
+                      // Component details remain unchanged
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Component Images
+                            if (_getComponentImages(component).isNotEmpty) ...[
+                              SizedBox(
+                                height: 120,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount:
+                                      _getComponentImages(component).length,
+                                  itemBuilder: (context, index) {
+                                    String imagePath =
+                                        _getComponentImages(component)[index];
+                                    return Padding(
+                                      padding: EdgeInsets.only(right: 8),
+                                      child: GestureDetector(
+                                        onTap:
+                                            () => _showImageOverlay(
+                                              context,
+                                              imagePath,
+                                            ),
+                                        child: Container(
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey.shade300,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child: Image.file(
+                                              File(imagePath),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                            // Notes section
+                            Text(
+                              values['notes'],
+                              style: GoogleFonts.montserrat(
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            // Component Parameters
+                            if (values['parameters'] != null) ...[
+                              const SizedBox(height: 16),
+                              const Divider(),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Configuration',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Show parameters if they exist and have been configured
+                              if (values['selected_parameters'] != null) ...[
+                                ...values['parameters'].entries.map((entry) {
+                                  final paramName = entry.key;
+                                  final selectedValue =
+                                      (values['selected_parameters']
+                                          as Map<String, String>)[paramName] ??
+                                      'Not configured';
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 4),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          _formatParameterName(paramName),
+                                          style: GoogleFonts.montserrat(
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        Text(
+                                          selectedValue,
+                                          style: GoogleFonts.montserrat(
+                                            color: const Color(0xFF34A853),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                                const SizedBox(height: 16),
+                              ] else ...[
+                                if (widget.deviceCategory.trim().toLowerCase() != 'router') ...[
+                                  Text(
+                                    'No parameters configured',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.grey[600],
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                ]
+                              ],
+                              // Edit Parameters button
+                              Center(
+                                child: TextButton.icon(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder:
+                                          (context) => ParameterDialog(
+                                            componentName: _formatComponentName(
+                                              component,
+                                            ),
+                                            componentData: values,
+                                            parameters: values['parameters'],
+                                            onValueCalculated: (
+                                              newValue,
+                                              selectedParams,
+                                            ) {
+                                              setState(() {
+                                                if (_componentValues != null) {
+                                                  // Make a copy to trigger Flutter's state update
+                                                  _componentValues = Map<String, Map<String, dynamic>>.from(_componentValues!);
+                                                  var componentMap =
+                                                      _componentValues![component
+                                                          .toLowerCase()];
+                                                  if (componentMap != null) {
+                                                    componentMap['price'] =
+                                                        newValue;
+                                                    componentMap['selected_parameters'] =
+                                                        selectedParams;
+                                                  }
+                                                }
+                                              });
+                                            },
+                                          ),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF34A853),
+                                    size: 20,
+                                  ),
+                                  label: Text(
+                                    values['selected_parameters'] != null
+                                        ? 'Edit Parameters'
+                                        : 'Configure Parameters',
+                                    style: GoogleFonts.montserrat(
+                                      color: const Color(0xFF34A853),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Component Images
-                          if (_getComponentImages(component).isNotEmpty) ...[
-                            SizedBox(
-                              height: 120,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount:
-                                    _getComponentImages(component).length,
-                                itemBuilder: (context, index) {
-                                  String imagePath =
-                                      _getComponentImages(component)[index];
-                                  return Padding(
-                                    padding: EdgeInsets.only(right: 8),
-                                    child: GestureDetector(
-                                      onTap:
-                                          () => _showImageOverlay(
-                                            context,
-                                            imagePath,
-                                          ),
-                                      child: Container(
-                                        width: 120,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.grey.shade300,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          child: Image.file(
-                                            File(imagePath),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          // Notes section
-                          Text(
-                            values['notes'],
-                            style: GoogleFonts.montserrat(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          // Component Parameters
-                          if (values['parameters'] != null) ...[
-                            const SizedBox(height: 16),
-                            const Divider(),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Configuration',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            // Show parameters if they exist and have been configured
-                            if (values['selected_parameters'] != null) ...[
-                              ...values['parameters'].entries.map((entry) {
-                                final paramName = entry.key;
-                                final selectedValue =
-                                    (values['selected_parameters']
-                                        as Map<String, String>)[paramName] ??
-                                    'Not configured';
-
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 4),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        _formatParameterName(paramName),
-                                        style: GoogleFonts.montserrat(
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                      Text(
-                                        selectedValue,
-                                        style: GoogleFonts.montserrat(
-                                          color: const Color(0xFF34A853),
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                              const SizedBox(height: 16),
-                            ] else ...[
-                              if (widget.deviceCategory.trim().toLowerCase() != 'router') ...[
-                                Text(
-                                  'No parameters configured',
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.grey[600],
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                              ]
-                            ],
-                            // Edit Parameters button will always show if parameters exist
-                            Center(
-                              child: TextButton.icon(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder:
-                                        (context) => ParameterDialog(
-                                          componentName: _formatComponentName(
-                                            component,
-                                          ),
-                                          componentData: values,
-                                          parameters: values['parameters'],
-                                          onValueCalculated: (
-                                            newValue,
-                                            selectedParams,
-                                          ) {
-                                            setState(() {
-                                              if (_componentValues != null) {
-                                                var componentMap =
-                                                    _componentValues![component
-                                                        .toLowerCase()];
-                                                if (componentMap != null) {
-                                                  componentMap['price'] =
-                                                      newValue;
-                                                  componentMap['selected_parameters'] =
-                                                      selectedParams;
-                                                }
-                                              }
-                                            });
-                                          },
-                                        ),
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Color(0xFF34A853),
-                                  size: 20,
-                                ),
-                                label: Text(
-                                  values['selected_parameters'] != null
-                                      ? 'Edit Parameters'
-                                      : 'Configure Parameters',
-                                  style: GoogleFonts.montserrat(
-                                    color: const Color(0xFF34A853),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-
-            const SizedBox(height: 24),
-          ],
+                );
+              }).toList(),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Helper method to get icons (copy from assistant.dart)
+  // Helper method to get icons
   IconData _getIconForComponent(String component) {
     switch (component.toLowerCase()) {
       case 'ram':
-        return Icons.memory; // Memory stick icon
+        return Icons.memory;
       case 'battery':
       case 'cmos':
-        return Icons.battery_full; // Battery icon
+        return Icons.battery_full;
       case 'fan':
       case 'cooler':
-        return Icons.air; // Fan/air icon
+        return Icons.air;
       case 'wifi':
       case 'card':
-        return Icons.wifi; // WiFi icon
+        return Icons.wifi;
       case 'drive':
       case 'hdd':
       case 'ssd':
       case 'disk':
-        return Icons.storage; // Storage icon
+        return Icons.storage;
       case 'cpu':
-        return Icons.developer_board; // Circuit board icon
+        return Icons.developer_board;
       case 'gpu':
-        return Icons.videogame_asset; // Graphics/gaming icon
+        return Icons.videogame_asset;
       case 'psu':
-        return Icons.power; // Power icon
+        return Icons.power;
       case 'mboard':
-        return Icons.dashboard; // Dashboard icon for motherboard
+        return Icons.dashboard;
       case 'case':
-        return Icons.computer; // Computer case icon
+        return Icons.computer;
       default:
-        return Icons.memory; // Default fallback icon
+        return Icons.memory;
     }
   }
 
-  // Helper method to format component names (copy from assistant.dart)
+  // Helper method to format component names
   String _formatComponentName(String name) {
     String firstPart = name.split('_')[0];
     return firstPart[0].toUpperCase() + firstPart.substring(1);
