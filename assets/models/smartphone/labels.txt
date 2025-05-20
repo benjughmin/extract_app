@@ -1,6 +1,6 @@
 Speaker
 Battery
-Logic-Board
+Logic_Board
 Camera
 Charging-Port
 Vibration-Motor-Round
