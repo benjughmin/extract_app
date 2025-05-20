@@ -254,114 +254,131 @@ class _SummaryScreenState extends State<SummaryScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+            child: SizedBox(
+              height: 380, // Adjust as needed for your UI
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline, color: Color(0xFF34A853), size: 24),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Disclaimer',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[800],
+                    Row(
+                      children: [
+                        const Icon(Icons.info_outline, color: Color(0xFF34A853), size: 24),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Valuation Disclaimer',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold, // Make bold
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    RichText(
+                      text: TextSpan(
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          color: Colors.grey[700],
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '1. Component pricing used in this application is primarily sourced from publicly available platforms, including Shopee, Lazada, and Facebook Marketplace.\n\n',
+                          ),
+                          TextSpan(
+                            text: '2. Our pricing estimates are based on available market data but may vary due to platform availability, resale channels, regulatory changes, and other market conditions.\n\n',
+                          ),
+                          TextSpan(
+                            text: '3. Pricing at e-waste facilities ultimately depends on their specific policy regulations and operational practices.',
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    StatefulBuilder(
+                      builder: (context, setState) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            unselectedWidgetColor: const Color(0xFF34A853),
+                            checkboxTheme: CheckboxThemeData(
+                              fillColor: MaterialStateProperty.resolveWith<Color>(
+                                (states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return const Color(0xFF34A853);
+                                  }
+                                  return Colors.white;
+                                },
+                              ),
+                              checkColor: MaterialStateProperty.all<Color>(Colors.white),
+                            ),
+                          ),
+                          child: CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              'Don\'t show again this session',
+                              style: GoogleFonts.montserrat(fontSize: 14),
+                            ),
+                            value: doNotShowAgain,
+                            onChanged: (val) {
+                              setState(() {
+                                doNotShowAgain = val ?? false;
+                              });
+                            },
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (doNotShowAgain) {
+                            _disclaimerDisabled = true;
+                          }
+                          Navigator.of(context).pop();
+                          // Only proceed to load after disclaimer is closed
+                          if (!_disclaimerShown) {
+                            _disclaimerShown = true;
+                            _enableOfflinePersistence();
+                            _loadComponentValues();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          child: Text(
+                            'I understand',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'This is a placeholder disclaimer. Actual values and offers may vary depending on the facility and market conditions. Please consult with your chosen facility for final pricing and terms.',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                StatefulBuilder(
-                  builder: (context, setState) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        unselectedWidgetColor: const Color(0xFF34A853),
-                        checkboxTheme: CheckboxThemeData(
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                            (states) {
-                              if (states.contains(MaterialState.selected)) {
-                                return const Color(0xFF34A853);
-                              }
-                              return Colors.white;
-                            },
-                          ),
-                          checkColor: MaterialStateProperty.all<Color>(Colors.white),
-                        ),
-                      ),
-                      child: CheckboxListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(
-                          'Don\'t show again this session',
-                          style: GoogleFonts.montserrat(fontSize: 14),
-                        ),
-                        value: doNotShowAgain,
-                        onChanged: (val) {
-                          setState(() {
-                            doNotShowAgain = val ?? false;
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (doNotShowAgain) {
-                        _disclaimerDisabled = true;
-                      }
-                      Navigator.of(context).pop();
-                      // Only proceed to load after disclaimer is closed
-                      if (!_disclaimerShown) {
-                        _disclaimerShown = true;
-                        _enableOfflinePersistence();
-                        _loadComponentValues();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      child: Text(
-                        'OK',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         );
@@ -894,11 +911,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   ),
                 ),
               ),
-            );
+            ); // <-- Close AnimatedOpacity
           },
-        );
+        ); // <-- Close StatefulBuilder
       },
-    );
+    ); // <-- Close showDialog
 
     try {
       final feedbackService = FeedbackService();

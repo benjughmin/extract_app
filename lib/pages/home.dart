@@ -3,8 +3,122 @@ import '/pages/category.dart';
 import '/pages/session_list.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentPage = 0;
+  final PageController _pageController = PageController();
+  bool _welcomeShown = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_welcomeShown) {
+      _welcomeShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF232323),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(
+              'Welcome to e-Xtract!',
+              style: GoogleFonts.montserrat(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,  
+                color: Colors.greenAccent,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Purpose',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'e-Xtract helps you identify and recover useful parts from your electronics.',
+                    style: GoogleFonts.montserrat(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Who is it for?',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Whether you're a recycler, hobbyist, or just exploring what's inside, this app guides you through the basics of electronic component recovery.",
+                    style: GoogleFonts.montserrat(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'How it works',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "You can take a photo or upload your electronics, and e-Xtract will analyze it to help you understand what’s worth salvaging. \n\nInstructions focus on safe, beginner-friendly techniques that don’t require soldering or industrial-grade equipment.",
+                    style: GoogleFonts.montserrat(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'For Everyone',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Built for the general public, e-Xtract turns curiosity into capability, helping you get more value out of what you already have.',
+                    style: GoogleFonts.montserrat(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Let\'s get started!',
+                          style: GoogleFonts.montserrat(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.greenAccent,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +167,12 @@ class HomePage extends StatelessWidget {
                       SizedBox(
                         height: screenHeight * 0.35, // Responsive height
                         child: PageView(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentPage = index;
+                            });
+                          },
                           children: [
                             _buildSlide(
                               context: context,
@@ -80,6 +200,23 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
+                      ),
+                      SizedBox(height: screenHeight * 0.015),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, (index) {
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
+                            width: _currentPage == index ? 14 : 10,
+                            height: _currentPage == index ? 14 : 10,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.greenAccent, width: 2),
+                              color: _currentPage == index ? Colors.greenAccent : Colors.transparent,
+                            ),
+                          );
+                        }),
                       ),
                       SizedBox(height: screenHeight * 0.02),
 
