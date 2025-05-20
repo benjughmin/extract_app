@@ -67,11 +67,11 @@
       "Keep track of screws and small parts in a container"
     ],
     "tools": [
-      "Phillips #0, #1 screwdrivers",
+      "Phillips screwdrivers (typically  #0 and #1 )",
       "Plastic spudger or opening tool",
       "Tweezers",
-      "(Optional) Anti-static wrist strap (ESD strap)",
-      "Small container for screws"
+      "(Optional) Small container for screws",
+      "(Optional) Anti-static wrist strap (ESD strap)"
     ]
   },
   
@@ -80,7 +80,7 @@
       "id": "start",
       "text": "Would you like to indicate the reason/s you're troubleshooting the router, or would you like to head straight to extraction?",
       "options": [
-        { "label": "Troubleshooting Cause", "next": "issue" },
+        { "label": "Disposal Cause", "next": "issue" },
         { "label": "Detected Components List", "next": "component_extraction" }
       ]
     },
@@ -88,7 +88,6 @@
       "id": "issue",
       "text": "What issue or component would you like to address first?",
       "options": [
-        { "label": "No internet connection", "next": "internet_issue" },
         { "label": "Weak Wi-Fi signal", "next": "wifi_issue" },
         { "label": "Router overheating", "next": "overheating_issue" },
         { "label": "Antenna loose or broken", "next": "antenna_issue" },
@@ -201,7 +200,7 @@
         { "label": "Board won't come free", "next": "board_stuck_help" },
         { "label": "Can't disconnect a cable", "next": "board_cable_help" },
         { "label": "Unsure about remaining connections", "next": "board_connection_help" },
-        { "label": "I need professional assistance", "next": "professional_assistance" }
+        { "label": "Doesn't match these / I'm not sure", "next": "professional_assistance" }
       ]
     },
     {
@@ -227,6 +226,10 @@
           "order": 5,
           "action": "Check if the board's ports (Ethernet, USB) are caught on the case openings."
         }
+      ],
+      "options": [
+        { "label": "Back to confirmation", "next": "board_extraction_confirmation" },
+        { "label": "Still can't extract", "next": "professional_assistance" }
       ],
       "next": "board_extraction_confirmation"
     },
@@ -254,6 +257,10 @@
           "action": "Use minimal force. If a connector won't come free easily, double-check its mechanism rather than pulling harder."
         }
       ],
+      "options": [
+        { "label": "Back to confirmation", "next": "board_extraction_confirmation" },
+        { "label": "Still can't extract", "next": "professional_assistance" }
+      ],
       "next": "board_extraction_confirmation"
     },
     {
@@ -276,11 +283,15 @@
           "action": "Make sure all external ports (USB, Ethernet) are clear of the case openings."
         }
       ],
+      "options": [
+        { "label": "Back to confirmation", "next": "board_extraction_confirmation" },
+        { "label": "Still can't extract", "next": "professional_assistance" }
+      ],
       "next": "board_extraction_confirmation"
     },
     {
       "id": "board_extracted_success",
-      "text": "Congratulations! You've successfully extracted the router board. This is a valuable component worth approximately $25.00. The board contains the main processor, memory, and circuitry that powers your router's functions. Would you like to extract another component?",
+      "text": "Congratulations! You've successfully extracted the router board. Would you like to extract another component?",
       "options": [
         { "label": "Extract another component", "next": "component_extraction" },
         { "label": "End", "next": "end" }
@@ -336,7 +347,7 @@
       "options": [
         { "label": "Yes", "next": "antenna_extracted_success" },
         { "label": "No, it won't unscrew", "next": "external_antenna_help" },
-        { "label": "I need professional assistance", "next": "professional_assistance" }
+        { "label": "Doesn't match these / I'm not sure", "next": "professional_assistance" }
       ]
     },
     {
@@ -362,6 +373,10 @@
           "order": 5,
           "action": "If it still won't budge, the connector might be damaged or have a special release mechanism."
         }
+      ],
+      "options": [
+        { "label": "Back to confirmation", "next": "external_antenna_confirmation" },
+        { "label": "Still can't extract", "next": "professional_assistance" }
       ],
       "next": "external_antenna_confirmation"
     },
@@ -406,7 +421,7 @@
       "options": [
         { "label": "Yes", "next": "antenna_extracted_success" },
         { "label": "No, I'm having trouble", "next": "internal_antenna_help" },
-        { "label": "I need professional assistance", "next": "professional_assistance" }
+        { "label": "Doesn't match these / I'm not sure", "next": "professional_assistance" }
       ]
     },
     {
@@ -416,7 +431,7 @@
         { "label": "Can't locate the antenna", "next": "locate_internal_antenna" },
         { "label": "Can't disconnect the antenna cable", "next": "antenna_cable_help" },
         { "label": "Antenna won't detach from casing", "next": "antenna_mounting_help" },
-        { "label": "I need professional assistance", "next": "professional_assistance" }
+        { "label": "Doesn't match these / I'm not sure", "next": "professional_assistance" }
       ]
     },
     {
@@ -491,7 +506,7 @@
     },
     {
       "id": "antenna_extracted_success",
-      "text": "Congratulations! You've successfully extracted the router antenna. This component is worth approximately $8.00. Antennas are critical for Wi-Fi signal strength and range. Would you like to extract another component?",
+      "text": "Congratulations! You've successfully extracted the router antenna. Would you like to extract another component?",
       "options": [
         { "label": "Extract another component", "next": "component_extraction" },
         { "label": "End", "next": "end" }
