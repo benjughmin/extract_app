@@ -199,6 +199,7 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
       });
     }
   }
+  
 
   // Extracts additional configuration from the JSON data
   void _parseAdditionalRuleBaseStructure(RuleBase ruleBase) {
@@ -556,6 +557,159 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
     );
   }
 
+// Add this right after your existing _showGuidelinesDialog() method
+void _showHelpGuidelinesDialog() {
+  if (!mounted) return;
+  if (_guidelines == null) return;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Container(
+          constraints: const BoxConstraints(maxHeight: 420),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.info_outline,
+                            color: Color.fromARGB(255, 63, 87, 75),
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Guidelines & Tools',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Guidelines:',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ..._guidelines?['safety']?.map<Widget>((guideline) =>
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('• ', style: TextStyle(fontSize: 16)),
+                              Expanded(
+                                child: Text(
+                                  guideline,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )?.toList() ?? [],
+                      const SizedBox(height: 16),
+                      Text(
+                        'Recommended Tools:',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ..._guidelines?['tools']?.map<Widget>((tool) =>
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('• ', style: TextStyle(fontSize: 16)),
+                              Expanded(
+                                child: Text(
+                                  tool,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )?.toList() ?? [],
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    child: Text(
+                      'Got It',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        );
+      },
+    );
+  }
+
+
   // Main build method for the widget UI
   @override
   Widget build(BuildContext context) {
@@ -592,12 +746,24 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Device Category',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            color: Colors.white70,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              'Device Category',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.info_outline, color: Colors.white, size: 22), // changed to white
+                              tooltip: 'Tap me for tools & guidelines',
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              onPressed: _showHelpGuidelinesDialog,
+                            ),
+                          ],
                         ),
                         // Toggle button for expanding/collapsing
                         IconButton(
