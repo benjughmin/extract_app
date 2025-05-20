@@ -333,11 +333,11 @@ class _UploadPageState extends State<UploadPage> {
 
             const SizedBox(height: 30),
             // Instructional text with improved styling
-            Text(
-              'Upload pictures of your e-waste or use your camera. We recommend having at least two images for better results.', // The text content
+            Text( 
+              'Take a photo or Upload e-waste images.', // The text content
               style: GoogleFonts.montserrat( // Using Google Fonts
                 color: Colors.white70, // Slightly transparent white
-                fontSize: 20, // Larger font size
+                fontSize: 15, // Larger font size
                 fontWeight: FontWeight.w600, // Medium-bold weight
               ),
               textAlign: TextAlign.center, // Centers the text
