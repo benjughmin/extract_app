@@ -46,7 +46,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'E-Waste Value Tracker',
+      title: 'e-Xtract',
       theme: ThemeData(
         primaryColor: const Color(0xFF34A853),
         colorScheme: ColorScheme.fromSeed(
