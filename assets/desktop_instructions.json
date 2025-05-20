@@ -225,8 +225,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -248,8 +248,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -272,8 +272,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -294,8 +294,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -313,8 +313,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -347,8 +347,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -370,8 +370,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -397,8 +397,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -426,8 +426,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -454,8 +454,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -478,8 +478,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -502,8 +502,8 @@
       ],
       "options": [
         { "label": "Component Extraction", "next": "component_extraction" },
-        { "label": "End", "next": "end" },
-        { "label": "Back", "next": "component_extraction" }
+        { "label": "Back", "next": "component_extraction" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
