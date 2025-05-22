@@ -18,30 +18,30 @@
   },
   "guidelines": {
     "safety": [
-      "⚠️ Power off device before disassembly",
-      "⚡ Use anti-static wrist strap when handling components",
-      "🔥 Handle lithium batteries with extreme care - no metal tools near battery",
-      "🌬️ Work in well-ventilated area when using isopropyl alcohol",
-      "🧤 Wear safety glasses when prying components"
+      "Power off device before disassembly",
+      "Use anti-static wrist strap when handling components",
+      "Handle lithium batteries with extreme care - no metal tools near battery",
+      "Work in well-ventilated area when using isopropyl alcohol",
+      "Wear safety glasses when prying components"
     ],
     "tools": [
-      "🛠️ Precision screwdriver set (Phillips, Pentalobe, Torx)",
-      "🔧 Plastic spudgers (multiple sizes)",
-      "🧲 Anti-static tweezers (non-magnetic)",
-      "🧪 Isopropyl alcohol (90%+) for adhesive removal",
-      "🌡️ Heat gun/hairdryer for softening adhesives",
-      "📷 Smartphone or camera to document disassembly steps",
-      "🧩 Organizer tray for screws and small components"
+      " Precision screwdriver set (Phillips, Pentalobe, Torx)",
+      " Plastic spudgers (multiple sizes)",
+      " Anti-static tweezers (non-magnetic)",
+      " Isopropyl alcohol (90%+) for adhesive removal",
+      " Heat gun/hairdryer for softening adhesives",
+      " Smartphone or camera to document disassembly steps",
+      " Organizer tray for screws and small components"
     ]
   },
 
   "nodes": [
     {
       "id": "start",
-      "text": "📱 What type of smartphone do you have?",
+      "text": " What type of smartphone do you have?",
       "options": [
-        { "label": "🍎 Apple", "next": "apple_choice" },
-        { "label": "🤖 Android", "next": "android_choice" }
+        { "label": " Apple", "next": "apple_choice" },
+        { "label": " Android", "next": "android_choice" }
       ]
     },
     {
@@ -64,12 +64,12 @@
       "id": "apple_issue",
       "text": "What issue are you experiencing with your Apple device?",
       "options": [
-        { "label": "🔋 Battery issues", "next": "apple_battery_issue" },
-        { "label": "📷 Camera issues", "next": "apple_camera_issue" },
-        { "label": "🔌 Charging problems", "next": "apple_charging_issue" },
-        { "label": "🔊 Audio issues", "next": "apple_audio_issue" },
-        { "label": "📳 Vibration failure", "next": "apple_vibration_issue" },
-        { "label": "⚡ Device not powering on", "next": "apple_power_issue" },
+        { "label": " Battery issues", "next": "apple_battery_issue" },
+        { "label": " Camera issues", "next": "apple_camera_issue" },
+        { "label": " Charging problems", "next": "apple_charging_issue" },
+        { "label": " Audio issues", "next": "apple_audio_issue" },
+        { "label": " Vibration failure", "next": "apple_vibration_issue" },
+        { "label": "Device not powering on", "next": "apple_power_issue" },
         { "label": "Back", "next": "apple_choice" },
         { "label": "End", "next": "end" }
       ]
@@ -78,12 +78,12 @@
       "id": "android_issue",
       "text": "What issue are you experiencing with your Android device?",
       "options": [
-        { "label": "🔋 Battery issues", "next": "android_battery_issue" },
-        { "label": "📷 Camera issues", "next": "android_camera_issue" },
-        { "label": "🔌 Charging problems", "next": "android_charging_issue" },
-        { "label": "🔊 Audio issues", "next": "android_audio_issue" },
-        { "label": "📳 Vibration failure", "next": "android_vibration_issue" },
-        { "label": "⚡ Device not powering on", "next": "android_power_issue" },
+        { "label": " Battery issues", "next": "android_battery_issue" },
+        { "label": " Camera issues", "next": "android_camera_issue" },
+        { "label": " Charging problems", "next": "android_charging_issue" },
+        { "label": " Audio issues", "next": "android_audio_issue" },
+        { "label": " Vibration failure", "next": "android_vibration_issue" },
+        { "label": "Device not powering on", "next": "android_power_issue" },
         { "label": "Back", "next": "android_choice" },
         { "label": "End", "next": "end" }
       ]
@@ -110,8 +110,8 @@
       "id": "apple_charging_issue",
       "text": "Charging problems can be caused by a faulty charging port or battery degradation. Which component would you like to address first?",
       "options": [
-        { "label": "🔌 Charging Port", "next": "apple_charging_port" },
-        { "label": "🔋 Battery", "next": "apple_battery" },
+        { "label": " Charging Port", "next": "apple_charging_port" },
+        { "label": " Battery", "next": "apple_battery" },
         { "label": "Back", "next": "apple_issue" }
       ]
     },
@@ -135,8 +135,8 @@
       "id": "apple_power_issue",
       "text": "Power issues can be caused by a faulty logic board or completely dead battery. Which component would you like to check first?",
       "options": [
-        { "label": "💻 Logic Board", "next": "apple_logic_board" },
-        { "label": "🔋 Battery", "next": "apple_battery" },
+        { "label": " Logic Board", "next": "apple_logic_board" },
+        { "label": " Battery", "next": "apple_battery" },
         { "label": "Back", "next": "apple_issue" }
       ]
     },
@@ -162,8 +162,8 @@
       "id": "android_charging_issue",
       "text": "Charging problems can be caused by a faulty charging port or battery degradation. Which component would you like to address first?",
       "options": [
-        { "label": "🔌 Charging Port", "next": "android_charging_port" },
-        { "label": "🔋 Battery", "next": "android_battery" },
+        { "label": " Charging Port", "next": "android_charging_port" },
+        { "label": " Battery", "next": "android_battery" },
         { "label": "Back", "next": "android_issue" }
       ]
     },
@@ -187,27 +187,27 @@
       "id": "android_power_issue",
       "text": "Power issues can be caused by a faulty logic board or completely dead battery. Which component would you like to check first?",
       "options": [
-        { "label": "💻 Logic Board", "next": "android_logic_board" },
-        { "label": "🔋 Battery", "next": "android_battery" },
+        { "label": " Logic Board", "next": "android_logic_board" },
+        { "label": " Battery", "next": "android_battery" },
         { "label": "Back", "next": "android_issue" }
       ]
     },
     {
       "id": "apple_intro",
-      "text": "🔧 Initial Preparation\n\n ⚠️ Please first power off the device before proceeding with the disassembly.\n📱 Remove the SIM card tray and external accessories connected to the device.\n🧤 Use anti-static precautions when handling internal components. \n\nWhat components would you like to extract first?",
+      "text": " Initial Preparation\n\n Please first power off the device before proceeding with the disassembly.\n Remove the SIM card tray and external accessories connected to the device.\n Use anti-static precautions when handling internal components. \n\nWhat components would you like to extract first?",
       "options": [
-        { "label": "🔋 Battery", "next": "apple_battery" },
-        { "label": "📷 Camera", "next": "apple_camera" },
-        { "label": "🔌 Charging Port", "next": "apple_charging_port" },
-        { "label": "💻 Logic Board", "next": "apple_logic_board" },
-        { "label": "🔊 Speaker", "next": "apple_speaker" },
-        { "label": "📳 Vibrator", "next": "apple_vibrator" },
+        { "label": " Battery", "next": "apple_battery" },
+        { "label": " Camera", "next": "apple_camera" },
+        { "label": " Charging Port", "next": "apple_charging_port" },
+        { "label": " Logic Board", "next": "apple_logic_board" },
+        { "label": " Speaker", "next": "apple_speaker" },
+        { "label": " Vibrator", "next": "apple_vibrator" },
         { "label": "Back", "next": "apple_choice" }
       ]
     },
     {
       "id": "apple_battery",
-      "text": "🔋 Battery\n\n⚠️ WARNING \nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. \n\nDo you still want to proceed?",
+      "text": " Battery\n\nWARNING \nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. \n\nDo you still want to proceed?",
       "options": [
         { "label": "Proceed", "next": "apple_battery_steps" },
         { "label": "Back", "next": "apple_intro" }
@@ -279,7 +279,7 @@
     },
     {
       "id": "apple_battery_post",
-      "text": "Once the battery is dismantled:\nStore the batteries safely in a fireproof container\n🚫 Do not bend, puncture, or expose the battery to high temperatures\n♻️ Consider professional recycling options for lithium batteries",
+      "text": "Once the battery is dismantled:\nStore the batteries safely in a fireproof container\n🚫 Do not bend, puncture, or expose the battery to high temperatures\n Consider professional recycling options for lithium batteries",
       "options": [
         { "label": "Back to Components", "next": "apple_intro" },
         { "label": "End", "next": "end" }
@@ -376,7 +376,7 @@
       ],
       "options": [
         { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": "🏁 End", "next": "end" }
+        { "label": " End", "next": "end" }
       ]
     },
     {
@@ -405,7 +405,7 @@
       ],
       "options": [
         { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": "🏁 End", "next": "end" }
+        { "label": " End", "next": "end" }
       ]
     },
     {
@@ -434,7 +434,7 @@
       ],
       "options": [
         { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": "🏁 End", "next": "end" }
+        { "label": " End", "next": "end" }
       ]
     },
     {
@@ -459,25 +459,25 @@
       ],
       "options": [
         { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": "🏁 End", "next": "end" }
+        { "label": " End", "next": "end" }
       ]
     },
     {
       "id": "android_intro",
-      "text": "🤖 Android Disassembly\n\n🔧 # Initial Preparation\n- ⚠️ Please first power off the device before proceeding with the disassembly.\n- 📱 Remove the SIM card tray and external accessories connected to the device.\n- 🧤 Use anti-static precautions when handling internal components.",
+      "text": " Android Disassembly\n\n # Initial Preparation\n- Please first power off the device before proceeding with the disassembly.\n-  Remove the SIM card tray and external accessories connected to the device.\n-  Use anti-static precautions when handling internal components.",
       "options": [
-        { "label": "🔋 Battery", "next": "android_battery" },
-        { "label": "📷 Camera", "next": "android_camera" },
-        { "label": "🔌 Charging Port", "next": "android_charging_port" },
-        { "label": "💻 Logic Board", "next": "android_logic_board" },
-        { "label": "🔊 Speaker", "next": "android_speaker" },
-        { "label": "📳 Vibrator", "next": "android_vibrator" },
-        { "label": "🔙 Back", "next": "start" }
+        { "label": " Battery", "next": "android_battery" },
+        { "label": " Camera", "next": "android_camera" },
+        { "label": " Charging Port", "next": "android_charging_port" },
+        { "label": " Logic Board", "next": "android_logic_board" },
+        { "label": " Speaker", "next": "android_speaker" },
+        { "label": " Vibrator", "next": "android_vibrator" },
+        { "label": " Back", "next": "start" }
       ]
     },
     {
       "id": "android_battery",
-      "text": "🔋 Battery\n\n⚠️ WARNING \nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. \n\nDo you still want to proceed?",
+      "text": " Battery\n\nWARNING \nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. \n\nDo you still want to proceed?",
       "options": [
         { "label": "Proceed", "next": "android_battery_steps" },
         { "label": "Back", "next": "android_intro" }
@@ -549,7 +549,7 @@
     },
     {
       "id": "android_battery_post",
-      "text": "Once the battery is dismantled:\nStore the batteries safely in a fireproof container\n🚫 Do not bend, puncture, or expose the battery to high temperatures\n♻️ Consider professional recycling options for lithium batteries",
+      "text": "Once the battery is dismantled:\nStore the batteries safely in a fireproof container\n🚫 Do not bend, puncture, or expose the battery to high temperatures\n Consider professional recycling options for lithium batteries",
       "options": [
         { "label": "Back to Menu", "next": "android_intro" },
         { "label": "End", "next": "end" }
@@ -734,7 +734,7 @@
     },
     {
       "id": "end",
-      "text": "✅ Processing complete. Remember to:\n1. 📦 Store components properly in anti-static bags\n2. ♻️ Recycle through certified e-waste channels\n3. 🗑️ Wipe any personal data using factory reset or specialized tools\n4. 🧰 Organize your screws and components for future use\n\nThank you for recycling responsibly! 🌍"
+      "text": " Processing complete. Remember to:\n1.  Store components properly in anti-static bags\n2.  Recycle through certified e-waste channels\n3.  Wipe any personal data using factory reset or specialized tools\n4.  Organize your screws and components for future use\n\nThank you for recycling responsibly! "
     }
   ]
 }
