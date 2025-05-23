@@ -144,21 +144,6 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
             Text('Notes: ${location['notes']}'),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-          TextButton(
-            onPressed: () async {
-              final url = location['website'];
-              if (await canLaunchUrl(Uri.parse(url))) {
-                await launchUrl(Uri.parse(url));
-              }
-            },
-            child: const Text('Visit Website'),
-          ),
-        ],
       ),
     );
   }

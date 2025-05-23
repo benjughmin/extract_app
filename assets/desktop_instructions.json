@@ -102,42 +102,47 @@
     },
     {
       "id": "hdd_issue",
-      "text": "Hard drive issues typically include clicking sounds, slow operation, or failure to be recognized. Would you like to extract the HDD?",
+      "text": "Hard drive issues typically include clicking sounds, slow operation, or failure to be recognized. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract HDD", "next": "extract_hdd" },
-        { "label": "Back", "next": "storage_issue" }
+        { "label": "Yes", "next": "dispose_hdd" },
+        { "label": "No", "next": "extract_hdd" },
+        { "label": "Return", "next": "storage_issue" }
       ]
     },
     {
       "id": "sata_issue",
-      "text": "SATA SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to extract the SATA SSD?",
+      "text": "SATA SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract SATA SSD", "next": "extract_sata" },
-        { "label": "Back", "next": "storage_issue" }
+        { "label": "Yes", "next": "dispose_sata" },
+        { "label": "No", "next": "extract_sata" },
+        { "label": "Return", "next": "storage_issue" }
       ]
     },
     {
       "id": "nvme_issue",
-      "text": "SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to extract the SSD?",
+      "text": "NVMe SSD issues often manifest as sudden failures, slow performance, or boot problems. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract SSD", "next": "extract_nvme" },
-        { "label": "Back", "next": "storage_issue" }
+        { "label": "Yes", "next": "dispose_nvme" },
+        { "label": "No", "next": "extract_nvme" },
+        { "label": "Return", "next": "storage_issue" }
       ]
     },
     {
       "id": "case_issue",
-      "text": "Case damage is common in older devices. Extracting valuable components is recommended before disposal. Would you like to proceed with case disassembly?",
+      "text": "Case damage is common in older devices. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract case components", "next": "extract_case" },
-        { "label": "Back", "next": "issue" }
+        { "label": "Yes", "next": "dispose_case" },
+        { "label": "No", "next": "extract_case" },
+        { "label": "Return", "next": "issue" }
       ]
     },
     {
       "id": "bios_issue",
-      "text": "BIOS errors or clock issues typically indicate a problem with the CMOS battery. Would you like to extract the CMOS battery?",
+      "text": "BIOS errors or clock issues typically indicate a problem with the CMOS battery. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract CMOS battery", "next": "extract_cmos" },
-        { "label": "Back", "next": "issue" }
+        { "label": "Yes", "next": "dispose_cmos" },
+        { "label": "No", "next": "extract_cmos" },
+        { "label": "Return", "next": "issue" }
       ]
     },
     {
@@ -151,58 +156,65 @@
     },
     {
       "id": "cooler_issue",
-      "text": "CPU cooler problems often lead to overheating, shutdowns, or thermal throttling. Would you like to extract the CPU cooler?",
+      "text": "CPU cooler problems often lead to overheating, shutdowns, or thermal throttling. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract CPU cooler", "next": "extract_cooler" },
-        { "label": "Back", "next": "cooling_issue" }
+        { "label": "Yes", "next": "dispose_cooler" },
+        { "label": "No", "next": "extract_cooler" },
+        { "label": "Return", "next": "cooling_issue" }
       ]
     },
     {
       "id": "fan_issue",
-      "text": "Case fan issues can cause inadequate airflow, increased system temperature, and noise problems. Would you like to extract the case fan?",
+      "text": "Case fan issues can cause inadequate airflow, increased system temperature, and noise problems. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract case fan", "next": "extract_fan" },
-        { "label": "Back", "next": "cooling_issue" }
+        { "label": "Yes", "next": "dispose_fan" },
+        { "label": "No", "next": "extract_fan" },
+        { "label": "Return", "next": "cooling_issue" }
       ]
     },
     {
       "id": "cpu_issue",
-      "text": "CPU malfunctions can be caused by overheating, physical damage, or age-related degradation. Would you like to extract the CPU?",
+      "text": "CPU malfunctions can be caused by overheating, physical damage, or age-related degradation. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract CPU", "next": "extract_cpu" },
-        { "label": "Back", "next": "issue" }
+        { "label": "Yes", "next": "dispose_cpu" },
+        { "label": "No", "next": "extract_cpu" },
+        { "label": "Return", "next": "issue" }
       ]
     },
     {
       "id": "gpu_issue",
-      "text": "Graphics card problems often manifest as display artifacts, crashes, or complete failure to output video. Would you like to extract the GPU?",
+      "text": "Graphics card problems often manifest as display artifacts, crashes, or complete failure to output video. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract GPU", "next": "extract_gpu" },
-        { "label": "Back", "next": "issue" }
+        { "label": "Yes", "next": "dispose_gpu" },
+        { "label": "No", "next": "extract_gpu" },
+        { "label": "Return", "next": "issue" }
       ]
     },
     {
       "id": "motherboard_issue",
-      "text": "Motherboard problems can affect multiple components and may present as boot failures, random shutdowns, or component recognition issues. Would you like to extract the motherboard?",
+      "text": "Motherboard problems can affect multiple components and may present as boot failures, random shutdowns, or component recognition issues. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract motherboard", "next": "extract_mboard" },
-        { "label": "Back", "next": "issue" }
+        { "label": "Yes", "next": "dispose_mboard" },
+        { "label": "No", "next": "extract_mboard" },
+        { "label": "Return", "next": "issue" }
       ]
     },
     {
       "id": "power_issue",
-      "text": "Power supply failures can cause sudden shutdowns, failure to power on, or strange noises from the PSU. Would you like to extract the power supply?",
+      "text": "Power supply failures can cause sudden shutdowns, failure to power on, or strange noises from the PSU. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract PSU", "next": "extract_psu" },
-        { "label": "Back", "next": "issue" }
+        { "label": "Yes", "next": "dispose_psu" },
+        { "label": "No", "next": "extract_psu" },
+        { "label": "Return", "next": "issue" }
       ]
     },
     {
       "id": "memory_issue",
-      "text": "RAM issues typically cause system instability, blue screens, or failure to boot. Would you like to extract the RAM modules?",
+      "text": "RAM issues typically cause system instability, blue screens, or failure to boot. Would you like to see disposal procedures for this part?",
       "options": [
-        { "label": "Extract RAM", "next": "extract_ram" },
-        { "label": "Back", "next": "issue" }
+        { "label": "Yes", "next": "dispose_ram" },
+        { "label": "No", "next": "extract_ram" },
+        { "label": "Return", "next": "issue" }
       ]
     },
     {
@@ -509,6 +521,162 @@
     {
       "id": "end",
       "text": "All selected components have been processed."
+    },
+    {
+      "id": "dispose_hdd",
+      "steps": [
+        { "order": 1, "action": "If possible, secure-wipe the drive using data destruction software to ensure all personal data is unrecoverable." },
+        { "order": 2, "action": "If the drive is non-functional, consider physical destruction by drilling holes through the platters or using a hammer to damage the drive mechanism (wear safety glasses and gloves)." },
+        { "order": 3, "action": "Place the drive in a separate container and take it to an e-waste recycling center that accepts hard drives." },
+        { "order": 4, "action": "Many electronics retailers and recycling centers have programs specifically for hard drive recycling." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_sata",
+      "steps": [
+        { "order": 1, "action": "If possible, use secure erase tools to wipe all data from the SSD." },
+        { "order": 2, "action": "For non-functional SSDs, physical destruction may be necessary to protect sensitive data." },
+        { "order": 3, "action": "SSDs contain valuable materials that can be recycled - take them to certified e-waste recycling centers." },
+        { "order": 4, "action": "Never dispose of SSDs in regular trash as they may contain hazardous materials." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_nvme",
+      "steps": [
+        { "order": 1, "action": "If the drive is functional, use secure erase tools designed specifically for NVMe drives." },
+        { "order": 2, "action": "For non-functional drives, physical destruction (breaking the PCB) can prevent data recovery." },
+        { "order": 3, "action": "NVMe drives contain valuable rare metals - always recycle them at certified e-waste facilities." },
+        { "order": 4, "action": "Consider contacting the manufacturer as some have take-back recycling programs." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_case",
+      "steps": [
+        { "order": 1, "action": "Remove all components and peripherals from the case before disposal." },
+        { "order": 2, "action": "Computer cases are typically made of steel, aluminum, or plastic, all of which can be recycled." },
+        { "order": 3, "action": "Remove any batteries, lights, or electronic components from the case before recycling." },
+        { "order": 4, "action": "Check with local recycling facilities as some may accept computer cases as scrap metal." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_cmos",
+      "steps": [
+        { "order": 1, "action": "CMOS batteries are typically lithium coin cell batteries (CR2032) and should never be thrown in regular trash." },
+        { "order": 2, "action": "Cover the battery terminals with non-conductive tape to prevent short circuits." },
+        { "order": 3, "action": "Take the battery to a battery recycling center, electronics store, or hazardous waste collection." },
+        { "order": 4, "action": "Many retailers that sell these batteries will also accept them for recycling." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_cooler",
+      "steps": [
+        { "order": 1, "action": "Clean off any thermal paste with isopropyl alcohol and a lint-free cloth." },
+        { "order": 2, "action": "Separate metal components (heatsink) from plastic components (fan) if possible." },
+        { "order": 3, "action": "The metal heatsink can be recycled as scrap metal at most recycling centers." },
+        { "order": 4, "action": "The fan and electronic components should be taken to an e-waste recycling facility." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_fan",
+      "steps": [
+        { "order": 1, "action": "Disconnect any cables and remove any mounting brackets or screws." },
+        { "order": 2, "action": "Computer fans contain both plastic and metal components, as well as small electronic parts." },
+        { "order": 3, "action": "If you're experienced, you can disassemble the fan to separate materials for better recycling." },
+        { "order": 4, "action": "Take the fan to an e-waste recycling center as it contains electronic components." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_cpu",
+      "steps": [
+        { "order": 1, "action": "Clean off any remaining thermal paste with isopropyl alcohol and a lint-free cloth." },
+        { "order": 2, "action": "CPUs contain valuable precious metals including gold, silver, and copper." },
+        { "order": 3, "action": "Never dispose of CPUs in regular trash - they contain materials that shouldn't enter landfills." },
+        { "order": 4, "action": "Take CPUs to specialized e-waste recyclers who can properly recover the valuable materials." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_gpu",
+      "steps": [
+        { "order": 1, "action": "GPUs contain valuable materials including gold, copper, aluminum, and rare earth elements." },
+        { "order": 2, "action": "Check if the manufacturer has a take-back or recycling program for their graphics cards." },
+        { "order": 3, "action": "Remove any batteries or capacitors if you're experienced and dispose of them separately." },
+        { "order": 4, "action": "Take the GPU to a certified e-waste recycling center that handles electronic components." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_mboard",
+      "steps": [
+        { "order": 1, "action": "Remove all components, including the CPU, RAM, and any expansion cards." },
+        { "order": 2, "action": "Remove the CMOS battery and dispose of it separately as it contains lithium." },
+        { "order": 3, "action": "Motherboards contain hazardous materials including lead, mercury, and flame retardants." },
+        { "order": 4, "action": "Always take motherboards to certified e-waste recycling centers for proper handling." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_psu",
+      "steps": [
+        { "order": 1, "action": "Power supplies contain large capacitors that can hold a charge even when unplugged - handle with care." },
+        { "order": 2, "action": "Do not attempt to open a power supply as internal components can be dangerous." },
+        { "order": 3, "action": "PSUs contain materials that are hazardous to the environment including lead and flame retardants." },
+        { "order": 4, "action": "Take the entire PSU to an e-waste recycling center for proper disposal." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_ram",
+      "steps": [
+        { "order": 1, "action": "RAM modules contain valuable metals including gold, silver, and copper in the connectors and circuitry." },
+        { "order": 2, "action": "Consider donating working RAM to computer repair shops or electronics refurbishers." },
+        { "order": 3, "action": "For non-functional RAM, take it to an e-waste recycling center for proper recovery of materials." },
+        { "order": 4, "action": "Never dispose of RAM in regular trash as it contains materials that shouldn't enter landfills." }
+      ],
+      "options": [
+        { "label": "Return to Component List", "next": "component_extraction" },
+        { "label": "End Disposal", "next": "end" }
+      ]
     }
   ]
 }
