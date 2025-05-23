@@ -156,7 +156,7 @@ class DeviceGuideImages {
     ],
     'Landline': [
       GuideImage(
-        assetPath: 'assets/guides/open_landline.png',
+        assetPath: 'assets/guides/open_landline.jpeg',
         description: "Ensure the device's casing is open, and is placed at an appropriate distance",
         iconData: Icons.phone,
       ),
