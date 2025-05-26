@@ -41,8 +41,8 @@ class Category extends StatelessWidget {
               // Each box is created using a helper method
               _buildDeviceCard(
                 context: context,
-                icon: Icons.smartphone, // Icon for smartphone
-                label: 'Smartphone',
+                icon: Icons.desktop_mac, // Icon for desktop
+                label: 'Desktop',
               ),
               _buildDeviceCard(
                 context: context,
@@ -51,8 +51,8 @@ class Category extends StatelessWidget {
               ),
               _buildDeviceCard(
                 context: context,
-                icon: Icons.desktop_mac, // Icon for desktop
-                label: 'Desktop',
+                icon: Icons.smartphone, // Icon for smartphone
+                label: 'Smartphone',
               ),
               _buildDeviceCard(
                 context: context,

@@ -140,8 +140,6 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
             Text('Phone: ${location['phone']}'),
             const SizedBox(height: 8),
             Text('Hours: ${location['hours']}'),
-            const SizedBox(height: 8),
-            Text('Notes: ${location['notes']}'),
           ],
         ),
       ),

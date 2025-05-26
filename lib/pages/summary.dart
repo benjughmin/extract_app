@@ -728,7 +728,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         onPressed: _showFeedbackDialog,
         icon: const Icon(Icons.upload_rounded, color: Colors.white),
         label: Text(
-          'Share Detection Results',
+          'Share Input Image',
           style: GoogleFonts.montserrat(
             color: Colors.white,
             fontSize: 16,
@@ -889,7 +889,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Please wait while your images are uploaded',
+                          'Please wait while your images are being uploaded.',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.robotoCondensed(
                             fontSize: 18,
@@ -942,7 +942,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Thank you for helping improve our detection!',
+              'Thank you for helping improve our detection models!',
               style: GoogleFonts.montserrat(),
             ),
             backgroundColor: const Color(0xFF34A853),

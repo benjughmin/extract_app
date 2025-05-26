@@ -35,6 +35,9 @@
         { "label": "RAM/s", "next": "ram_type" },
         { "label": "SSD (2.5 SATA)", "next": "extract_ssd-sata" },
         { "label": "SSD (NVMe M.2)", "next": "extract_ssd-nvme" },
+        { "label": "Covered NVMe SSD", "next": "extract_ssd-nvme"},
+        { "label": "Covered RAM", "next": "extract_ram"},
+        { "label": "Covered Wi-Fi Card", "next": "extract_wifi"},
         { "label": "Hard Drive (HDD)", "next": "hdd_flow" },
         { "label": "Wi-Fi Card", "next": "extract_wifi"},
         { "label": "Keyboard", "next": "extract_keyboard" },
@@ -219,7 +222,7 @@
       "id": "ram_issue",
       "text": "Memory issues may be caused by a RAM failure. Would you like to see disposal steps for this part?",
       "options": [
-        { "label": "Yes", "next": "dispose_rame" },
+        { "label": "Yes", "next": "dispose_ram" },
         { "label": "No", "next": "ram_type" },
         { "label": "Return", "next": "issue" }
       ]
@@ -453,6 +456,9 @@
     "Ram": "ram",
     "SSD (2.5 SATA)": "ssd-sata",
     "SSD (NVMe M.2)": "ssd-nvme",
+    "Covered NVMe SSD": "ssd-covered",
+    "Covered RAM": "ram-covered",
+    "Covered Wi-Fi Card": "wifi-card-covered",
     "Hard Drive (HDD)": "hard-drive",
     "Wi-Fi Card": "wifi-card",
     "Keyboard": "keyboard"
@@ -461,11 +467,11 @@
   "issue_component_mapping": {
     "Laptop is not powering on": ["battery"],
     "Laptop is overheating": ["fan"],
-    "Memory issue / RAM failure": ["ram"],
-    "NVMe SSD not detected / failing": ["ssd-nvme"],
+    "Memory issue / RAM failure": ["ram", "ram-covered"],
+    "NVMe SSD not detected / failing": ["ssd-nvme", "ssd-covered"],
     "SATA SSD not working / corrupted": ["ssd-sata"],
     "Hard Drive clicking / not spinning": ["hard-drive"],
-    "Connectivity issue (Wi-Fi)": ["wifi-card"],
+    "Connectivity issue (Wi-Fi)": ["wifi-card", "wifi-card-covered"],
     "Typing problems / Keyboard issues": ["keyboard"]
   },
 
