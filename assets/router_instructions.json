@@ -80,7 +80,7 @@
     },
     {
       "id": "antenna_issue",
-      "text": "For antenna [blablablabla add here], Would you like to know how to properly dispose it?",
+      "text": "For antenna issues, Would you like to know how to properly dispose it?",
       "options": [
         { "label": "Check Antenna", "next": "dispose_antenna" },
         { "label": "Back", "next": "issue" }
