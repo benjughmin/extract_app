@@ -4,60 +4,8 @@
     "Antenna": "antenna"
   },
   "issue_component_mapping": {
-    "No internet connection": ["board", "antenna"],
-    "Weak Wi-Fi signal": ["antenna", "board"],
     "Router overheating": ["board"],
     "Antenna loose or broken": ["antenna"]
-  },
-  "component_values": {
-    "board": {
-      "price": 25.00,
-      "notes": "High value component, contains primary circuitry and processing chips",
-      "parameters": {
-        "age": {
-          "options": ["Less than 1 year", "1-2 years", "3-4 years", "Over 4 years"],
-          "multipliers": {
-            "Less than 1 year": 1.0,
-            "1-2 years": 0.8,
-            "3-4 years": 0.6,
-            "Over 4 years": 0.2
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.4
-          }
-        }
-      }
-    },
-    "antenna": {
-      "price": 8.00,
-      "notes": "Value varies by type (internal/external) and signal frequency range",
-      "parameters": {
-        "age": {
-          "options": ["Less than 1 year", "1-2 years", "3-4 years", "Over 4 years"],
-          "multipliers": {
-            "Less than 1 year": 1.0,
-            "1-2 years": 0.8,
-            "3-4 years": 0.6,
-            "Over 4 years": 0.4
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.4
-          }
-        }
-      }
-    }
   },
   "guidelines": {
     "safety": [
@@ -88,7 +36,6 @@
       "id": "issue",
       "text": "What issue or component would you like to address first?",
       "options": [
-        { "label": "Weak Wi-Fi signal", "next": "wifi_issue" },
         { "label": "Router overheating", "next": "overheating_issue" },
         { "label": "Antenna loose or broken", "next": "antenna_issue" },
         { "label": "Back", "next": "start" },
@@ -125,17 +72,17 @@
     },
     {
       "id": "overheating_issue",
-      "text": "Overheating issues are commonly related to the router board. Would you like to extract the board for inspection?",
+      "text": "Overheating issues are commonly related to the router board. Would you like to know how to properly dispose it?",
       "options": [
-        { "label": "Yes", "next": "extract_board_prepare" },
+        { "label": "Yes", "next": "dispose_board" },
         { "label": "No", "next": "issue" }
       ]
     },
     {
       "id": "antenna_issue",
-      "text": "For antenna issues, we'll need to identify what type of antenna your router has.",
+      "text": "For antenna [blablablabla add here], Would you like to know how to properly dispose it?",
       "options": [
-        { "label": "Check Antenna", "next": "antenna_type" },
+        { "label": "Check Antenna", "next": "dispose_antenna" },
         { "label": "Back", "next": "issue" }
       ]
     },
@@ -513,6 +460,30 @@
       ]
     },
     {
+      "id": "dispose_board",
+      "steps": [
+        { "order": 1, "action": "Router boards (PCBs) contain valuable and hazardous materials. Do not dispose of them in regular trash." },
+        { "order": 2, "action": "Place the board in a separate container to avoid damage or contamination." },
+        { "order": 3, "action": "Take the board to an authorized e-waste recycling center for proper processing and metal recovery." },
+        { "order": 4, "action": "If unsure, consult your local municipality for electronics recycling guidelines." }
+      ],
+      "options": [
+        { "label": "Return to Start", "next": "start" }
+      ]
+    },
+    {
+      "id": "dispose_antenna",
+      "steps": [
+        { "order": 1, "action": "Router antennas may contain metal and plastic. Do not dispose of them in regular trash." },
+        { "order": 2, "action": "Separate the antenna from the router body if possible." },
+        { "order": 3, "action": "Place the antenna in a container or bag to prevent injury from sharp edges." },
+        { "order": 4, "action": "Bring the antenna to an e-waste recycling center or follow local guidelines for electronics disposal." }
+      ],
+      "options": [
+        { "label": "Return to Start", "next": "start" }
+      ]
+    },
+    {
       "id": "professional_assistance",
       "text": "Some router components can be challenging to extract, especially when they use specialized connections or are tightly integrated. To avoid damaging valuable components, you might want to seek professional assistance with this extraction.",
       "options": [
@@ -523,6 +494,14 @@
     {
       "id": "end",
       "text": "You have completed the router component extraction process. Thank you for responsibly recycling your electronic components!"
+    },
+    {
+      "id": "other_issue",
+      "text": "If your issue is not listed, would you like to proceed to component extraction?",
+      "options": [
+        { "label": "Yes, show components", "next": "component_extraction" },
+        { "label": "No, end process", "next": "end" }
+      ]
     }
   ]
 }

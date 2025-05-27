@@ -7,119 +7,6 @@
     "Cannot hear caller": ["speaker"],
     "Phone not powering on": ["board"]
   },
-  "component_values": {
-    "board": {
-      "default_base_price": 1.00,
-      "notes": "Value varies by wattage and certification",
-      "parameters": {
-        "brand": {
-          "options": ["Panasonic", "AT&T", "Cisco", "VTech", "General"],
-          "multipliers": {
-            "Panasonic": 1.15,
-            "AT&T": 1.2,
-            "Cisco": 1.25,
-            "VTech": 0.9,
-            "General": 1
-          }
-        },
-        "age": {
-          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
-          "multipliers": {
-            "Less than 1 year": 0.9,
-            "1-2 years": 0.8,
-            "3-4 years": 0.6,
-            "Over 4 years": 0.4
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 0.9,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.2
-          }
-        },
-        "location": {
-          "options": ["Handset", "Base"],
-          "multipliers": {
-            "Handset": 1.0,
-            "Base": 1.5
-          }
-        },
-        "type": {
-          "options": ["Analog Phone", "Corded Phone", "Cordless Phone", "VoIP Phone", "Multiline System Phone"],
-          "multipliers": {
-            "Analog Phone": 299,
-            "Corded Phone": 744,
-            "Cordless Phone": 1680,
-            "VoIP Phone": 1700,
-            "Multiline System Phone": 6899
-          }
-        }
-      }
-    },
-    "speaker": {
-      "default_base_price": 10.00,
-      "notes": "Value varies by wattage and certification",
-      "parameters": {
-        "wattage": {
-          "options": ["<2W", "2W-4W", "5W-7W", ">7W", "Unknown"],
-          "multipliers": {
-            "<2W": 0.6,
-            "2W-4W": 1.0,
-            "5W-7W": 1.2,
-            ">7W": 1.5,
-            "Unknown": 1
-          }
-        },
-        "brand": {
-          "options": ["Panasonic", "AT&T", "Cisco", "VTech", "General"],
-          "multipliers": {
-            "Panasonic": 1.15,
-            "AT&T": 1.2,
-            "Cisco": 1.25,
-            "VTech": 0.9,
-            "General": 1
-          }
-        },
-        "age": {
-          "options": ["Less than 1 year", "1-2 years", "2-3 years", "3-5 years", "Over 5 years"],
-          "multipliers": {
-            "Less than 1 year": 1.0,
-            "1-2 years": 0.8,
-            "3-4 years": 0.6,
-            "Over 4 years": 0.4
-          }
-        },
-        "condition": {
-          "options": ["Like New", "Good", "Fair", "Poor"],
-          "multipliers": {
-            "Like New": 1.0,
-            "Good": 0.8,
-            "Fair": 0.6,
-            "Poor": 0.4
-          }
-        },
-        "location": {
-          "options": ["Handset", "Base"],
-          "multipliers": {
-            "Handset": 1.0,
-            "Base": 1.5
-          }
-        },
-        "type": {
-          "options": ["Analog Phone", "Cordless Phone", "VoIP Phone", "Multiline System Phone"],
-          "multipliers": {
-            "Analog Phone": 299,
-            "Cordless Phone": 1680,
-            "VoIP Phone": 1700,
-            "Multiline System Phone": 6899
-          }
-        }
-      }
-    }
-  },
   "guidelines": {
     "safety": [
       "Power off and unplug the device before starting.",
@@ -175,13 +62,21 @@
         { "label": "End", "next": "end" }
       ]
     },
+    {
+      "id": "other_issue",
+      "text": "If your issue is not listed, would you like to proceed to component extraction?",
+      "options": [
+        { "label": "Yes", "next": "component_extraction" },
+        { "label": "No, end process", "next": "end" }
+      ]
+    },
 
 
     {
       "id": "board_issue",
-      "text": "The power issue could be caused by a faulty board. Would you like to extract the board?",
+      "text": "The power issue could be caused by a faulty board. Would you like to know how to properly dispose it?",
       "options": [
-        { "label": "Yes", "next": "board_location" },
+        { "label": "Yes", "next": "dispose_board" },
         { "label": "No", "next": "start" }
       ]
     },
@@ -627,9 +522,9 @@
 
     {
       "id": "speaker_issue",
-      "text": "A faulty speaker might be causing the sound issue. Would you like to extract it?",
+      "text": "A faulty speaker might be causing the sound issue. Would you like to know how to properly dispose it?",
       "options": [
-        { "label": "Yes", "next": "speaker_location" },
+        { "label": "Yes", "next": "dispose_speaker" },
         { "label": "No", "next": "start" }
       ]
     },
@@ -797,6 +692,30 @@
       "options": [
         { "label": "Extract another component", "next": "component_extraction" },
         { "label": "End", "next": "end" }
+      ]
+    },
+    {
+      "id": "dispose_board",
+      "steps": [
+        { "order": 1, "action": "Landline phone boards (PCBs) contain valuable and hazardous materials. Do not dispose of them in regular trash." },
+        { "order": 2, "action": "Place the board in a separate container to avoid damage or contamination." },
+        { "order": 3, "action": "Take the board to an authorized e-waste recycling center for proper processing and metal recovery." },
+        { "order": 4, "action": "If unsure, consult your local municipality for electronics recycling guidelines." }
+      ],
+      "options": [
+        { "label": "Return to Start", "next": "start" }
+      ]
+    },
+    {
+      "id": "dispose_speaker",
+      "steps": [
+        { "order": 1, "action": "Phone speakers may contain magnets, metals, and plastic. Do not dispose of them in regular trash." },
+        { "order": 2, "action": "Separate the speaker from the phone body if possible." },
+        { "order": 3, "action": "Place the speaker in a container or bag to prevent injury from sharp edges or magnets." },
+        { "order": 4, "action": "Bring the speaker to an e-waste recycling center or follow local guidelines for electronics disposal." }
+      ],
+      "options": [
+        { "label": "Return to Start", "next": "start" }
       ]
     }
   ]
