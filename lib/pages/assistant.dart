@@ -1,7 +1,6 @@
 import 'dart:io'; 
 import 'package:flutter/material.dart'; 
 import 'package:google_fonts/google_fonts.dart'; 
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import '/pages/base.dart'; 
 import '/pages/knowledge_implementation.dart';
@@ -291,6 +290,8 @@ class _ChatbotRedoState extends State<ChatbotRedo> {
     if (nodeId == 'end' || 
         nodeId == 'start' || 
         nodeId == 'component_extraction' || 
+        nodeId == 'apple_intro' || 
+        nodeId == 'android_intro' || 
         nodeId == 'issue') {
       setState(() {
         _currentComponent = null;
@@ -1691,7 +1692,7 @@ void _showHelpGuidelinesDialog() {
     }
     
     // Special handling for component extraction screen - only show detected components
-    if (_currentNode!.id == "component_extraction") {
+    if (_currentNode!.id == "component_extraction" || _currentNode!.id == "apple_intro" || _currentNode!.id == "android_intro") {
       return _currentNode!.options.where((option) {
         // Always include navigation options like "Back" or "End"
         if (["Back", "End"].contains(option.label)) {

@@ -1,0 +1,8 @@
+name: your_project_name
+description: A Flutter project with tests
+dependencies:
+  flutter:
+    sdk: flutter
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

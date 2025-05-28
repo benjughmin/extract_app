@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart'; 
 import '/pages/part_detection.dart'; 
 import '/pages/base.dart'; 
-import 'package:google_fonts/google_fonts.dart'; // Added Google Fonts for better typography
-import '/pages/guide_images.dart'; // Importing guide images for the selected category
+import '/pages/guide_images.dart'; 
+import 'package:google_fonts/google_fonts.dart';
 
 // This widget represents the UploadPage screen where users can upload/select images
 // Since the UI needs to update dynamically based on the contents of _selectedImages, a StatefulWidget is required.

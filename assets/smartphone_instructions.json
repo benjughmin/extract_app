@@ -25,23 +25,23 @@
       "Wear safety glasses when prying components"
     ],
     "tools": [
-      " Precision screwdriver set (Phillips, Pentalobe, Torx)",
-      " Plastic spudgers (multiple sizes)",
-      " Anti-static tweezers (non-magnetic)",
-      " Isopropyl alcohol (90%+) for adhesive removal",
-      " Heat gun/hairdryer for softening adhesives",
-      " Smartphone or camera to document disassembly steps",
-      " Organizer tray for screws and small components"
+      "Precision screwdriver set (Phillips, Pentalobe, Torx)",
+      "Plastic spudgers (multiple sizes)",
+      "Anti-static tweezers (non-magnetic)",
+      "Isopropyl alcohol (90%+) for adhesive removal",
+      "Heat gun/hairdryer for softening adhesives",
+      "Smartphone or camera to document disassembly steps",
+      "Organizer tray for screws and small components"
     ]
   },
 
   "nodes": [
     {
       "id": "start",
-      "text": " What type of smartphone do you have?",
+      "text": "What type of smartphone do you have?",
       "options": [
-        { "label": " Apple", "next": "apple_choice" },
-        { "label": " Android", "next": "android_choice" }
+        { "label": "Apple", "next": "apple_choice" },
+        { "label": "Android", "next": "android_choice" }
       ]
     },
     {
@@ -64,11 +64,11 @@
       "id": "apple_issue",
       "text": "What issue are you experiencing with your Apple device?",
       "options": [
-        { "label": " Battery issues", "next": "apple_battery_issue" },
-        { "label": " Camera issues", "next": "apple_camera_issue" },
-        { "label": " Charging problems", "next": "apple_charging_issue" },
-        { "label": " Audio issues", "next": "apple_audio_issue" },
-        { "label": " Vibration failure", "next": "apple_vibration_issue" },
+        { "label": "Battery issues", "next": "apple_battery_issue" },
+        { "label": "Camera issues", "next": "apple_camera_issue" },
+        { "label": "Charging problems", "next": "apple_charging_issue" },
+        { "label": "Audio issues", "next": "apple_audio_issue" },
+        { "label": "Vibration failure", "next": "apple_vibration_issue" },
         { "label": "Device not powering on", "next": "apple_power_issue" },
         { "label": "Back", "next": "apple_choice" },
         { "label": "End", "next": "end" }
@@ -78,11 +78,11 @@
       "id": "android_issue",
       "text": "What issue are you experiencing with your Android device?",
       "options": [
-        { "label": " Battery issues", "next": "android_battery_issue" },
-        { "label": " Camera issues", "next": "android_camera_issue" },
-        { "label": " Charging problems", "next": "android_charging_issue" },
-        { "label": " Audio issues", "next": "android_audio_issue" },
-        { "label": " Vibration failure", "next": "android_vibration_issue" },
+        { "label": "Battery issues", "next": "android_battery_issue" },
+        { "label": "Camera issues", "next": "android_camera_issue" },
+        { "label": "Charging problems", "next": "android_charging_issue" },
+        { "label": "Audio issues", "next": "android_audio_issue" },
+        { "label": "Vibration failure", "next": "android_vibration_issue" },
         { "label": "Device not powering on", "next": "android_power_issue" },
         { "label": "Back", "next": "android_choice" },
         { "label": "End", "next": "end" }
@@ -110,8 +110,8 @@
       "id": "apple_charging_issue",
       "text": "Charging problems can be caused by a faulty charging port or battery degradation. Which component would you like to address first?",
       "options": [
-        { "label": " Charging Port", "next": "apple_charging_port" },
-        { "label": " Battery", "next": "apple_battery" },
+        { "label": "Charging Port", "next": "apple_charging_port" },
+        { "label": "Battery", "next": "apple_battery" },
         { "label": "Back", "next": "apple_issue" }
       ]
     },
@@ -135,8 +135,8 @@
       "id": "apple_power_issue",
       "text": "Power issues can be caused by a faulty logic board or completely dead battery. Which component would you like to check first?",
       "options": [
-        { "label": " Logic Board", "next": "apple_logic_board" },
-        { "label": " Battery", "next": "apple_battery" },
+        { "label": "Logic Board", "next": "apple_logic_board" },
+        { "label": "Battery", "next": "apple_battery" },
         { "label": "Back", "next": "apple_issue" }
       ]
     },
@@ -162,8 +162,8 @@
       "id": "android_charging_issue",
       "text": "Charging problems can be caused by a faulty charging port or battery degradation. Which component would you like to address first?",
       "options": [
-        { "label": " Charging Port", "next": "android_charging_port" },
-        { "label": " Battery", "next": "android_battery" },
+        { "label": "Charging Port", "next": "android_charging_port" },
+        { "label": "Battery", "next": "android_battery" },
         { "label": "Back", "next": "android_issue" }
       ]
     },
@@ -187,27 +187,27 @@
       "id": "android_power_issue",
       "text": "Power issues can be caused by a faulty logic board or completely dead battery. Which component would you like to check first?",
       "options": [
-        { "label": " Logic Board", "next": "android_logic_board" },
-        { "label": " Battery", "next": "android_battery" },
+        { "label": "Logic Board", "next": "android_logic_board" },
+        { "label": "Battery", "next": "android_battery" },
         { "label": "Back", "next": "android_issue" }
       ]
     },
     {
       "id": "apple_intro",
-      "text": " Initial Preparation\n\n Please first power off the device before proceeding with the disassembly.\n Remove the SIM card tray and external accessories connected to the device.\n Use anti-static precautions when handling internal components. \n\nWhat components would you like to extract first?",
+      "text": "Initial Preparation\n\n1. Please first power off the device before proceeding with the disassembly.\n2. Remove the SIM card tray and external accessories connected to the device.\n3. Use anti-static precautions when handling internal components.\n\nWhat components would you like to extract first?",
       "options": [
-        { "label": " Battery", "next": "apple_battery" },
-        { "label": " Camera", "next": "apple_camera" },
-        { "label": " Charging Port", "next": "apple_charging_port" },
-        { "label": " Logic Board", "next": "apple_logic_board" },
-        { "label": " Speaker", "next": "apple_speaker" },
-        { "label": " Vibrator", "next": "apple_vibrator" },
+        { "label": "Battery", "next": "apple_battery" },
+        { "label": "Camera", "next": "apple_camera" },
+        { "label": "Charging Port", "next": "apple_charging_port" },
+        { "label": "Logic Board", "next": "apple_logic_board" },
+        { "label": "Speaker", "next": "apple_speaker" },
+        { "label": "Vibrator", "next": "apple_vibrator" },
         { "label": "Back", "next": "apple_choice" }
       ]
     },
     {
       "id": "apple_battery",
-      "text": " Battery\n\nWARNING \nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. \n\nDo you still want to proceed?",
+      "text": "Component: Battery\n\nWARNING:\nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery.\n\nDo you still want to proceed?",
       "options": [
         { "label": "Proceed", "next": "apple_battery_steps" },
         { "label": "Back", "next": "apple_intro" }
@@ -218,11 +218,11 @@
       "steps": [
         {
           "order": 1,
-          "action": "If there is a metal shield over the battery connector, remove it using a precision screwdriver."
+          "action": "Disconnect the battery connector using a non-metallic pry tool. This should always be your first step to prevent short circuits."
         },
         {
           "order": 2,
-          "action": "Disconnect the battery connector using a non-metallic pry tool. This should always be your first step to prevent short circuits!"
+          "action": "If there is a metal shield over the battery connector, remove it using a precision screwdriver."
         }
       ],
       "options": [
@@ -266,7 +266,7 @@
         },
         {
           "order": 2,
-          "action": "Let it sit for 3-5 minutes to fully soften the adhesive - patience is key here!"
+          "action": "Let it sit for 3-5 minutes to fully soften the adhesive - patience is key here."
         },
         {
           "order": 3,
@@ -279,7 +279,7 @@
     },
     {
       "id": "apple_battery_post",
-      "text": "Once the battery is dismantled:\nStore the batteries safely in a fireproof container\n🚫 Do not bend, puncture, or expose the battery to high temperatures\n Consider professional recycling options for lithium batteries",
+      "text": "Battery Extraction Complete\n\n- Store the batteries safely in a fireproof container\n- Do not bend, puncture, or expose the battery to high temperatures\n- Consider professional recycling options for lithium batteries",
       "options": [
         { "label": "Back to Components", "next": "apple_intro" },
         { "label": "End", "next": "end" }
@@ -287,7 +287,7 @@
     },
     {
       "id": "apple_camera",
-      "text": "Which camera do you want to extract?",
+      "text": "Component: Camera\n\nWhich camera do you want to extract?",
       "options": [
         { "label": "Rear Camera", "next": "apple_camera_rear" },
         { "label": "Front Camera", "next": "apple_camera_front" },
@@ -307,7 +307,7 @@
         },
         {
           "order": 3,
-          "action": "Disconnect the flex cables near the rear-camera module carefully using a plastic spudger - these are fragile!"
+          "action": "Disconnect the flex cables near the rear-camera module carefully using a plastic spudger - these are fragile."
         },
         {
           "order": 4,
@@ -331,7 +331,7 @@
         },
         {
           "order": 3,
-          "action": "Remove any brackets or shields using a precision screwdriver - keep screws organized!"
+          "action": "Remove any brackets or shields using a precision screwdriver - keep screws organized."
         },
         {
           "order": 4,
@@ -348,7 +348,7 @@
     },
     {
       "id": "apple_camera_post",
-      "text": "Camera Removal Complete!\nAvoid touching the camera lens to prevent smudges or scratches\nStore the cameras in a dust-free container\nConsider using lens covers for protection during storage",
+      "text": "Camera Extraction Complete\n\n- Avoid touching the camera lens to prevent smudges or scratches\n- Store the cameras in a dust-free container",
       "options": [
         { "label": "Back to Menu", "next": "apple_intro" },
         { "label": "End", "next": "end" }
@@ -371,12 +371,19 @@
         },
         {
           "order": 4,
-          "action": "Use a plastic card or tweezers to gently lift and peel away the entire charging port flex cable. Work slowly - these components are extremely fragile!"
+          "action": "Use a plastic card or tweezers to gently lift and peel away the entire charging port flex cable. Work slowly - these components are extremely fragile."
         }
       ],
       "options": [
-        { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": " End", "next": "end" }
+        { "label": "Done", "next": "apple_charging_port_post" }
+      ]
+    },
+    {
+      "id": "apple_charging_port_post",
+      "text": "Charging Port Extraction Complete\n\n- Store the charging port assembly in an anti-static bag\n- Keep flex cables flat to prevent damage\n- Note any corrosion or damage for recycling classification",
+      "options": [
+        { "label": "Back to Components", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -404,8 +411,15 @@
         }
       ],
       "options": [
-        { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": " End", "next": "end" }
+        { "label": "Done", "next": "apple_logic_board_post" }
+      ]
+    },
+    {
+      "id": "apple_logic_board_post",
+      "text": "Logic Board Extraction Complete\n\n- Handle with extreme care - this contains valuable metals and sensitive components\n- Store in anti-static packaging\n- Logic boards have the highest recycling value - ensure proper e-waste facility processing",
+      "options": [
+        { "label": "Back to Components", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -433,8 +447,15 @@
         }
       ],
       "options": [
-        { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": " End", "next": "end" }
+        { "label": "Done", "next": "apple_speaker_post" }
+      ]
+    },
+    {
+      "id": "apple_speaker_post",
+      "text": "Speaker Extraction Complete\n\n- Avoid dropping or impacts that could damage the speaker cone\n- Store in a protective container to prevent dust accumulation\n- Speaker magnets contain rare earth elements valuable for recycling",
+      "options": [
+        { "label": "Back to Components", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
@@ -458,26 +479,33 @@
         }
       ],
       "options": [
-        { "label": "Back to Menu", "next": "apple_intro" },
-        { "label": " End", "next": "end" }
+        { "label": "Done", "next": "apple_vibrator_post" }
+      ]
+    },
+    {
+      "id": "apple_vibrator_post",
+      "text": "Vibrator/Taptic Engine Extraction Complete\n\n- Handle carefully as the motor contains precision components\n- Store in anti-static bag to prevent damage\n- Taptic engines contain valuable rare earth magnets",
+      "options": [
+        { "label": "Back to Components", "next": "apple_intro" },
+        { "label": "End", "next": "end" }
       ]
     },
     {
       "id": "android_intro",
-      "text": " Android Disassembly\n\n # Initial Preparation\n- Please first power off the device before proceeding with the disassembly.\n-  Remove the SIM card tray and external accessories connected to the device.\n-  Use anti-static precautions when handling internal components.",
+      "text": "Android Disassembly\n\nInitial Preparation\n1. Please first power off the device before proceeding with the disassembly.\n2. Remove the SIM card tray and external accessories connected to the device.\n3. Use anti-static precautions when handling internal components.",
       "options": [
-        { "label": " Battery", "next": "android_battery" },
-        { "label": " Camera", "next": "android_camera" },
-        { "label": " Charging Port", "next": "android_charging_port" },
-        { "label": " Logic Board", "next": "android_logic_board" },
-        { "label": " Speaker", "next": "android_speaker" },
-        { "label": " Vibrator", "next": "android_vibrator" },
-        { "label": " Back", "next": "start" }
+        { "label": "Battery", "next": "android_battery" },
+        { "label": "Camera", "next": "android_camera" },
+        { "label": "Charging Port", "next": "android_charging_port" },
+        { "label": "Logic Board", "next": "android_logic_board" },
+        { "label": "Speaker", "next": "android_speaker" },
+        { "label": "Vibrator", "next": "android_vibrator" },
+        { "label": "Back", "next": "start" }
       ]
     },
     {
       "id": "android_battery",
-      "text": " Battery\n\nWARNING \nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery. \n\nDo you still want to proceed?",
+      "text": "Battery\n\nWARNING\nBatteries are made out of lithium-ion, which can be dangerous if punctured or damaged. It is advised to let professionals handle this type of battery.\n\nDo you still want to proceed?",
       "options": [
         { "label": "Proceed", "next": "android_battery_steps" },
         { "label": "Back", "next": "android_intro" }
@@ -492,7 +520,7 @@
         },
         {
           "order": 2,
-          "action": "Disconnect the battery connector using a non-metallic pry tool. This is critical before proceeding with any repairs!"
+          "action": "Disconnect the battery connector using a non-metallic pry tool. This is critical before proceeding with any repairs."
         }
       ],
       "options": [
@@ -536,7 +564,7 @@
         },
         {
           "order": 2,
-          "action": "Let it sit for 3-5 minutes to fully soften the adhesive - be patient!"
+          "action": "Let it sit for 3-5 minutes to fully soften the adhesive - be patient."
         },
         {
           "order": 3,
@@ -549,9 +577,9 @@
     },
     {
       "id": "android_battery_post",
-      "text": "Once the battery is dismantled:\nStore the batteries safely in a fireproof container\n🚫 Do not bend, puncture, or expose the battery to high temperatures\n Consider professional recycling options for lithium batteries",
+      "text": "Battery Extraction Complete\n\n- Store the batteries safely in a fireproof container\n- Do not bend, puncture, or expose the battery to high temperatures\n- Consider professional recycling options for lithium batteries",
       "options": [
-        { "label": "Back to Menu", "next": "android_intro" },
+        { "label": "Back to Components", "next": "android_intro" },
         { "label": "End", "next": "end" }
       ]
     },
@@ -618,7 +646,7 @@
     },
     {
       "id": "android_camera_post",
-      "text": "Camera Removal Complete!\n-Avoid touching the camera lens to prevent smudges or scratches\n-Store the cameras in a dust-free container\n-Consider using lens covers for protection during storage",
+      "text": "Camera Removal Complete\n- Avoid touching the camera lens to prevent smudges or scratches\n- Store the cameras in a dust-free container\n- Consider using lens covers for protection during storage",
       "options": [
         { "label": "Back to Menu", "next": "android_intro" },
         { "label": "End", "next": "end" }
@@ -644,6 +672,13 @@
           "action": "Use a plastic card or tweezers to gently lift and peel away the entire charging port flex cable. Many Androids combine the charging port with the speaker assembly."
         }
       ],
+      "options": [
+        { "label": "Done", "next": "android_charging_port_post" }
+      ]
+    },
+    {
+      "id": "android_charging_port_post",
+      "text": "Charging Port Extraction Complete\n\n- Store the charging port assembly in an anti-static bag\n- Keep flex cables flat to prevent damage\n- Note any corrosion or damage for recycling classification",
       "options": [
         { "label": "Back to Menu", "next": "android_intro" },
         { "label": "End", "next": "end" }
@@ -674,6 +709,13 @@
         }
       ],
       "options": [
+        { "label": "Done", "next": "android_logic_board_post" }
+      ]
+    },
+    {
+      "id": "android_logic_board_post",
+      "text": "Logic Board Extraction Complete\n\n- Handle with extreme care - this contains valuable metals and sensitive components\n- Store in anti-static packaging\n- Logic boards have the highest recycling value - ensure proper e-waste facility processing",
+      "options": [
         { "label": "Back to Menu", "next": "android_intro" },
         { "label": "End", "next": "end" }
       ]
@@ -703,6 +745,13 @@
         }
       ],
       "options": [
+        { "label": "Done", "next": "android_speaker_post" }
+      ]
+    },
+    {
+      "id": "android_speaker_post",
+      "text": "Speaker Extraction Complete\n\n- Avoid dropping or impacts that could damage the speaker cone\n- Store in a protective container to prevent dust accumulation\n- Speaker magnets contain rare earth elements valuable for recycling",
+      "options": [
         { "label": "Back to Menu", "next": "android_intro" },
         { "label": "End", "next": "end" }
       ]
@@ -728,13 +777,20 @@
         }
       ],
       "options": [
+        { "label": "Done", "next": "android_vibrator_post" }
+      ]
+    },
+    {
+      "id": "android_vibrator_post",
+      "text": "Vibrator Extraction Complete\n\n- Handle carefully as the motor contains precision components\n- Store in anti-static bag to prevent damage\n- Vibration motors contain valuable rare earth magnets",
+      "options": [
         { "label": "Back to Menu", "next": "android_intro" },
         { "label": "End", "next": "end" }
       ]
     },
     {
       "id": "end",
-      "text": " Processing complete. Remember to:\n1.  Store components properly in anti-static bags\n2.  Recycle through certified e-waste channels\n3.  Wipe any personal data using factory reset or specialized tools\n4.  Organize your screws and components for future use\n\nThank you for recycling responsibly! "
+      "text": " Processing complete. Remember to:\n1. Store components properly in anti-static bags\n2. Recycle through certified e-waste channels\n3. Wipe any personal data using factory reset or specialized tools\n4. Organize your screws and components for future use\n\nThank you for recycling responsibly!"
     }
   ]
 }

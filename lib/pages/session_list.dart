@@ -1,4 +1,4 @@
-// Create a new file: pages/sessions_list.dart
+// Displays a list of saved sessions with options to view details or delete them.
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,14 +33,6 @@ class _SessionsListPageState extends State<SessionsListPage> {
 
   String _formatDate(DateTime date) {
     return timeago.format(date, locale: 'en');
-  }
-
-  String _formatTime(DateTime date) {
-    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-
-  String _formatDay(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 
   @override

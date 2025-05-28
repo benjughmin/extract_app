@@ -36,7 +36,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
   int _displayedImageIndex = 0; 
   int _currentImageIndex = 0;
   late PageController _pageController;
-  List<GlobalKey> _imageWithBoxesKeys = [];
+  // List<GlobalKey> _imageWithBoxesKeys = [];  !Not sure if to be removed or not
   List<bool> _processingStatus = [];
   
   bool _isProcessingBatch = false;
@@ -53,11 +53,13 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
       viewportFraction: 1.0,
     );
     
+    /* !Not sure if to be removed or not
     _imageWithBoxesKeys = List.generate(
       widget.selectedImages.length,
       (index) => GlobalKey(),
     );
-    
+    */
+
     _allDetections = List.generate(
       widget.selectedImages.length,
       (index) => [],
@@ -237,7 +239,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
       
       final name = (clsIdx < _labels.length) ? _labels[clsIdx] : 'Unknown';
 
-      // Add filtering for unwanted components
+      // Adds filtering for unwanted components
       if (!_shouldIncludeComponent(name)) continue;
 
       dets.add(
@@ -330,7 +332,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
     Map<String, String> componentImages = {};
 
     for (var detection in detections) {
-      // Skip unwanted components
+      // Skips unwanted components
       if (!_shouldIncludeComponent(detection.className)) continue;
 
       final componentPath = await _cropComponentImage(
@@ -405,7 +407,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
         .join(' ');
   }
 
-  // New method to filter unwanted components based on category
+  // A method to filter unwanted components based on category
   bool _shouldIncludeComponent(String componentName) {
     if ((widget.category == 'Landline' && componentName == 'antenna') ||
         (widget.category == 'Router' && componentName == 'speaker')) {
@@ -451,7 +453,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
                       onPageChanged: (index) {
                         print("PAGE CHANGED TO: $index");
                         setState(() {
-                          _displayedImageIndex = index; // Update the displayed index
+                          _displayedImageIndex = index;
                         });
                       },
                       itemBuilder: (context, index) {
@@ -532,7 +534,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
 
                           final String imagePath = widget.selectedImages[i].path;
 
-                          // Crop components if not already cropped
+                          // Crops components if not already cropped
                           if (_allCroppedComponents[i].isEmpty) {
                             _allCroppedComponents[i] = await _cropAllDetectedComponents(
                               imagePath,
@@ -544,7 +546,7 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
                         }
                       }
 
-                      // Navigate to the next page with the collected data
+                      // Navigates to the next page with the collected data
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => ChatbotRedo(
@@ -602,7 +604,6 @@ class _DetectionPageState extends State<DetectionPage> with SingleTickerProvider
               ),
             ),
           ),
-          // Add the processing popup overlay
           _buildProcessingPopup(),
         ],
       ),

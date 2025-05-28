@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
@@ -90,7 +89,6 @@ class _ParameterDialogState extends State<ParameterDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // Dialog UI remains unchanged
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: SingleChildScrollView(
@@ -122,7 +120,7 @@ class _ParameterDialogState extends State<ParameterDialog> {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: DropdownButtonFormField<String>(
-                  isExpanded: true,  // Add this line to make dropdown expand to full width
+                  isExpanded: true,  
                   decoration: InputDecoration(
                     labelText:
                         paramName[0].toUpperCase() + paramName.substring(1),
@@ -193,7 +191,7 @@ class SummaryScreen extends StatefulWidget {
   final List<String> extractedComponents;
   final Map<String, Map<String, String>> componentImages;
   final List<String> userImagePaths;
-  final Map<String, Map<String, dynamic>>? initialComponentValues; // <-- Add this
+  final Map<String, Map<String, dynamic>>? initialComponentValues; 
 
   const SummaryScreen({
     super.key,
@@ -201,7 +199,7 @@ class SummaryScreen extends StatefulWidget {
     required this.extractedComponents,
     required this.componentImages,
     required this.userImagePaths,
-    this.initialComponentValues, // <-- Add this
+    this.initialComponentValues, 
   });
 
   @override
@@ -255,7 +253,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: SizedBox(
-              height: 380, // Adjust as needed for your UI
+              height: 380, 
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -269,7 +267,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                           'Valuation Disclaimer',
                           style: GoogleFonts.montserrat(
                             fontSize: 17,
-                            fontWeight: FontWeight.bold, // Make bold
+                            fontWeight: FontWeight.bold, 
                             color: Colors.grey[800],
                           ),
                         ),
@@ -386,11 +384,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
     );
   }
 
-  // Setup offline persistence
+  // Offline Persistence Setup
   Future<void> _enableOfflinePersistence() async {
     try {
-      // This only needs to be set once in the app, typically in main.dart
-      // but we add it here for completeness since we're focusing on summary.dart
       FirebaseFirestore.instance.settings = Settings(
         persistenceEnabled: true,
         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
@@ -398,7 +394,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
       print('✅ Firestore offline persistence enabled');
     } catch (e) {
       print('⚠️ Firestore settings may have already been set: $e');
-      // This is fine, as settings can only be set once
     }
   }
 
@@ -449,10 +444,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
         }
       }, onError: (e) {
         print('❌ Error listening to Firestore updates: $e');
-        // No need to fallback here as we already have data
       });
       
-      // Once data is loaded, show parameter dialogs
       _showParameterDialogs();
       
     } catch (e) {
@@ -480,10 +473,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
       
       print('📝 Loaded component values from local JSON');
       
-      // Also store this data to Firestore for future offline access
       _saveToFirestore(normalizedCategory, jsonData['component_values']);
       
-      // Show parameter dialogs
       _showParameterDialogs();
       
     } catch (e) {
@@ -508,7 +499,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
       print('💾 Saved local data to Firestore for future offline access');
     } catch (e) {
       print('❌ Error saving to Firestore: $e');
-      // This is fine, we already have the data locally
     }
   }
 
@@ -678,14 +668,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
             // Convert Firestore documents to a list of maps
             final locations = querySnapshot.docs.map((doc) {
               final data = doc.data();
-              final latLong = data['lat_long'] as GeoPoint; // Treat as GeoPoint
+              final latLong = data['lat_long'] as GeoPoint; // Geopoint
 
               return {
                 'id': doc.id,
                 'name': data['name'],
                 'address': data['address'],
-                'latitude': latLong.latitude, // Extract latitude
-                'longitude': latLong.longitude, // Extract longitude
+                'latitude': latLong.latitude, 
+                'longitude': latLong.longitude, 
                 'phone': data['phone'],
                 'hours': data['hours'],
                 'website': data['website'],
@@ -830,7 +820,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
     late void Function(int) updateProgress;
     late void Function() closeOverlay;
 
-    // Show custom overlay
+   
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -911,11 +901,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   ),
                 ),
               ),
-            ); // <-- Close AnimatedOpacity
+            ); 
           },
-        ); // <-- Close StatefulBuilder
+        ); 
       },
-    ); // <-- Close showDialog
+    );
 
     try {
       final feedbackService = FeedbackService();
@@ -1032,7 +1022,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Existing UI components...
               Container(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
@@ -1113,13 +1102,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
               const SizedBox(height: 24),
 
-              // Add the e-waste disposal section here
               _buildEWasteDisposalSection(),
 
-              // Add the feedback button here
               _buildFeedbackButton(),
 
-              // Components List
               ...uniqueComponents.map((component) {
                 final values =
                     _componentValues?[component.toLowerCase()] ??

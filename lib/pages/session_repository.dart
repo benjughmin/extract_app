@@ -1,10 +1,10 @@
-// Create a new file: repositories/session_repository.dart
+// Handles the storage and retrieval of saved sessions using Flutter Secure Storage.
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'session.dart';
 
 class SessionRepository {
-  static const _storage = FlutterSecureStorage();
+  static const _storage = FlutterSecureStorage(); // Securely stores session data locally on the device. 
   static const _sessionsKey = 'saved_sessions';
 
   Future<List<SavedSession>> getSavedSessions() async {
@@ -31,7 +31,7 @@ class SessionRepository {
     await _storage.write(key: _sessionsKey, value: json.encode(jsonList));
   }
 
-  // Add to session_repository.dart
+
   Future<void> saveAllSessions(List<Map<String, dynamic>> sessions) async {
     await _storage.write(
       key: _sessionsKey,

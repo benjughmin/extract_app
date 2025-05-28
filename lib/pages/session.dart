@@ -1,4 +1,4 @@
-// Update session.dart
+// Stores the information about the user's progress
 class SavedSession {
   final String id;
   final String deviceCategory;
@@ -6,7 +6,7 @@ class SavedSession {
   final DateTime savedAt;
   final List<String> detectedComponents;
   final Map<String, Map<String, String>> componentImages;
-  final String? currentNodeId; // Add this field to track where the session stopped
+  final String? currentNodeId; 
 
   SavedSession({
     required this.id,
@@ -15,7 +15,7 @@ class SavedSession {
     required this.savedAt,
     required this.detectedComponents,
     required this.componentImages,
-    this.currentNodeId, // Add to constructor
+    this.currentNodeId, 
   });
 
   factory SavedSession.fromJson(Map<String, dynamic> json) {
@@ -27,7 +27,7 @@ class SavedSession {
       detectedComponents: List<String>.from(json['detectedComponents']),
       componentImages: (json['componentImages'] as Map).map((key, value) => 
         MapEntry(key, Map<String, String>.from(value))),
-      currentNodeId: json['currentNodeId'], // Add to fromJson
+      currentNodeId: json['currentNodeId'], 
     );
   }
 
@@ -39,11 +39,10 @@ class SavedSession {
       'savedAt': savedAt.toIso8601String(),
       'detectedComponents': detectedComponents,
       'componentImages': componentImages,
-      'currentNodeId': currentNodeId, // Add to toJson
+      'currentNodeId': currentNodeId, 
     };
   }
 
-  // Add a copyWith method for easier updates
   SavedSession copyWith({
     String? id,
     String? deviceCategory,

@@ -24,23 +24,20 @@ class HomeScreen extends StatelessWidget {
                   .collection('ewaste_locations')
                   .get();
 
-              // Debug: Print the number of documents retrieved
               print('Retrieved ${querySnapshot.docs.length} locations from Firestore');
 
-              // Convert Firestore documents to a list of maps
               final locations = querySnapshot.docs.map((doc) {
                 final data = doc.data();
-                final latLong = data['lat_long'] as List<dynamic>; // Treat as a list
+                final latLong = data['lat_long'] as List<dynamic>;
 
-                // Debug: Print each document ID being processed
                 print('Processing document: ${doc.id}');
 
                 return {
                   'id': doc.id,
                   'name': data['name'] ?? 'Unknown Location',
                   'address': data['address'] ?? 'No address provided',
-                  'latitude': latLong[0], // Extract latitude from the array
-                  'longitude': latLong[1], // Extract longitude from the array
+                  'latitude': latLong[0], 
+                  'longitude': latLong[1], 
                   'phone': data['phone'] ?? 'No phone provided',
                   'hours': data['hours'] ?? 'Hours not specified',
                   'website': data['website'] ?? 'https://example.com',
@@ -48,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                 };
               }).toList();
 
-              // Navigate to the map screen with the fetched locations
+              // Navigates to the map screen with the fetched locations
               if (locations.isNotEmpty) {
                 Navigator.push(
                   context,
@@ -57,7 +54,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                 );
               } else {
-                // Show error if no locations found
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('No e-waste locations found in the database'),
@@ -102,7 +98,7 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
     super.initState();
     _getUserLocation();
     
-    // Debug: Print the locations received
+    // Prints the locations received
     print('Received ${widget.locations.length} locations in map screen');
     for (var loc in widget.locations) {
       print('Location: ${loc['name']} at (${loc['latitude']}, ${loc['longitude']})');
@@ -132,7 +128,7 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
   }
 
   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const double earthRadius = 6371; // Radius of Earth in kilometers
+    const double earthRadius = 6378; // Radius of Earth in kilometers (NASA)
     double dLat = (lat2 - lat1) * pi / 180;
     double dLon = (lon2 - lon1) * pi / 180;
 
@@ -166,7 +162,7 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
 
   String _formatDistance(double distance) {
     if (distance < 1) {
-      // Show in meters if less than 1km
+      // Displays in meters if less than 1km
       return '${(distance * 1000).toStringAsFixed(0)} m';
     } else {
       return '${distance.toStringAsFixed(1)} km';
@@ -305,7 +301,6 @@ class _EWasteMapScreenState extends State<EWasteMapScreen> {
                       ),
                       child: Column(
                         children: [
-                          // Oval-like icon to indicate expandability
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
