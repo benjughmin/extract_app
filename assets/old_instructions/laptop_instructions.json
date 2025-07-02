@@ -825,41 +825,6 @@
       "Tweezers",
       "Optional: Gloves, ESD Wrist Strap, or Anti-Static Mat"
     ]
-  },
-
-  "test_instructions": {
-    "ram": [
-      "Power on the device and check if the system recognizes the RAM.",
-      "Run a memory test utility (e.g., MemTest86) to check for errors."
-    ],
-    "battery": [
-      "Charge the battery fully, then unplug and see how long it lasts.",
-      "Check for swelling or physical damage."
-    ],
-    "fan": [
-      "Power on the device and listen for fan noise.",
-      "Check if air is blowing out of the vents."
-    ],
-    "ssd-nvme": [
-      "Connect the SSD to a working computer and check if it is detected.",
-      "Run a disk health tool (e.g., CrystalDiskInfo) to check for errors."
-    ],
-    "ssd-sata": [
-      "Connect the SSD to a working computer and check if it is detected.",
-      "Run a disk health tool (e.g., CrystalDiskInfo) to check for errors."
-    ],
-    "hard-drive": [
-      "Connect the hard drive to a working computer and check if it is detected.",
-      "Listen for unusual noises (clicking, grinding) when powered on."
-    ],
-    "wifi-card": [
-      "Install the Wi-Fi card in a compatible device and check if it is recognized.",
-      "Test wireless connectivity."
-    ],
-    "keyboard": [
-      "Connect the keyboard to a device and test all keys.",
-      "Check for stuck or unresponsive keys."
-    ]
   }
 }
 

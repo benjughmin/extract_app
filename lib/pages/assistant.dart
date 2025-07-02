@@ -10,6 +10,7 @@ import '/pages/upload_or_camera.dart';
 import '/pages/session.dart';
 import '/pages/session_repository.dart'; 
 import '/pages/summary.dart';
+import '/pages/testing_guide.dart';
 
 // StatefulWidget is used when the UI can change dynamically during runtime
 class ChatbotRedo extends StatefulWidget {
@@ -1605,6 +1606,57 @@ void _showHelpGuidelinesDialog() {
                 ),
                 const SizedBox(height: 9), // Space between Summary and Save Session button
                 
+                // Testing Guide button
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TestingGuideScreen(
+                          detectedComponents: widget.initialDetections,
+                          testInstructions: KnowledgeImplementation.getRawJsonData(widget.initialCategory)?['test_instructions'] ?? {},
+                          componentImages: widget.initialComponentImages,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF34A853), Color(0xFF0F9D58)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.science, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Testing Guide',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 9),
+
                 // Save Session button
                 SizedBox(
                   width: double.infinity,

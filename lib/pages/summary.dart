@@ -284,13 +284,19 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         ),
                         children: [
                           TextSpan(
-                            text: '1. Component pricing used in this application is primarily sourced from publicly available platforms, including Shopee, Lazada, and Facebook Marketplace.\n\n',
+                            text: '1. Our pricing suggestions are given assuming that your parts are functional. We suggest verifying the functionality of your parts before moving on.\n\n',
                           ),
                           TextSpan(
-                            text: '2. Our pricing estimates are based on available market data but may vary due to platform availability, resale channels, regulatory changes, and other market conditions.\n\n',
+                            text: '2. Component pricing used in this application is primarily sourced from publicly available platforms, including Shopee, Lazada, and Facebook Marketplace.\n\n',
                           ),
                           TextSpan(
-                            text: '3. Pricing at e-waste facilities ultimately depends on their specific policy regulations and operational practices.',
+                            text: '3. Our pricing estimates are based on available market data but may vary due to platform availability, resale channels, regulatory changes, and other market conditions.\n\n',
+                          ),
+                          TextSpan(
+                            text: '4. Pricing at e-waste facilities ultimately depends on their specific policy regulations and operational practices.\n\n',
+                          ),
+                          TextSpan(
+                            text: '5. e-Xtract is not liable for any misunderstandings with user transactions, especially if the parts are not functional or if the market conditions change.',
                           ),
                         ],
                       ),
@@ -1113,10 +1119,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
               const SizedBox(height: 24),
 
-              // Add the e-waste disposal section here
               _buildEWasteDisposalSection(),
 
-              // Add the feedback button here
               _buildFeedbackButton(),
 
               // Components List
@@ -1125,6 +1129,12 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     _componentValues?[component.toLowerCase()] ??
                     {'price': 0.0, 'notes': 'No data available'};
                 final count = componentCounts[component] ?? 1;
+
+                // Calculate non-functional price
+                final double functionalPrice = (values['price'] ?? 0.0) is int
+                    ? (values['price'] ?? 0.0).toDouble()
+                    : (values['price'] ?? 0.0) as double;
+                final double nonFunctionalPrice = functionalPrice * 0.25;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -1157,8 +1167,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       children: [
                         Text(
                           values['selected_parameters'] != null
-                              ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}' // Show price if configured
-                              : '⋯', // Show ellipsis if not configured
+                              ? '\₱${functionalPrice.toStringAsFixed(2)}'
+                              : '⋯',
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -1179,7 +1189,18 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       ],
                     ),
                     children: [
-                      // Component details remain unchanged
+                      if (values['selected_parameters'] != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
+                          child: Text(
+                            'Non-Functional Price: ₱${nonFunctionalPrice.toStringAsFixed(2)}',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              color: const Color.fromARGB(203, 255, 70, 70),
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
