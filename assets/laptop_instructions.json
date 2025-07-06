@@ -829,36 +829,55 @@
 
   "test_instructions": {
     "ram": [
-      "Power on the device and check if the system recognizes the RAM.",
-      "Run a memory test utility (e.g., MemTest86) to check for errors."
+      "Power on the device and check if the system recognizes the RAM. If fails to power on or freezes, the RAM may be faulty.",
+      "If the laptop powers on, open your system settings by going to Settings > System > About, and check if the installed RAM amount matches your actual RAM sticks.",
+      "Software tools such as MemTest86 are available for free that can help you test the RAM in a more detailed manner.",
+      "Testing your RAM sticks on a different working laptop can also help you determine if the RAM is faulty.",
+      "If all tests pass, the RAM is likely functional."
     ],
     "battery": [
-      "Charge the battery fully, then unplug and see how long it lasts.",
-      "Check for swelling or physical damage."
+      "Check for swelling or physical damage. If there is obvious swelling or damage, the battery will not be functional",
+      "Plug in the charger of the laptop and wait for the battery to fully charge.",
+      "Once the battery is fully charged, unplug the charger and power on the laptop.",
+      "If the laptop fails to power on or shuts down immediately, the battery may be faulty.",
+      "If all tests pass, the battery is likely functional.",
+      "Get a detailed battery health analysis by opening the Command Prompt and typing 'powercfg /batteryreport'."
     ],
     "fan": [
-      "Power on the device and listen for fan noise.",
-      "Check if air is blowing out of the vents."
+      "Power on the device and place your hand near the fan vents to check for airflow.",
+      "If you feel warm air coming from the vents, the fans are likely working.",
+      "You will also be able to hear the fans spinning, especially under load, which Is a good sign."
     ],
     "ssd-nvme": [
-      "Connect the SSD to a working computer and check if it is detected.",
-      "Run a disk health tool (e.g., CrystalDiskInfo) to check for errors."
+      "Attach the SSD to a working laptop and check if it can be detected by the system.",
+      "Open the File Explorer and check if the SSD appears as a drive.",
+      "If the SSD appears as a drive, check if you can opene files and folders from it without errors.",
+      "Disk health tools or software can be used for a more detailed analysis of the SSD's health.",
+      "If all tests pass, the SSD is likely functional."
     ],
     "ssd-sata": [
-      "Connect the SSD to a working computer and check if it is detected.",
-      "Run a disk health tool (e.g., CrystalDiskInfo) to check for errors."
+      "Attach the SSD to a working laptop and check if it can be detected by the system.",
+      "Open the File Explorer and check if the SSD appears as a drive.",
+      "If the SSD appears as a drive, check if you can opene files and folders from it without errors.",
+      "Disk health tools or software can be used for a more detailed analysis of the SSD's health.",
+      "If all tests pass, the SSD is likely functional."
     ],
     "hard-drive": [
-      "Connect the hard drive to a working computer and check if it is detected.",
-      "Listen for unusual noises (clicking, grinding) when powered on."
+      "Attach the hard drive to a working laptop and check if it can be detected by the system.",
+      "Open the File Explorer and check if the HDD appears as a drive.",
+      "If the HDD appears as a drive, check if you can opene files and folders from it without errors.",
+      "If you hear clicking sounds or grinding noises, the HDD may be failing.",
+      "If all tests pass, the SSD is likely functional."
     ],
     "wifi-card": [
-      "Install the Wi-Fi card in a compatible device and check if it is recognized.",
-      "Test wireless connectivity."
+      "Install the Wi-Fi card in a compatible laptop and check if it is recognized.",
+      "If the laptop can connect to Wi-Fi networks, the card is likely functional."
     ],
     "keyboard": [
-      "Connect the keyboard to a device and test all keys.",
-      "Check for stuck or unresponsive keys."
+      "Open a text editor, such as Notepad, on your laptop and test each key.",
+      "If all keys respond correctly, the keyboard is likely functional.",
+      "Web browsers can also be used to test the keyboard by typing in the address bar or search box.",
+      "If some keys do not respond, the keyboard may be faulty especially with those specific keys."
     ]
   }
 }

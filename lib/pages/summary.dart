@@ -1130,11 +1130,13 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     {'price': 0.0, 'notes': 'No data available'};
                 final count = componentCounts[component] ?? 1;
 
-                // Calculate non-functional price
-                final double functionalPrice = (values['price'] ?? 0.0) is int
-                    ? (values['price'] ?? 0.0).toDouble()
-                    : (values['price'] ?? 0.0) as double;
-                final double nonFunctionalPrice = functionalPrice * 0.25;
+                // Check if the component's Functionality parameter is set to Not Working
+                final selectedParameters = values['selected_parameters'] as Map<String, String>?;
+                final isNotWorking = selectedParameters != null &&
+                  selectedParameters.entries.any((entry) =>
+                    entry.key.toLowerCase().contains('function') &&
+                    entry.value.trim().toLowerCase() == 'not working'
+                  );
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -1167,12 +1169,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       children: [
                         Text(
                           values['selected_parameters'] != null
-                              ? '\₱${functionalPrice.toStringAsFixed(2)}'
+                              ? '\₱${(values['price'] ?? 0.0).toStringAsFixed(2)}'
                               : '⋯',
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF34A853),
+                            color: isNotWorking
+                                ? Colors.red
+                                : const Color(0xFF34A853),
                           ),
                         ),
                         Text(
@@ -1189,18 +1193,6 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       ],
                     ),
                     children: [
-                      if (values['selected_parameters'] != null)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
-                          child: Text(
-                            'Non-Functional Price: ₱${nonFunctionalPrice.toStringAsFixed(2)}',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              color: const Color.fromARGB(203, 255, 70, 70),
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -1281,28 +1273,33 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                           as Map<String, String>)[paramName] ??
                                       'Not configured';
 
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 4),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          _formatParameterName(paramName),
-                                          style: GoogleFonts.montserrat(
-                                            color: Colors.grey[600],
-                                          ),
+                              // Check if the Functionality parameter is set to Not Working
+                                final isFunctionalityNotWorking = paramName.toLowerCase().contains('function')
+                                    && selectedValue.trim().toLowerCase() == 'not working';
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _formatParameterName(paramName),
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.grey[600],
                                         ),
-                                        Text(
-                                          selectedValue,
-                                          style: GoogleFonts.montserrat(
-                                            color: const Color(0xFF34A853),
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                      ),
+                                      Text(
+                                        selectedValue,
+                                        style: GoogleFonts.montserrat(
+                                          color: isFunctionalityNotWorking // If functionality is set to Not Working, font is red
+                                              ? Colors.red
+                                              : const Color(0xFF34A853),
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                      ],
-                                    ),
-                                  );
+                                      ),
+                                    ],
+                                  ),
+                                );
                                 }).toList(),
                                 const SizedBox(height: 16),
                               ] else ...[

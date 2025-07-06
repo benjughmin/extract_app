@@ -71,8 +71,8 @@ class TestingGuideScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                               child: Image.file(
                                 File(imgPath),
-                                width: 100,
-                                height: 100,
+                                width: 200,
+                                height: 200,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -80,17 +80,18 @@ class TestingGuideScreen extends StatelessWidget {
                         )).toList(),
                       ),
                     ),
+                    const SizedBox(height: 8),
                   if (instructions != null && instructions.isNotEmpty)
                     ...instructions.map((step) => Padding(
                           padding: const EdgeInsets.only(bottom: 6),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('• ', style: TextStyle(fontSize: 16)),
+                              const Text('• ', style: TextStyle(fontSize: 18)),
                               Expanded(
                                 child: Text(
                                   step,
-                                  style: GoogleFonts.montserrat(fontSize: 15),
+                                  style: GoogleFonts.montserrat(fontSize: 16),
                                 ),
                               ),
                             ],
