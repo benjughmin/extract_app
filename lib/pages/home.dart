@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '/pages/category.dart';
 import '/pages/session_list.dart';
+import '/pages/educational_content_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
@@ -244,6 +245,21 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => const SessionsListPage(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: screenHeight * 0.015),
+                      _buildButton(
+                        context: context,
+                        text: 'Learn About E-Waste',
+                        icon: Icons.school,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EducationalContentPage(),
                             ),
                           );
                         },
