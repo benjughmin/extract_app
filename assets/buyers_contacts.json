@@ -1,0 +1,25 @@
+{
+  "buyers": [
+    {
+      "name": "FYM Scrap Trading",
+      "address": "123 Quezon Avenue, Quezon City, Metro Manila",
+      "email": "fymscrapbuyer@gmail.com",
+      "number": "+63 977 062 5300",
+      "specialties": [""]
+    },
+    {
+      "name": "Tejeros Trading",
+      "address": "456 IT Park, Lahug, Cebu City",
+      "email": "kangkimpoy01@yahoo.com",
+      "number": "+63 921 629 6726",
+      "specialties": [""]
+    },
+    {
+      "name": "Tingzon Metal",
+      "address": "B71 L25 Kamuning St. Amparo Village Brgy-179 Caloocan City North",
+      "email": "[None]",
+      "number": "+63 945 555 7890",
+      "specialties": [""]
+    }
+  ]
+}

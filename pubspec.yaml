@@ -44,6 +44,7 @@ flutter:
   assets:
 
     - assets/splash.json
+    - assets/buyers_contacts.json
     # Guide images + app icon
     - assets/guides/
 
